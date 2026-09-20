@@ -25,6 +25,7 @@ export function ScratchPad({
   // โหลดรายการหน้ากระดาษที่เคยเพิ่มไว้
   useEffect(() => {
     try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- โหลดรายการหน้าที่เคยเพิ่มไว้จาก localStorage
       const saved = localStorage.getItem(listKey);
       if (saved) {
         const arr = JSON.parse(saved) as number[];
