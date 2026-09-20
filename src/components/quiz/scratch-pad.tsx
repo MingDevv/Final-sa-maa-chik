@@ -25,12 +25,13 @@ export function ScratchPad({
   // โหลดรายการหน้ากระดาษที่เคยเพิ่มไว้
   useEffect(() => {
     try {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- โหลดรายการหน้าที่เคยเพิ่มไว้จาก localStorage
       const saved = localStorage.getItem(listKey);
       if (saved) {
         const arr = JSON.parse(saved) as number[];
         if (Array.isArray(arr) && arr.length > 0) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- โหลดรายการหน้ากระดาษที่เคยเพิ่มไว้จาก localStorage
           setPages(arr);
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- พร้อมกันกับ setPages ด้านบน
           setActive(arr[arr.length - 1]);
         }
       }
