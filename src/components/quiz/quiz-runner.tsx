@@ -146,8 +146,9 @@ export function QuizRunner({ set }: { set: PlaySet }) {
     };
   }, [set.id]);
 
-  // จำตำแหน่งข้อปัจจุบัน
+  // จำตำแหน่งข้อปัจจุบัน — เริ่มบันทึกหลัง hydrate เท่านั้น (กันทับค่าที่เคยจำไว้ตอน mount)
   useEffect(() => {
+    if (!hydratedRef.current) return;
     try {
       localStorage.setItem(`fep_idx:${set.id}`, String(current));
     } catch {
@@ -507,7 +508,7 @@ export function QuizRunner({ set }: { set: PlaySet }) {
           <ChevronLeft className="h-4 w-4" aria-hidden /> ข้อก่อน
         </Button>
 
-        <div className="flex flex-wrap justify-center gap-1.5" role="tablist" aria-label="เลือกข้อ">
+        <div className="flex max-w-full flex-nowrap gap-1.5 overflow-x-auto pb-1 sm:flex-wrap sm:justify-center sm:overflow-visible" role="tablist" aria-label="เลือกข้อ">
           {set.questions.map((qq, i) => {
             const answered =
               answers[qq.id] &&
@@ -523,7 +524,7 @@ export function QuizRunner({ set }: { set: PlaySet }) {
                 aria-label={`ข้อ ${i + 1}${answered ? " (ตอบแล้ว)" : ""}${answers[qq.id]?.flagged ? " (ปักธง)" : ""}`}
                 onClick={() => setCurrent(i)}
                 className={cn(
-                  "relative h-8 w-8 rounded-xl border text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-ring",
+                  "relative h-8 w-8 shrink-0 rounded-xl border text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-ring",
                   i === current
                     ? "border-wine bg-wine text-white dark:border-primary dark:bg-primary"
                     : answered

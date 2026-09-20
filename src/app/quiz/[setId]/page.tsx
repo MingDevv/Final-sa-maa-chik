@@ -31,11 +31,11 @@ export default async function QuizPage({
       {guide && (
         <details className="group rounded-3xl border border-border bg-card shadow-soft">
           <summary className="flex cursor-pointer items-center gap-2 px-5 py-3 text-sm font-semibold text-wine focus-visible:outline-2 focus-visible:outline-ring dark:text-primary">
-            <BookOpen className="h-4 w-4" aria-hidden />
-            ชีตสรุปก่อนทำ (แนะนำให้อ่านก่อนเริ่ม — มีสูตรครบ)
+            <BookOpen className="h-4 w-4 shrink-0" aria-hidden />
+            <span className="min-w-0">ชีตสรุปก่อนทำ — มีสูตรครบ</span>
             <Link
               href={`/study-guide/${encodeURIComponent(set.subjectCode)}`}
-              className="ml-auto text-xs font-normal text-muted-foreground underline underline-offset-2 hover:text-foreground"
+              className="ml-auto shrink-0 whitespace-nowrap text-xs font-normal text-muted-foreground underline underline-offset-2 hover:text-foreground"
             >
               เปิดเต็มจอ
             </Link>

@@ -28,7 +28,7 @@ export function SiteHeader() {
           <span className="flex h-8 w-8 items-center justify-center rounded-2xl bg-gradient-to-br from-wine to-purple-brand text-white shadow-soft">
             <GraduationCap className="h-5 w-5" aria-hidden />
           </span>
-          <span className="text-[15px]">Final-sa-maa-chik</span>
+          <span className="whitespace-nowrap text-sm md:text-[15px]">Final-sa-maa-chik</span>
         </Link>
 
         <nav className="flex items-center gap-1 text-sm" aria-label="เมนูหลัก">
