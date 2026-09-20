@@ -29,14 +29,77 @@ export const dynamic = "force-dynamic";
 const greetingForHour = (h: number) =>
   h < 11 ? "สวัสดีตอนเช้า" : h < 15 ? "สวัสดีตอนบ่าย" : h < 18 ? "สวัสดีตอนเย็น" : "สวัสดียามค่ำ";
 
+/** จับกรณี DB ยังไม่พร้อม (เช่นเพิ่ง deploy บน Vercel ยังไม่ตั้ง DATABASE_URL) — แสดงคำแนะนำแทนหน้าพัง */
+async function loadDashboard() {
+  try {
+    const session = await getReadOnlySession();
+    const [subjects, summary, weakTopics, recent] = await Promise.all([
+      subjectService.listSubjects(),
+      analyticsService.dashboard(session.ownerKey),
+      analyticsService.weakTopics(session.ownerKey),
+      analyticsService.recentAttempts(session.ownerKey),
+    ]);
+    return { subjects, summary, weakTopics, recent, dbReady: true as const };
+  } catch {
+    return {
+      subjects: [],
+      summary: { totalQuestionsDone: 0, totalStudyMinutes: 0, currentStreak: 0, quizzesTaken: 0, averagePercent: 0, activeDays: 0 },
+      weakTopics: [],
+      recent: [],
+      dbReady: false as const,
+    };
+  }
+}
+
 export default async function DashboardPage() {
-  const session = await getReadOnlySession();
-  const [subjects, summary, weakTopics, recent] = await Promise.all([
-    subjectService.listSubjects(),
-    analyticsService.dashboard(session.ownerKey),
-    analyticsService.weakTopics(session.ownerKey),
-    analyticsService.recentAttempts(session.ownerKey),
-  ]);
+  const { subjects, summary, weakTopics, recent, dbReady } = await loadDashboard();
+
+  if (!dbReady) {
+    return (
+      <div className="mx-auto max-w-2xl pt-10">
+        <Card className="rounded-3xl shadow-soft-lg">
+          <CardHeader className="items-center pb-2 text-center">
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-gradient-to-br from-wine to-purple-brand text-white shadow-soft text-2xl">
+              🔧
+            </span>
+            <CardTitle className="pt-2 text-lg">ยังเชื่อมต่อฐานข้อมูลไม่ได้</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              เว็บต้องเชื่อม PostgreSQL ก่อนจึงจะแสดงวิชาและข้อสอบได้ — ทำตามขั้นตอนนี้ครั้งเดียว
+            </p>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 text-sm">
+            <ol className="ml-5 list-decimal space-y-2">
+              <li>
+                สร้างฐานข้อมูลฟรีที่ <strong>neon.tech</strong> (Postgres) แล้วคัดลอก
+                &ldquo;Connection string&rdquo;
+              </li>
+              <li>
+                ใน Vercel: <strong>Settings → Environment Variables</strong> เพิ่ม{" "}
+                <code className="rounded bg-muted px-1">DATABASE_URL</code> = connection string
+                ที่ได้ (และ <code className="rounded bg-muted px-1">ADMIN_CODE</code> = รหัสผู้ดูแล)
+              </li>
+              <li>กด Redeploy หนึ่งครั้ง</li>
+              <li>
+                จากเครื่องตัวเอง รัน:{" "}
+                <code className="rounded bg-muted px-1">npx prisma migrate deploy</code> แล้วตามด้วย{" "}
+                <code className="rounded bg-muted px-1">npm run db:seed</code>,{" "}
+                <code className="rounded bg-muted px-1">npm run seed:guides</code>,{" "}
+                <code className="rounded bg-muted px-1">npm run seed:exams</code>{" "}
+                (ชี้ DATABASE_URL ไปที่ DB คลาวด์)
+              </li>
+              <li>
+                เช็กสถานะที่ <code className="rounded bg-muted px-1">/api/health</code> — ถ้าขึ้น{" "}
+                <code className="rounded bg-muted px-1">{`{ "database": "ok" }`}</code> คือใช้ได้แล้ว
+              </li>
+            </ol>
+            <p className="text-xs text-muted-foreground">
+              รายละเอียดเต็มอยู่ใน README.md หัวข้อ &ldquo;Deploy ขึ้น Vercel&rdquo;
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const lastSet = recent[0];
   const hour = new Date().getHours();
