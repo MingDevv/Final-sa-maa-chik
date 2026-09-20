@@ -67,7 +67,7 @@ const formatClock = (sec: number) => {
     : `${m}:${String(ss).padStart(2, "0")}`;
 };
 
-/** หน้าทำข้อสอบ: จับเวลา, autosave ทุกคำตอบ, ปักธง, เลื่อนข้อ, ส่งคำตอบ */
+/** หน้าทำข้อสอบ: จับเวลา, autosave แบบ debounce, ปักธง, จำตำแหน่งข้อ, ส่งคำตอบ */
 export function QuizRunner({ set }: { set: PlaySet }) {
   const router = useRouter();
   const [attemptId, setAttemptId] = useState<string | null>(null);
@@ -79,6 +79,12 @@ export function QuizRunner({ set }: { set: PlaySet }) {
   const [submitting, setSubmitting] = useState(false);
   const [perQuestionCorrect, setPerQuestionCorrect] = useState<Record<string, boolean>>({});
   const hydratedRef = useRef(false);
+  // ภาพกระดานที่ยังไม่ได้อัปโหลด — จะส่งตอนกด "ส่งคำตอบ" ครั้งเดียว (ไม่หน่วงตอนเขียน)
+  const pendingSketches = useRef<Record<string, string>>({});
+  // คิว autosave แบบ debounce ต่อข้อ (ลด request ตอนพิมพ์)
+  const saveTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const pendingPatches = useRef<Record<string, AnswerState>>({});
+  const attemptIdRef = useRef<string | null>(null);
   const q = set.questions[current];
 
   // เริ่ม/กลับมาทำ attempt
@@ -97,8 +103,9 @@ export function QuizRunner({ set }: { set: PlaySet }) {
         return;
       }
       const id = json.data.attemptId as string;
+      attemptIdRef.current = id;
       setAttemptId(id);
-      // ดึงคำตอบที่ autosave ไว้ (ทำต่อจากที่ค้าง)
+      // ดึงคำตอบที่ autosave ไว้ (ทำต่อจากที่ค้าง) — เงียบ ๆ ไม่เด้ง toast รบกวน
       const r2 = await fetch(`/api/attempts/${id}`);
       const j2 = await r2.json();
       if (j2.ok && !hydratedRef.current) {
@@ -116,16 +123,37 @@ export function QuizRunner({ set }: { set: PlaySet }) {
             };
           }
         }
-        if (Object.keys(saved).length > 0) {
-          setAnswers(saved);
-          toast.info("กลับมาทำต่อจากที่บันทึกไว้แล้ว");
+        if (Object.keys(saved).length > 0) setAnswers(saved);
+
+        // กลับไปข้อที่ทำค้าง + ตั้งเวลาให้ต่อเนื่องจากเวลาที่เริ่มจริง
+        try {
+          const savedIdx = Number(localStorage.getItem(`fep_idx:${set.id}`));
+          if (Number.isFinite(savedIdx) && savedIdx > 0 && savedIdx < set.questions.length) {
+            setCurrent(savedIdx);
+          }
+        } catch {
+          /* localStorage ใช้ไม่ได้ — ข้าม */
         }
+        const startedAt = j2.data.startedAt ? new Date(j2.data.startedAt).getTime() : Date.now();
+        const total = set.recommendedMinutes * 60;
+        const usedSec = Math.floor((Date.now() - startedAt) / 1000);
+        setElapsed(Math.min(usedSec, total));
+        setSecondsLeft(Math.max(0, total - usedSec));
       }
     })();
     return () => {
       cancelled = true;
     };
   }, [set.id]);
+
+  // จำตำแหน่งข้อปัจจุบัน
+  useEffect(() => {
+    try {
+      localStorage.setItem(`fep_idx:${set.id}`, String(current));
+    } catch {
+      /* ข้าม */
+    }
+  }, [current, set.id]);
 
   // ตัวจับเวลา
   useEffect(() => {
@@ -135,6 +163,32 @@ export function QuizRunner({ set }: { set: PlaySet }) {
     }, 1000);
     return () => clearInterval(t);
   }, []);
+
+  /** อัปโหลดภาพกระดานที่ค้างไว้ (เรียกก่อนส่งคำตอบครั้งเดียว — ไม่หน่วงตอนเขียน) */
+  async function flushPendingSketches() {
+    const entries = Object.entries(pendingSketches.current);
+    await Promise.all(
+      entries.map(async ([questionId, dataUrl]) => {
+        try {
+          const blob = await (await fetch(dataUrl)).blob();
+          const form = new FormData();
+          form.append("file", new File([blob], "sketch.png", { type: "image/png" }));
+          const up = await fetch("/api/uploads", { method: "POST", body: form });
+          const upJson = await up.json();
+          if (upJson.ok) {
+            delete pendingSketches.current[questionId];
+            await fetch(`/api/attempts/${attemptIdRef.current}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ questionId, sketchKey: upJson.data.key }),
+            });
+          }
+        } catch {
+          // อัปโหลดไม่สำเร็จ — คำตอบสุดท้ายยังส่งได้ปกติ
+        }
+      }),
+    );
+  }
 
   const submit = useCallback(
     async (auto = false) => {
@@ -157,6 +211,20 @@ export function QuizRunner({ set }: { set: PlaySet }) {
       setSubmitting(true);
       setConfirmSubmit(false);
       try {
+        // ส่งภาพกระดานที่ค้างก่อน (ถ้ามี) แล้วค่อยส่งข้อสอบ
+        await flushPendingSketches();
+        // กันคำตอบที่ยังค้างใน debounce (พิมพ์เสร็จปุ๊บส่งเลยปั๊บ)
+        await Promise.all(
+          Object.keys(pendingPatches.current).map((qid) => {
+            const merged = pendingPatches.current[qid];
+            delete pendingPatches.current[qid];
+            return fetch(`/api/attempts/${attemptId}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ questionId: qid, ...merged }),
+            }).catch(() => undefined);
+          }),
+        );
         const res = await fetch(`/api/attempts/${attemptId}/submit`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -188,26 +256,50 @@ export function QuizRunner({ set }: { set: PlaySet }) {
   }, [secondsLeft, attemptId, submitting]);
 
   const saveAnswer = useCallback(
-    async (questionId: string, patch: AnswerState, immediate = true) => {
+    (questionId: string, patch: AnswerState, immediate = true) => {
+      // อัปเดต UI ทันที (ลื่นไหล) แล้วค่อยส่งบันทึกเบื้องหลัง
       setAnswers((prev) => ({ ...prev, [questionId]: { ...prev[questionId], ...patch } }));
-      if (!attemptId || !immediate) return;
-      try {
-        const res = await fetch(`/api/attempts/${attemptId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ questionId, ...patch }),
-        });
-        const json = await res.json();
-        if (json.ok && json.data?.isCorrect === true) {
-          setPerQuestionCorrect((prev) => ({ ...prev, [questionId]: true }));
-        } else if (json.ok && json.data?.isCorrect === false) {
-          setPerQuestionCorrect((prev) => ({ ...prev, [questionId]: false }));
+
+      // รวม patch ล่าสุดไว้ตลอด (ตัวถัดไปทับตัวก่อน)
+      pendingPatches.current[questionId] = {
+        ...(pendingPatches.current[questionId] ?? {}),
+        ...patch,
+      };
+
+      const send = async () => {
+        const merged = pendingPatches.current[questionId];
+        delete pendingPatches.current[questionId];
+        const id = attemptIdRef.current;
+        if (!id || !merged) return;
+        try {
+          const res = await fetch(`/api/attempts/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ questionId, ...merged }),
+          });
+          const json = await res.json();
+          if (json.ok && json.data?.isCorrect === true) {
+            setPerQuestionCorrect((prev) => ({ ...prev, [questionId]: true }));
+          } else if (json.ok && json.data?.isCorrect === false) {
+            setPerQuestionCorrect((prev) => ({ ...prev, [questionId]: false }));
+          }
+        } catch {
+          // autosave ล้มเหลวชั่วคราว — คำตอบยังอยู่ใน state และจะพยายามบันทึกใหม่เมื่อแก้
         }
-      } catch {
-        // autosave ล้มเหลวชั่วคราว — คำตอบยังอยู่ใน state และจะพยายามบันทึกใหม่เมื่อแก้
+      };
+
+      const timer = saveTimers.current[questionId];
+      if (timer) clearTimeout(timer);
+      if (immediate) {
+        // MCQ/ปักธง/ยืนยัน — ส่งทันที
+        delete saveTimers.current[questionId];
+        void send();
+      } else {
+        // พิมพ์ข้อความ — รอให้พิมพ์จบช่วง (500ms) ค่อยส่งรวมครั้งเดียว
+        saveTimers.current[questionId] = setTimeout(send, 500);
       }
     },
-    [attemptId],
+    [],
   );
 
   const answeredCount = useMemo(
@@ -360,21 +452,9 @@ export function QuizRunner({ set }: { set: PlaySet }) {
           <div className="mt-4 flex flex-col gap-3">
             <Whiteboard
               storageKey={`${set.id}:${q.id}`}
-              onChange={async (dataUrl) => {
-                // แนบภาพเขียนเข้าคำตอบเมื่อมีการวาด
-                if (!dataUrl || !attemptId) return;
-                try {
-                  const blob = await (await fetch(dataUrl)).blob();
-                  const form = new FormData();
-                  form.append("file", new File([blob], "sketch.png", { type: "image/png" }));
-                  const up = await fetch("/api/uploads", { method: "POST", body: form });
-                  const upJson = await up.json();
-                  if (upJson.ok) {
-                    saveAnswer(q.id, { sketchKey: upJson.data.key }, false);
-                  }
-                } catch {
-                  // แนบภาพไม่สำเร็จ — ผู้ใช้ยังส่งคำตอบสุดท้ายได้
-                }
+              onChange={(dataUrl) => {
+                // เก็บภาพไว้ในหน่วยความจำก่อน — จะอัปโหลดครั้งเดียวตอนกดส่งคำตอบ (ไม่หน่วงตอนเขียน)
+                if (dataUrl) pendingSketches.current[q.id] = dataUrl;
               }}
             />
             <div>
