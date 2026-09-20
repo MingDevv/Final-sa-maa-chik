@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { subjectService } from "@/server/services/subject-service";
+import { db } from "@/lib/db";
+import { Hero, examCountdownText } from "@/components/dashboard/hero";
 import { analyticsService } from "@/server/services/analytics-service";
 import { getReadOnlySession } from "@/server/read-session";
 import { localizedToString } from "@/lib/types";
@@ -39,20 +41,36 @@ async function loadDashboard() {
       analyticsService.weakTopics(session.ownerKey),
       analyticsService.recentAttempts(session.ownerKey),
     ]);
-    return { subjects, summary, weakTopics, recent, dbReady: true as const };
+    let termInfo: { name: string; countdown: string | null } = {
+      name: "สอบปลายภาค 1/2569",
+      countdown: null,
+    };
+    try {
+      const term = await db.examTerm.findFirst({ where: { status: "ACTIVE" } });
+      if (term) {
+        termInfo = {
+          name: localizedToString(term.name),
+          countdown: examCountdownText(term.examDate),
+        };
+      }
+    } catch {
+      /* ไม่มีรอบสอบก็แสดงปกได้ */
+    }
+    return { subjects, summary, weakTopics, recent, termInfo, dbReady: true as const };
   } catch {
     return {
       subjects: [],
       summary: { totalQuestionsDone: 0, totalStudyMinutes: 0, currentStreak: 0, quizzesTaken: 0, averagePercent: 0, activeDays: 0 },
       weakTopics: [],
       recent: [],
+      termInfo: { name: "", countdown: null },
       dbReady: false as const,
     };
   }
 }
 
 export default async function DashboardPage() {
-  const { subjects, summary, weakTopics, recent, dbReady } = await loadDashboard();
+  const { subjects, summary, weakTopics, recent, termInfo, dbReady } = await loadDashboard();
 
   if (!dbReady) {
     return (
@@ -106,14 +124,11 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold text-wine md:text-3xl dark:text-primary">
-          {greetingForHour(hour)} พร้อมสอบปลายภาคกันหรือยัง?
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          อ่านชีท ทำโจทย์ ทบทวนจุดอ่อน — ติดตามความพร้อมของเราได้ทุกวัน
-        </p>
-      </section>
+      <Hero
+        countdown={termInfo.countdown}
+        termName={termInfo.name}
+        subjectCount={subjects.length}
+      />
 
       {/* สรุปความคืบหน้ารวม */}
       <section
