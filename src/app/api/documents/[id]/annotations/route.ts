@@ -12,7 +12,7 @@ const createSchema = z.object({
     .object({
       page: z.number().int().min(1),
       color: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#E11D48"),
-      note: z.string().optional(),
+      note: z.string().optional().nullable(), // client ส่ง null มาได้ (ไม่มีโน้ต)
     })
     .optional(),
   note: z
@@ -60,7 +60,7 @@ export async function POST(
     }
     if (body.highlight) {
       const created = await progressRepository.addHighlight(
-        owner, id, body.highlight.page, body.highlight.color, body.highlight.note,
+        owner, id, body.highlight.page, body.highlight.color, body.highlight.note ?? undefined,
       );
       return ok(created);
     }

@@ -88,24 +88,55 @@ export function QuizRunner({ set }: { set: PlaySet }) {
   const attemptIdRef = useRef<string | null>(null);
   const q = set.questions[current];
 
-  // เริ่ม/กลับมาทำ attempt
+  // เริ่ม/กลับมาทำ attempt — ลองซ้ำอัตโนมัติเมื่อเครือข่าย/เซิร์ฟเวอร์ขัดข้องชั่วคราว
   useEffect(() => {
     let cancelled = false;
+    const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
     (async () => {
-      const res = await fetch("/api/attempts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ setId: set.id, mode: "EXAM" }),
-      });
-      const json = await res.json();
-      if (cancelled) return; // StrictMode ยิงซ้ำ — เงียบไว้ ไม่ใช่ความผิดพลาดจริง
-      if (!json.ok) {
-        toast.error(json.error ?? "เริ่มข้อสอบไม่สำเร็จ");
-        return;
+      let id: string | null = null;
+      for (let attempt = 0; attempt < 4; attempt++) {
+        try {
+          const res = await fetch("/api/attempts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ setId: set.id, mode: "EXAM" }),
+          });
+          const json = await res.json();
+          if (cancelled) return; // StrictMode ยิงซ้ำ — เงียบไว้ ไม่ใช่ความผิดพลาดจริง
+          if (json.ok) {
+            id = json.data.attemptId as string;
+            break;
+          }
+          if (res.status >= 500 && attempt < 3) {
+            await delay(700 * (attempt + 1));
+            continue;
+          }
+          toast.error(json.error ?? "เริ่มข้อสอบไม่สำเร็จ");
+          return;
+        } catch {
+          if (attempt < 3) {
+            await delay(700 * (attempt + 1));
+            continue;
+          }
+          if (!cancelled) toast.error("เครือข่ายขัดข้อง — รีเฟรชหน้าเพื่อลองใหม่");
+          return;
+        }
       }
-      const id = json.data.attemptId as string;
+      if (cancelled || !id) return;
       attemptIdRef.current = id;
       setAttemptId(id);
+      // ส่งคำตอบที่ผู้ใช้ตอบค้างไว้ระหว่างรอเชื่อมต่อ (ถ้ามี)
+      const queued = Object.entries(pendingPatches.current);
+      for (const [qid, patch] of queued) {
+        delete pendingPatches.current[qid];
+        fetch(`/api/attempts/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ questionId: qid, ...patch }),
+        }).catch(() => undefined);
+      }
+
       // ดึงคำตอบที่ autosave ไว้ (ทำต่อจากที่ค้าง) — เงียบ ๆ ไม่เด้ง toast รบกวน
       const r2 = await fetch(`/api/attempts/${id}`);
       const j2 = await r2.json();
@@ -194,7 +225,11 @@ export function QuizRunner({ set }: { set: PlaySet }) {
 
   const submit = useCallback(
     async (auto = false) => {
-      if (!attemptId || submitting) return;
+      if (submitting) return;
+      if (!attemptId) {
+        toast.error("กำลังเชื่อมต่อเซิร์ฟเวอร์ — รอสักครู่แล้วกดส่งอีกครั้ง");
+        return;
+      }
       if (!auto) {
         const unanswered = set.questions.filter((qq) => {
           const a = answers[qq.id];
@@ -269,10 +304,11 @@ export function QuizRunner({ set }: { set: PlaySet }) {
       };
 
       const send = async () => {
-        const merged = pendingPatches.current[questionId];
-        delete pendingPatches.current[questionId];
         const id = attemptIdRef.current;
-        if (!id || !merged) return;
+        if (!id) return; // ยังไม่มี attempt — ค้างไว้ใน pendingPatches รอส่งหลังได้ id
+        const merged = pendingPatches.current[questionId];
+        if (!merged) return;
+        delete pendingPatches.current[questionId];
         try {
           const res = await fetch(`/api/attempts/${id}`, {
             method: "PATCH",

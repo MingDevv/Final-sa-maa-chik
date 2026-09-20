@@ -3,8 +3,8 @@ import type { NextRequest } from "next/server";
 
 const GUEST_COOKIE = "fep_guest";
 
-/** สร้าง guest session cookie ให้ทุกผู้เยี่ยมชม (ใช้ผูกความคืบหน้าแบบไม่ต้องสมัครสมาชิก) */
-export function middleware(request: NextRequest) {
+/** สร้าง guest session cookie ให้ทุกผู้เยี่ยมชม (ใช้ผูกความคืบหน้าแบบไม่ต้องสมัครสมาชิก) — Next 16 proxy convention */
+export function proxy(request: NextRequest) {
   const response = NextResponse.next();
   if (!request.cookies.get(GUEST_COOKIE)) {
     const id = `g_${crypto.randomUUID().replace(/-/g, "").slice(0, 24)}`;

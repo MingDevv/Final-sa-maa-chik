@@ -184,7 +184,10 @@ export const attemptService = {
           isCorrect: p.status === "correct",
         });
       }
-      return { isCorrect: p?.status === "correct" };
+      // เฉลยก่อนเวลาเฉพาะโหมดฝึก/ชุดที่ตั้งเฉลยทันที — โหมดสอบไม่เผยทาง response
+      const mayReveal =
+        attempt.mode === "PRACTICE" || attempt.set.revealMode === "AFTER_EACH";
+      return { isCorrect: mayReveal ? p?.status === "correct" : null };
     }
     return { isCorrect: null };
   },
@@ -196,6 +199,11 @@ export const attemptService = {
   }): Promise<SubmitResult | null> {
     const attempt = await attemptRepository.findById(input.attemptId);
     assertOwner(attempt, input.owner);
+
+    // กันส่งซ้ำ: ถ้าส่งไปแล้ว ให้ผลจากการคำนวณของข้อมูลปัจจุบันโดยไม่นับสถิติซ้ำ
+    if (attempt.status === "SUBMITTED") {
+      return scoreAttemptAnswers(attempt);
+    }
 
     const result = scoreAttemptAnswers(attempt);
     const durationSec =
@@ -232,10 +240,11 @@ export const attemptService = {
     attemptId: string;
     questionId: string;
     correct: boolean;
+    owner: { userId?: string; guestSessionId?: string };
   }) {
     // ผู้ใช้ติ๊กตรวจข้อเขียนเอง — บันทึกผลและอัปเดตคะแนนรวม
     const attempt = await attemptRepository.findById(input.attemptId);
-    if (!attempt) return null;
+    assertOwner(attempt, input.owner);
     const q = attempt.set.questions.find((x) => x.id === input.questionId);
     if (!q || q.type !== "WRITTEN") return null;
 

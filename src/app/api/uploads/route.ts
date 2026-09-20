@@ -1,5 +1,5 @@
 import { getStorage } from "@/server/storage";
-import { handleApiError, ok } from "@/server/api-helpers";
+import { fail, handleApiError, ok } from "@/server/api-helpers";
 
 const ALLOWED_IMAGE_TYPES = new Set([
   "image/png",
@@ -10,15 +10,20 @@ const ALLOWED_IMAGE_TYPES = new Set([
 
 /** POST อัปโหลดรูปภาพ (ภาพจากกระดานเขียน / รูปประกอบข้อสอบ) multipart: file */
 export async function POST(req: Request) {
+  let form: FormData;
   try {
-    const form = await req.formData();
+    form = await req.formData();
+  } catch {
+    return fail("รูปแบบคำขอไม่ถูกต้อง (ต้องเป็น multipart/form-data)", 400);
+  }
+  try {
     const file = form.get("file");
-    if (!(file instanceof File)) return handleApiError(new Error("ไม่พบไฟล์"));
+    if (!(file instanceof File)) return fail("ไม่พบไฟล์ที่อัปโหลด", 400);
     if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-      return handleApiError(new Error("รองรับเฉพาะไฟล์ภาพ PNG/JPEG/WEBP/GIF"));
+      return fail("รองรับเฉพาะไฟล์ภาพ PNG/JPEG/WEBP/GIF", 400);
     }
     if (file.size > 5 * 1024 * 1024) {
-      return handleApiError(new Error("รูปใหญ่เกิน 5MB"));
+      return fail("รูปใหญ่เกิน 5MB", 400);
     }
     const buffer = Buffer.from(await file.arrayBuffer());
     const stored = await getStorage().save(buffer, {

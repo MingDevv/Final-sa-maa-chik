@@ -35,6 +35,7 @@ interface HighlightItem {
 
 /** พื้นที่อ่านชีท: PDF viewer + sidebar (บุ๊กมาร์ก/ไฮไลต์/โน้ต) + บันทึกหน้าล่าสุดอัตโนมัติ */
 export function StudyWorkspace({
+  isAdmin = false,
   documentId,
   fileUrl,
   initialPage,
@@ -42,6 +43,7 @@ export function StudyWorkspace({
   initialNotes,
   initialHighlights,
 }: {
+  isAdmin?: boolean;
   documentId: string;
   fileUrl: string;
   initialPage: number;
@@ -194,17 +196,19 @@ export function StudyWorkspace({
           <Button variant="secondary" size="sm" className="rounded-2xl" onClick={addHighlight}>
             <Highlighter className="mr-1 h-4 w-4" aria-hidden /> ไฮไลต์
           </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="rounded-2xl"
-            onClick={createDraftSet}
-            disabled={creatingSet}
-            title="สร้างชุดฝึกฉบับร่างจากหัวข้อนี้ (ผู้ดูแลตรวจและเผยแพร่ก่อนใช้จริง)"
-          >
-            <Sparkles className="mr-1 h-4 w-4" aria-hidden />
-            {creatingSet ? "กำลังสร้าง..." : "สร้างชุดฝึก"}
-          </Button>
+          {isAdmin && (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="rounded-2xl"
+              onClick={createDraftSet}
+              disabled={creatingSet}
+              title="สร้างชุดฝึกฉบับร่างจากหัวข้อนี้ (ผู้ดูแลตรวจและเผยแพร่ก่อนใช้จริง)"
+            >
+              <Sparkles className="mr-1 h-4 w-4" aria-hidden />
+              {creatingSet ? "กำลังสร้าง..." : "สร้างชุดฝึก"}
+            </Button>
+          )}
         </div>
 
         <Tabs defaultValue="notes" className="rounded-3xl border border-border bg-card shadow-soft">

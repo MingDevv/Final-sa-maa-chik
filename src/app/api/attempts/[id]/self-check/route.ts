@@ -16,11 +16,12 @@ export async function POST(
   try {
     const { id } = await params;
     const body = schema.parse(await request.json());
-    await getSession(); // ยืนยันเซสชันผู้ใช้
+    const session = await getSession();
     const result = await attemptService.selfCheck({
       attemptId: id,
       questionId: body.questionId,
       correct: body.correct,
+      owner: session.ownerKey,
     });
     if (!result) return handleApiError(new Error("NOT_FOUND"));
     return ok(result);
