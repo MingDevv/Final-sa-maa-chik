@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { KatexText } from "@/components/katex-text";
+import { ScratchPad } from "@/components/quiz/scratch-pad";
 import { Whiteboard } from "@/components/quiz/whiteboard";
 import { cn } from "@/lib/utils";
 
@@ -380,6 +381,11 @@ export function QuizRunner({ set }: { set: PlaySet }) {
             className="mt-3 max-h-80 rounded-2xl border border-border object-contain"
           />
         )}
+
+        {/* กระดาษทด — มีให้ทุกวิชา ทุกข้อ (เปิดเมื่อต้องคำนวณ/จดคิด) */}
+        <div className="mt-3">
+          <ScratchPad setId={set.id} questionId={q.id} />
+        </div>
 
         {/* ตัวเลือก MCQ */}
         {q.type === "MCQ" && q.options && (
