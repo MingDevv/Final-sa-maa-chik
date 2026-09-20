@@ -40,6 +40,17 @@ enum UserRole {
 
 // ---------- รอบสอบ / วิชา / หัวข้อ ----------
 
+model StudyGuide {
+  id        String   @id @default(cuid())
+  subjectId String   @unique
+  content   String // ชีตสรุปก่อนสอบ (markdown + LaTeX $...$)
+  updatedAt DateTime @updatedAt
+
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@map("study_guides")
+}
+
 model ExamTerm {
   id            String    @id @default(cuid())
   name          Json // LocalizedText ชื่อรอบสอบ เช่น "ปลายภาค 1/2569"
@@ -77,6 +88,7 @@ model Subject {
   documents       SourceDocument[]
   questionSets    QuestionSet[]
   weakTopics      WeakTopic[]
+  studyGuide      StudyGuide?
 
   @@map("subjects")
 }

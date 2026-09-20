@@ -23,12 +23,12 @@ export function SiteHeader() {
         <Link
           href="/"
           className="flex items-center gap-2 rounded-xl px-2 py-1 font-semibold text-wine transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring dark:text-primary"
-          aria-label="หน้าแรก Final Exam Prep"
+          aria-label="หน้าแรก Final-sa-maa-chik"
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-2xl bg-gradient-to-br from-wine to-purple-brand text-white shadow-soft">
             <GraduationCap className="h-5 w-5" aria-hidden />
           </span>
-          <span className="text-[15px]">Final Exam Prep</span>
+          <span className="text-[15px]">Final-sa-maa-chik</span>
         </Link>
 
         <nav className="flex items-center gap-1 text-sm" aria-label="เมนูหลัก">

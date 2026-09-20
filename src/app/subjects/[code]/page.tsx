@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { FileText } from "lucide-react";
+import { FileText, NotebookPen } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SubjectContent } from "@/components/subject/subject-content";
@@ -25,6 +25,15 @@ export default async function SubjectPage({
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap gap-2">
+        <Link
+          href={`/study-guide/${encodeURIComponent(subject.code)}`}
+          className="lift flex items-center gap-2 rounded-2xl border border-wine/30 bg-soft-pink/60 px-4 py-2 text-sm font-medium text-wine hover:bg-soft-pink dark:border-primary/40 dark:bg-secondary dark:text-primary dark:hover:bg-secondary/70 focus-visible:outline-2 focus-visible:outline-ring"
+        >
+          <NotebookPen className="h-4 w-4" aria-hidden /> อ่านชีตสรุปก่อนสอบ (มีสูตรครบ)
+        </Link>
+      </div>
+
       <header className="flex flex-wrap items-center gap-3">
         <span
           className="flex h-14 w-14 items-center justify-center rounded-3xl text-white shadow-soft"

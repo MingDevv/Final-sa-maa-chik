@@ -80,6 +80,10 @@ export const documentService = {
     const doc = await documentRepository.findById(id);
     if (!doc) return null;
     const storage = getStorage();
+    // key ขึ้นต้นด้วย static/ = ไฟล์ที่ commit ไว้ใน public/seed (ใช้ได้ทั้ง dev และ Vercel)
+    const fileUrl = doc.storageKey.startsWith("static/")
+      ? `/seed/${doc.storageKey.slice("static/".length)}`
+      : storage.getUrl(doc.storageKey);
     return {
       id: doc.id,
       title: localizedToString(doc.title),
@@ -89,7 +93,7 @@ export const documentService = {
       subjectColor: doc.subject.color,
       topicId: doc.topicId,
       topicTitle: doc.topic ? localizedToString(doc.topic.title) : null,
-      fileUrl: storage.getUrl(doc.storageKey),
+      fileUrl,
       pageCount: doc.pageCount,
       status: doc.status,
       metadata: doc.metadata as Record<string, unknown>,
@@ -139,6 +143,17 @@ export const documentService = {
   async readFile(documentId: string) {
     const doc = await documentRepository.findById(documentId);
     if (!doc) return null;
+    if (doc.storageKey.startsWith("static/")) {
+      const { readFile } = await import("node:fs/promises");
+      const path = await import("node:path");
+      const rel = doc.storageKey.slice("static/".length);
+      // กัน path traversal
+      if (rel.includes("..")) return null;
+      const buffer = await readFile(
+        path.join(process.cwd(), "public", "seed", rel),
+      );
+      return { buffer, mimeType: doc.mimeType };
+    }
     const storage = getStorage();
     const buffer = await storage.read(doc.storageKey);
     return { buffer, mimeType: doc.mimeType };

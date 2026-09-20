@@ -87,13 +87,8 @@ const statusLabel: Record<string, string> = {
   UPCOMING: "กำลังจะมา",
 };
 
-const adminHeaders = () => {
-  const token = localStorage.getItem("fep_admin_token") ?? "";
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { "x-admin-token": token } : {}),
-  };
-};
+// ล็อกอินผู้ดูแลด้วย cookie (จากหน้าใส่รหัส) — fetch same-origin ส่ง cookie ให้เอง
+const adminHeaders = () => ({ "Content-Type": "application/json" });
 
 /** ศูนย์จัดการเนื้อหา: วิชา/หัวข้อ/PDF/ชุดข้อสอบ/รอบสอบ + import/export */
 export function AdminDashboard({ subjects: initialSubjects }: { subjects: SubjectItem[] }) {
@@ -141,15 +136,12 @@ export function AdminDashboard({ subjects: initialSubjects }: { subjects: Subjec
             variant="outline"
             className="rounded-2xl"
             onClick={async () => {
-              const token = prompt("ตั้งค่า Admin Token (ปล่อยว่างถ้าไม่ได้ตั้ง ADMIN_TOKEN ใน .env)");
-              if (token !== null) {
-                localStorage.setItem("fep_admin_token", token);
-                toast.success("บันทึก token ไว้ในเบราว์เซอร์นี้แล้ว");
-                refresh();
-              }
+              await fetch("/api/admin/login", { method: "DELETE" });
+              toast.success("ออกจากระบบผู้ดูแลแล้ว");
+              window.location.href = "/admin";
             }}
           >
-            ตั้งค่า Admin Token
+            ออกจากระบบ
           </Button>
           <Button
             variant="outline"
@@ -351,10 +343,8 @@ function DocumentsTab({
       form.append("file", file);
       form.append("title", JSON.stringify({ th: title || file.name.replace(/\.pdf$/i, "") }));
       form.append("subjectId", subjectId);
-      const token = localStorage.getItem("fep_admin_token") ?? "";
       const res = await fetch("/api/admin/documents", {
         method: "POST",
-        headers: token ? { "x-admin-token": token } : undefined,
         body: form,
       });
       const json = await res.json();

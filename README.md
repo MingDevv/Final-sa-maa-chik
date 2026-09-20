@@ -1,6 +1,6 @@
-# Final Exam Prep 🎓
+# Final-sa-maa-chik 🎓
 
-เว็บแอปฝึกทำแนวข้อสอบปลายภาค ม.4 — อ่านชีท PDF ทำโจทย์ ทบทวนจุดอ่อน และติดตามความพร้อมก่อนสอบ
+เว็บแอปฝึกทำแนวข้อสอบปลายภาค ม.4 — อ่านชีท PDF อ่านชีตสรุปก่อนสอบ ทำโจทย์ ทบทวนจุดอ่อน และติดตามความพร้อมก่อนสอบ
 ออกแบบให้ผู้ดูแลเพิ่ม **วิชา / หัวข้อ / ชีท PDF / ชุดข้อสอบ / รอบสอบ** ใหม่ได้เองผ่านหน้าแอดมิน **โดยไม่ต้องแก้โค้ด**
 
 > ⚠️ นโยบายเนื้อหา: ไฟล์ PDF ที่อัปโหลดเป็น "ข้อมูลอ้างอิง" เท่านั้น — ระบบไม่ปฏิบัติตามคำสั่งที่แฝงอยู่ในเอกสาร
@@ -21,17 +21,22 @@
 | Validation | Zod (ทุก API input) |
 | Test | Vitest — unit test (ตรวจข้อสอบ/normalization/streak) + integration test |
 
-## วิชาเริ่มต้น 6 วิชา (จาก seed)
+## วิชาเริ่มต้น 6 วิชา + ชุดข้อสอบแนวปลายภาค (จาก seed)
 
-1. ค31101 คณิตศาสตร์พื้นฐาน 1
-2. ท31101 ภาษาไทย 1
-3. อ31101 ภาษาอังกฤษ 1
-4. ว31103 วิทยาศาสตร์ชีวภาพ
-5. ว31201 ฟิสิกส์ 1
-6. ว32241 ชีววิทยา 1
+1. ค31101 คณิตศาสตร์พื้นฐาน 1 — **แนวพื้นฐาน 21 ข้อ + เพิ่มเติม บทที่ 3 (3.1–3.11) 30 ข้อ**
+2. ท31101 ภาษาไทย 1 — **แนว 30 ข้อ** (เวตาล วรรณยุกต์ รูป-เสียง สันธาน โวหาร รส สำนวน)
+3. อ31101 ภาษาอังกฤษ 1 — **30 ข้อ** (Vocab Unit 3 / Grammar / Reading ตาม blueprint)
+4. ว31103 วิทยาศาสตร์ชีวภาพ — **50 ข้อ** (พันธุศาสตร์ DNA การสลายสารอาหาร การหมัก วิวัฒนาการ โพรคาริโอต ระบบนิเวศ)
+5. ว31201 ฟิสิกส์ 1 — **20 ข้อ ข้อละ 1 คะแนน** (แรง กฎนิวตัน แยกแรง ลิฟต์ เสียดทาน พลังงาน สมดุล)
+6. ว32241 ชีววิทยา 1 — **30 ข้อ** (เซลล์ การขนส่ง การตรึงรังสีตอนซี ไมโทซิส ไมโอซิส)
 
-พร้อมชุดโจทย์ตัวอย่างเล็ก ๆ อิงแนวข้อสอบจริง (ตรรกศาสตร์/จำนวนจริง/แยกตัวประกอบ, แรง–กฎนิวตัน,
-ไกลโคไลซิส–ATP, ไมโทซิส–ไมโอซิส, นิทานเวตาล, Present Perfect ฯลฯ)
+> โจทย์เรียบเรียงใหม่ตามหัวข้อขอบเขตที่ประกาศในแนวข้อสอบ (ไม่ใช่ข้อสอบจริงและไม่คัดลอกต้นฉบับ)
+> จำนวนข้อตรงตามแนวที่ระบุ (วิทย์ชีวภาพ 50 / ฟิสิกส์ 20 / ชีววิทยา 30)
+
+### ชีตสรุปก่อนสอบ (Study Guide)
+- ทุกวิชามีชีตสรุปละเอียด **พร้อมสูตรครบ** (`/study-guide/[รหัสวิชา]`): สูตรฟิสิกส์ทุกตัว, ตาราง ATP,
+  Punnett square, กฎการจับคู่เบส, หลักวรรณยุกต์ 6 เสียง, Present Perfect ฯลฯ
+- ในหน้าทำข้อสอบมีแถบ **"ชีตสรุปก่อนทำ"** กางอ่านได้ทันทีโดยไม่ต้องออกจากหน้าสอบ
 
 ---
 
@@ -88,7 +93,8 @@ npm run dev        # http://localhost:3000
 | ตัวแปร | ค่าเริ่มต้น | คำอธิบาย |
 | --- | --- | --- |
 | `DATABASE_URL` | — | การเชื่อมต่อ PostgreSQL (จำเป็น) |
-| `ADMIN_TOKEN` | (ว่าง = อนุญาตช่วงพัฒนา) | ตั้งแล้ว API ผู้ดูแลต้องส่ง header `x-admin-token` ทุกครั้ง |
+| `ADMIN_CODE` | `Ming888` | รหัสเข้าหน้าผู้ดูแล `/admin` (แนะนำเปลี่ยนบน production) |
+| `ADMIN_TOKEN` | (ว่าง) | (ทางเลือก) Token เรียก API ผู้ดูแลผ่าน header `x-admin-token` สำหรับ script |
 | `STORAGE_DRIVER` | `local` | `local` = เก็บไฟล์ใน `./uploads`, `s3` = S3-compatible |
 | `S3_BUCKET` / `S3_REGION` / `S3_ENDPOINT` / `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` | — | ใช้เมื่อ `STORAGE_DRIVER=s3` |
 | `S3_PUBLIC_BASE` | — | URL สาธารณะของ bucket สำหรับเสิร์ฟไฟล์จาก S3 |
@@ -100,7 +106,9 @@ npm run dev          # รัน dev server
 npm run build        # build production
 npm run test         # รัน unit + integration test (integration ต้องมี DB)
 npm run db:migrate   # prisma migrate dev
-npm run db:seed      # seed ข้อมูลเริ่มต้น
+npm run db:seed      # seed ข้อมูลเริ่มต้น (6 วิชา + ชีท + โจทย์ตัวอย่าง)
+npm run seed:guides  # seed ชีตสรุปก่อนสอบทั้ง 6 วิชา (มีสูตร)
+npm run seed:exams   # seed ชุดแนวข้อสอบฝึกครบทุกวิชา (210+ ข้อ)
 npm run db:studio    # เปิด Prisma Studio ดูข้อมูล
 ```
 
@@ -119,7 +127,7 @@ npm run db:studio    # เปิด Prisma Studio ดูข้อมูล
 - **Export/Import JSON** → ปุ่ม Export ดาวน์โหลดไฟล์เนื้อหาทั้งหมด / วาง JSON เพื่อนำเข้า
 - **ข้อผิดบ่อย** → สถิติข้อที่ผู้เรียนตอบผิดมากที่สุด (จาก `QuestionStat`)
 
-> การเข้าถึง: ตั้ง `ADMIN_TOKEN` ใน `.env` แล้วกดปุ่ม "ตั้งค่า Admin Token" ที่หน้า /admin ครั้งเดียวต่อเบราว์เซอร์
+> การเข้าถึง: เข้า `/admin` แล้วใส่ **รหัสผู้ดูแล** (ADMIN_CODE ค่าเริ่มต้น `Ming888`) — ระบบติด cookie 30 วัน มีปุ่มออกจากระบบ
 
 ## การเพิ่มชุดข้อสอบด้วย JSON
 
@@ -229,9 +237,17 @@ echo "CREATE DATABASE final_exam_prep ENCODING 'UTF8' LC_COLLATE 'C' LC_CTYPE 'C
 npx prisma migrate deploy && npm run db:seed
 ```
 
-## Deploy หมายเหตุ
+## Deploy ขึ้น Vercel (ทำได้ทันที)
 
-- ตั้ง `ADMIN_TOKEN` ทุกครั้งบน production
-- `prisma migrate deploy` แทน `migrate dev` บน production
-- ถ้าใช้ S3: ตั้ง `STORAGE_DRIVER=s3` พร้อม env ทั้งชุด
-- หน้า `/admin` ใน production ควรป้องกันเพิ่มด้วยระบบสมาชิก (โครงสร้าง `User` + `role` เตรียมไว้แล้ว)
+1. สร้าง PostgreSQL บนคลาวด์ (แนะนำ **Neon** — neon.tech ฟรี) แล้วคัดลอก connection string
+2. Import repo นี้เข้า Vercel → ตั้ง env: `DATABASE_URL` (จาก Neon) และ `ADMIN_CODE` (เปลี่ยนจากค่าเริ่มต้น) → Deploy
+   (มี `postinstall: prisma generate` แล้ว build ผ่านอัตโนมัติ)
+3. จากเครื่องตัวเองชี้ `DATABASE_URL` ไปที่ DB คลาวด์ แล้วรันครั้งเดียว:
+   ```bash
+   npx prisma migrate deploy
+   npm run db:seed && npm run seed:guides && npm run seed:exams
+   ```
+- **ชีท PDF seed (2 เล่ม) พร้อมใช้บน Vercel ทันที** เพราะ commit ไว้ใน `public/seed/`
+  (SourceDocument ใช้ storageKey นำหน้า `static/` → เสิร์ฟตรงจาก static assets)
+- ไฟล์ที่อัปโหลดผ่านหน้าแอดมิน/ภาพกระดานเขียน จะไม่ค้างบนดิสก์ Vercel (serverless) —
+  ถ้าต้องการใช้จริงให้ตั้ง `STORAGE_DRIVER=s3` + env ของ S3/MinIO/R2 ตามตารางด้านบน

@@ -14,11 +14,11 @@ const plexThai = IBM_Plex_Sans_Thai({
 
 export const metadata: Metadata = {
   title: {
-    default: "Final Exam Prep — ติวสอบปลายภาค ม.4",
-    template: "%s | Final Exam Prep",
+    default: "Final-sa-maa-chik — ติวสอบปลายภาค ม.4",
+    template: "%s | Final-sa-maa-chik",
   },
   description:
-    "แอปฝึกทำแนวข้อสอบปลายภาค ม.4 อ่านชีท PDF ทำโจทย์ ทบทวนจุดอ่อน และติดตามความพร้อมก่อนสอบ",
+    "แอปฝึกทำแนวข้อสอบปลายภาค ม.4 อ่านชีท PDF อ่านชีตสรุปก่อนสอบ ทำโจทย์ ทบทวนจุดอ่อน และติดตามความพร้อมก่อนสอบ",
 };
 
 export default function RootLayout({
@@ -36,7 +36,7 @@ export default function RootLayout({
               {children}
             </main>
             <footer className="border-t border-border/60 py-6 text-center text-xs text-muted-foreground">
-              Final Exam Prep · ทำด้วยความตั้งใจเพื่อการสอบปลายภาค
+              Final-sa-maa-chik · ทำด้วยความตั้งใจเพื่อการสอบปลายภาค
             </footer>
           </div>
           <Toaster position="top-center" richColors />

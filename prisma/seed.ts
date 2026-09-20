@@ -7,7 +7,6 @@
  * รัน: npm run db:seed
  */
 import { PrismaClient } from "@prisma/client";
-import { mkdirSync, copyFileSync, existsSync, statSync } from "node:fs";
 import path from "node:path";
 
 const db = new PrismaClient();
@@ -159,17 +158,21 @@ async function main() {
   const seedDocs = [
     {
       fileName: "การสลายสารอาหารระดับเซลล์.pdf",
+      staticKey: "static/cell-respiration.pdf", // ไฟล์ใน public/seed (ใช้ได้ทั้ง dev และ Vercel)
       title: lt("ชีท: การสลายสารอาหารระดับเซลล์"),
       subjectCode: "ว31103",
       topicName: "การสลายสารอาหารระดับเซลล์",
       pageCount: 9,
+      sizeBytes: 8946117,
     },
     {
       fileName: "ชีวะกับชีวภาพ ม.4 เทอม1.pdf.pdf",
+      staticKey: "static/bio-m4-term1.pdf",
       title: lt("ชีท: ชีวะกับชีวภาพ ม.4 เทอม 1"),
       subjectCode: "ว32241",
       topicName: "การตรึงรังสีตอนซี",
       pageCount: 10,
+      sizeBytes: 2406672,
     },
   ];
 
@@ -185,32 +188,14 @@ async function main() {
       where: { subjectId: subject.id, title: { path: ["th"], equals: doc.topicName } },
     });
 
-    // คัดลอกไฟล์เข้า uploads ของแอป (ถ้ามีไฟล์ต้นทาง)
-    const projectRoot = path.resolve(__dirname, "..");
-    const candidates = [
-      path.join(projectRoot, "..", doc.fileName),
-      path.join(projectRoot, "seed-files", doc.fileName),
-    ];
-    const source = candidates.find((c) => existsSync(c));
-    if (!source) {
-      console.log(`  ข้ามเอกสาร ${doc.title.th} (ไม่พบไฟล์ ${doc.fileName})`);
-      continue;
-    }
-    const uploadsRoot = path.join(projectRoot, "uploads", "documents");
-    mkdirSync(uploadsRoot, { recursive: true });
-    const stamp = Date.now().toString(36);
-    const key = `documents/${stamp}-seed-${doc.fileName.replace(/[^\w.-]+/g, "-")}`;
-    copyFileSync(source, path.join(projectRoot, "uploads", key));
-    const size = statSync(path.join(projectRoot, "uploads", key)).size;
-
     await db.sourceDocument.create({
       data: {
         title: doc.title,
         subjectId: subject.id,
         topicId: topic?.id ?? null,
-        storageKey: key,
+        storageKey: doc.staticKey,
         mimeType: "application/pdf",
-        sizeBytes: size,
+        sizeBytes: doc.sizeBytes,
         pageCount: doc.pageCount,
         status: "READY",
         metadata: {

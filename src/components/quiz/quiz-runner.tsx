@@ -91,7 +91,8 @@ export function QuizRunner({ set }: { set: PlaySet }) {
         body: JSON.stringify({ setId: set.id, mode: "EXAM" }),
       });
       const json = await res.json();
-      if (!json.ok || cancelled) {
+      if (cancelled) return; // StrictMode ยิงซ้ำ — เงียบไว้ ไม่ใช่ความผิดพลาดจริง
+      if (!json.ok) {
         toast.error(json.error ?? "เริ่มข้อสอบไม่สำเร็จ");
         return;
       }
