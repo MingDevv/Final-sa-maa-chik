@@ -173,10 +173,11 @@ export const attemptService = {
       selfChecked: rest.selfChecked,
     });
 
-    // โหมดฝึก (เฉลยทันที): ตรวจข้ออัตโนมัติให้ด้วย
+    // โหมดฝึก (เฉลยทันที): ตรวจข้ออัตโนมัติให้ด้วย — โหลดใหม่หลังบันทึกเพื่อให้เห็นคำตอบล่าสุด
     const q = attempt.set.questions.find((x) => x.id === questionId);
     if (q && q.type !== "WRITTEN") {
-      const { perQuestion } = scoreAttemptAnswers(attempt);
+      const fresh = await attemptRepository.findById(input.attemptId);
+      const { perQuestion } = scoreAttemptAnswers(fresh ?? attempt);
       const p = perQuestion.find((x) => x.questionId === questionId);
       if (p) {
         await attemptRepository.saveAnswer(input.attemptId, questionId, {

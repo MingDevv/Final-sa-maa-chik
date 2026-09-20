@@ -51,7 +51,16 @@ npx prisma generate
 docker compose up -d      # รัน postgres:17 ที่ localhost:5432 (user/pass: postgres)
 ```
 
-**วิธี B — Postgres ในเครื่อง:** ติดตั้ง PostgreSQL แล้วสร้างฐานข้อมูล `final_exam_prep`
+**วิธี B — Postgres แบบฝัง (ไม่ต้องติดตั้งอะไร ใช้บนเครื่องนี้ได้เลย):**
+
+```bash
+npm run dev:db    # รัน PostgreSQL ที่ localhost:5432 (user/pass: postgres, db: final_exam_prep)
+```
+
+> หมายเหตุ: ถ้าเครื่องตั้ง locale ไทย (WIN874) ครั้งแรกอาจต้องสร้าง db เป็น UTF8 เอง —
+> ดูคำสั่งในส่วน "Troubleshooting" ด้านล่าง
+
+**วิธี C — Postgres ในเครื่อง:** ติดตั้ง PostgreSQL แล้วสร้างฐานข้อมูล `final_exam_prep`
 แล้วตั้ง `DATABASE_URL` ใน `.env` ให้ตรง
 
 ### 2) Migration + Seed
@@ -208,6 +217,17 @@ npm run test        # 28 unit tests: normalization, MCQ check, shuffle, streak, 
 
 Integration tests (`tests/integration-api.test.ts`) จะทำงานเมื่อ `DATABASE_URL` ต่อได้จริง
 (ตรวจ seed ครบ 6 วิชา, ชุดเผยแพร่มีเฉลยครบ, เอกสารถูก mark reference-only, flow ทำข้อสอบ)
+
+## Troubleshooting
+
+**Error `character ... has no equivalent in encoding "WIN874"`** ตอน seed —
+เกิดเมื่อ PostgreSQL ถูกสร้างด้วย locale ไทย ให้สร้าง database เป็น UTF8 ใหม่:
+
+```bash
+echo 'DROP DATABASE IF EXISTS final_exam_prep;' | npx prisma db execute --url "postgresql://postgres:postgres@localhost:5432/postgres" --stdin
+echo "CREATE DATABASE final_exam_prep ENCODING 'UTF8' LC_COLLATE 'C' LC_CTYPE 'C' TEMPLATE template0;" | npx prisma db execute --url "postgresql://postgres:postgres@localhost:5432/postgres" --stdin
+npx prisma migrate deploy && npm run db:seed
+```
 
 ## Deploy หมายเหตุ
 
