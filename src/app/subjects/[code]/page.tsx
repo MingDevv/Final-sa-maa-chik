@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { FileText, NotebookPen } from "lucide-react";
+import { BackButton } from "@/components/back-button";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SubjectContent } from "@/components/subject/subject-content";
@@ -25,6 +26,10 @@ export default async function SubjectPage({
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="-mb-2">
+        <BackButton fallbackHref="/" label="ย้อนกลับหน้าแรก" />
+      </div>
+
       <div className="flex flex-wrap gap-2">
         <Link
           href={`/study-guide/${encodeURIComponent(subject.code)}`}

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { BookOpen, ChevronDown } from "lucide-react";
+import { BackButton } from "@/components/back-button";
 import Link from "next/link";
 import { QuizRunner } from "@/components/quiz/quiz-runner";
 import { MarkdownLite } from "@/components/study-guide/markdown-lite";
@@ -24,6 +25,9 @@ export default async function QuizPage({
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="-mb-2">
+        <BackButton fallbackHref={`/subjects/${encodeURIComponent(set.subjectCode)}`} label="ย้อนกลับ" />
+      </div>
       {guide && (
         <details className="group rounded-3xl border border-border bg-card shadow-soft">
           <summary className="flex cursor-pointer items-center gap-2 px-5 py-3 text-sm font-semibold text-wine focus-visible:outline-2 focus-visible:outline-ring dark:text-primary">

@@ -19,6 +19,28 @@ export const metadata: Metadata = {
   },
   description:
     "แอปฝึกทำแนวข้อสอบปลายภาค ม.4 อ่านชีท PDF อ่านชีตสรุปก่อนสอบ ทำโจทย์ ทบทวนจุดอ่อน และติดตามความพร้อมก่อนสอบ",
+  // ภาพพรีวิวเวลาวางลิงก์ใน LINE / Discord / Facebook ฯลฯ
+  openGraph: {
+    title: "Final-sa-maa-chik — ติวสอบปลายภาค ม.4",
+    description:
+      "ชีตสรุปพร้อมสูตรครบทุกวิชา + แนวข้อสอบตามขอบเขตจริง 210+ ข้อ พร้อมเฉลย — ฟรี ไม่ต้องสมัคร",
+    images: [
+      {
+        url: "/og-cover.png",
+        width: 1345,
+        height: 831,
+        alt: "Final-sa-maa-chik",
+      },
+    ],
+    type: "website",
+    locale: "th_TH",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Final-sa-maa-chik — ติวสอบปลายภาค ม.4",
+    description: "ชีตสรุป + แนวข้อสอบครบทุกวิชา พร้อมเฉลย",
+    images: ["/og-cover.png"],
+  },
 };
 
 export default function RootLayout({
