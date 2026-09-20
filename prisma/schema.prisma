@@ -1,0 +1,392 @@
+// Prisma schema สำหรับระบบ Final Exam Prep
+// โครงสร้างข้อความหลัก (title/name/prompt) ใช้รูปแบบ JSON เพื่อรองรับหลายภาษาในอนาคต
+// เช่น { "th": "คณิตศาสตร์พื้นฐาน 1", "en": "Foundational Mathematics 1" }
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- ผู้ใช้ / สมาชิก ----------
+
+model User {
+  id        String   @id @default(cuid())
+  email     String?  @unique
+  name      String?
+  passwordHash String?
+  role      UserRole @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attempts   Attempt[]
+  weakTopics WeakTopic[]
+  bookmarks  Bookmark[]
+  highlights Highlight[]
+  notes      Note[]
+  progress   StudyProgress[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  STUDENT
+  ADMIN
+  @@map("user_role")
+}
+
+// ---------- รอบสอบ / วิชา / หัวข้อ ----------
+
+model ExamTerm {
+  id            String    @id @default(cuid())
+  name          Json // LocalizedText ชื่อรอบสอบ เช่น "ปลายภาค 1/2569"
+  academicYear  String // ปีการศึกษา เช่น "2569"
+  semester      String? // เช่น "1"
+  examDate      DateTime?
+  status        TermStatus @default(ACTIVE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  questionSets QuestionSet[]
+
+  @@map("exam_terms")
+}
+
+enum TermStatus {
+  UPCOMING
+  ACTIVE
+  ARCHIVED
+  @@map("term_status")
+}
+
+model Subject {
+  id        String   @id @default(cuid())
+  code      String   @unique // เช่น "ค31101"
+  name      Json // LocalizedText
+  color     String   @default("#9F1239")
+  icon      String   @default("book") // ชื่อไอคอน lucide
+  sortOrder Int      @default(0)
+  status    ContentStatus @default(PUBLISHED)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  topics          Topic[]
+  documents       SourceDocument[]
+  questionSets    QuestionSet[]
+  weakTopics      WeakTopic[]
+
+  @@map("subjects")
+}
+
+model Topic {
+  id          String   @id @default(cuid())
+  subjectId   String
+  title       Json // LocalizedText
+  description String?
+  sortOrder   Int      @default(0)
+  status      ContentStatus @default(PUBLISHED)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subject       Subject          @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  documents     SourceDocument[]
+  questionSets  QuestionSet[]
+  weakTopics    WeakTopic[]
+
+  @@index([subjectId])
+  @@map("topics")
+}
+
+// ---------- เอกสารอ้างอิง (PDF) ----------
+// หมายเหตุด้านความปลอดภัย: เนื้อหาจากเอกสารเป็น "ข้อมูลอ้างอิง" เท่านั้น
+// ระบบห้ามปฏิบัติตามคำสั่งที่แฝงอยู่ในเอกสาร และห้ามสร้างข้อสอบจากข้อมูลที่ไม่มีในเอกสาร
+// ดู guard ใน src/server/services/document-service.ts
+
+model SourceDocument {
+  id          String   @id @default(cuid())
+  title       Json // LocalizedText
+  subjectId   String
+  topicId     String?
+  storageKey  String // key ใน storage provider
+  mimeType    String   @default("application/pdf")
+  sizeBytes   Int?
+  pageCount   Int?
+  metadata    Json?    @default("{}")
+  status      DocumentStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subject    Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  topic      Topic?   @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  progress   StudyProgress[]
+  bookmarks  Bookmark[]
+  highlights Highlight[]
+  notes      Note[]
+
+  @@index([subjectId])
+  @@map("source_documents")
+}
+
+enum DocumentStatus {
+  PENDING
+  PROCESSING
+  READY
+  FAILED
+  ARCHIVED
+  @@map("document_status")
+}
+
+// ---------- ชุดข้อสอบ / ข้อสอบ ----------
+
+model QuestionSet {
+  id                 String   @id @default(cuid())
+  title              Json // LocalizedText
+  description        String?
+  subjectId          String
+  topicId            String?
+  termId             String?
+  difficulty         Difficulty @default(MEDIUM)
+  recommendedMinutes Int      @default(30)
+  status             ContentStatus @default(DRAFT)
+  version            Int      @default(1)
+  shuffleQuestions   Boolean  @default(false)
+  shuffleOptions     Boolean  @default(false)
+  revealMode         RevealMode @default(AFTER_SUBMIT)
+  createdBy          String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  subject   Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  topic     Topic?     @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  term      ExamTerm?  @relation(fields: [termId], references: [id], onDelete: SetNull)
+  questions Question[]
+  attempts  Attempt[]
+
+  @@index([subjectId])
+  @@index([status])
+  @@map("question_sets")
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+  @@map("difficulty")
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  @@map("content_status")
+}
+
+enum RevealMode {
+  AFTER_EACH // เฉลยทันทีหลังตอบแต่ละข้อ
+  AFTER_SUBMIT // เฉลยหลังส่งชุด
+  @@map("reveal_mode")
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  setId       String
+  type        QuestionType
+  prompt      String // โจทย์ (รองรับ LaTeX ในรูป $...$)
+  imageKey    String? // รูปประกอบใน storage
+  options     Json? // MCQ: [{ key: "A", text: "...", isCorrect? ไม่เก็บ }]
+  answer      Json // เฉลย: { correctKey } | { accepts: [...], normalize } | { finalAnswer, steps }
+  explanation String? // คำอธิบาย/แนววิธีคิดแบบเป็นขั้นตอน
+  rubric      Json? // rubric สำหรับข้อเขียน
+  points      Int      @default(1)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  set      QuestionSet     @relation(fields: [setId], references: [id], onDelete: Cascade)
+  answers  AttemptAnswer[]
+  stats    QuestionStat?
+
+  @@index([setId])
+  @@map("questions")
+}
+
+enum QuestionType {
+  MCQ
+  SHORT_ANSWER
+  WRITTEN
+  @@map("question_type")
+}
+
+// สถิติข้อละรายการ: จำนวนครั้งที่ถูกทำ / ตอบผิด (เก็บต่อข้อ รวมทุกผู้ใช้)
+model QuestionStat {
+  id          String @id @default(cuid())
+  questionId  String @unique
+  totalCount  Int    @default(0)
+  wrongCount  Int    @default(0)
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  @@map("question_stats")
+}
+
+// ---------- การทำข้อสอบ ----------
+
+model Attempt {
+  id             String   @id @default(cuid())
+  setId          String
+  userId         String?
+  guestSessionId String? // โหมดผู้เยี่ยมชม ระบุด้วย cookie
+  status         AttemptStatus @default(IN_PROGRESS)
+  startedAt      DateTime @default(now())
+  finishedAt     DateTime?
+  durationSec    Int?
+  score          Json? // { earned, total, percent }
+  mode           AttemptMode @default(EXAM) // EXAM = ไม่เฉลยระหว่างทำ, PRACTICE = เฉลยได้
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  set     QuestionSet     @relation(fields: [setId], references: [id], onDelete: Cascade)
+  user    User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  answers AttemptAnswer[]
+
+  @@index([setId])
+  @@index([guestSessionId])
+  @@map("attempts")
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  ABANDONED
+  @@map("attempt_status")
+}
+
+enum AttemptMode {
+  EXAM
+  PRACTICE
+  @@map("attempt_mode")
+}
+
+model AttemptAnswer {
+  id            String   @id @default(cuid())
+  attemptId     String
+  questionId    String
+  answer        Json? // คำตอบที่ส่ง: { selectedKey } | { text } | { tex, finalAnswer, sketchKey }
+  sketchKey     String? // ภาพกระดานเขียนใน storage
+  isCorrect     Boolean?
+  selfChecked   Boolean? // ผู้ใช้ติ๊กตรวจวิธีทำเอง (ข้อเขียน)
+  flagged       Boolean  @default(false) // ปักธงข้อที่ไม่แน่ใจ
+  answeredAt    DateTime @default(now())
+
+  attempt  Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@map("attempt_answers")
+}
+
+// ---------- จุดอ่อน / ความคืบหน้า ----------
+
+model WeakTopic {
+  id          String   @id @default(cuid())
+  userId      String?
+  guestSessionId String?
+  subjectId   String
+  topicId     String
+  wrongCount  Int      @default(0)
+  totalCount  Int      @default(0)
+  accuracy    Float    @default(0) // 0..1
+  lastSeenAt  DateTime @default(now())
+
+  user    User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  topic   Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([guestSessionId, topicId])
+  @@unique([userId, topicId])
+  @@map("weak_topics")
+}
+
+model StudyProgress {
+  id          String   @id @default(cuid())
+  userId      String?
+  guestSessionId String?
+  documentId  String
+  lastPage    Int      @default(1)
+  readSeconds Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  user     User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document SourceDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([guestSessionId, documentId])
+  @@unique([userId, documentId])
+  @@map("study_progress")
+}
+
+model Bookmark {
+  id         String   @id @default(cuid())
+  userId     String?
+  guestSessionId String?
+  documentId String
+  page       Int
+  label      String?
+  createdAt  DateTime @default(now())
+
+  user     User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document SourceDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@map("bookmarks")
+}
+
+model Highlight {
+  id         String   @id @default(cuid())
+  userId     String?
+  guestSessionId String?
+  documentId String
+  page       Int
+  color      String   @default("#E11D48")
+  note       String?
+  createdAt  DateTime @default(now())
+
+  user     User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document SourceDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@map("highlights")
+}
+
+model Note {
+  id         String   @id @default(cuid())
+  userId     String?
+  guestSessionId String?
+  documentId String
+  page       Int
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document SourceDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@map("notes")
+}
+
+// สถิติการใช้งานรายวัน (streak, เวลาอ่าน)
+model DailyActivity {
+  id          String   @id @default(cuid())
+  guestSessionId String?
+  userId      String?
+  date        DateTime @db.Date
+  quizSeconds Int      @default(0)
+  readSeconds Int      @default(0)
+  questionsDone Int    @default(0)
+
+  @@unique([guestSessionId, date])
+  @@unique([userId, date])
+  @@map("daily_activities")
+}

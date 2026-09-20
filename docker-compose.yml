@@ -1,0 +1,16 @@
+# PostgreSQL สำหรับพัฒนา — รันด้วย: docker compose up -d
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: final_exam_prep
+    ports:
+      - "5432:5432"
+    volumes:
+      - fep_pgdata:/var/lib/postgresql/data
+
+volumes:
+  fep_pgdata:
