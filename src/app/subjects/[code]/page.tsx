@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { FileText, NotebookPen } from "lucide-react";
 import { BackButton } from "@/components/back-button";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SubjectContent } from "@/components/subject/subject-content";
@@ -48,7 +49,12 @@ export default async function SubjectPage({
           <FileText className="h-7 w-7" />
         </span>
         <div className="flex-1">
-          <h1 className="text-2xl font-semibold">{subject.name}</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-semibold">{subject.name}</h1>
+            {subject.status === "ARCHIVED" && (
+              <Badge variant="secondary" className="rounded-full">ชุดเก่า — คลังข้อสอบที่ผ่านมา</Badge>
+            )}
+          </div>
           <p className="text-sm text-muted-foreground">{subject.code}</p>
         </div>
       </header>

@@ -168,6 +168,8 @@ model QuestionSet {
   shuffleOptions     Boolean  @default(false)
   revealMode         RevealMode @default(AFTER_SUBMIT)
   createdBy          String?
+  // metadata สำหรับ workflow ตรวจทาน: จำนวนข้อตามต้นทาง/จำนวนจริง/ไฟล์อ้างอิง/สถานะทบทวน
+  metadata           Json?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -256,16 +258,33 @@ model Attempt {
   durationSec    Int?
   score          Json? // { earned, total, percent }
   mode           AttemptMode @default(EXAM) // EXAM = ไม่เฉลยระหว่างทำ, PRACTICE = เฉลยได้
+  // โหมดฝึกซ้ำเฉพาะข้อ: อ้างอิง RetrySession และจำกัดข้อที่แสดง
+  retrySessionId String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   set     QuestionSet     @relation(fields: [setId], references: [id], onDelete: Cascade)
   user    User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
   answers AttemptAnswer[]
+  retrySession RetrySession? @relation(fields: [retrySessionId], references: [id], onDelete: SetNull)
 
   @@index([setId])
   @@index([guestSessionId])
   @@map("attempts")
+}
+
+// รอบฝึกซ้ำเฉพาะข้อ: เก็บรายการ questionId ที่ผิด/ข้ามจาก attempt ต้นทาง (immutable)
+model RetrySession {
+  id               String   @id @default(cuid())
+  sourceAttemptId  String
+  questionIds      Json // string[]
+  ownerUserId      String?
+  ownerGuestId     String?
+  createdAt        DateTime @default(now())
+
+  attempts Attempt[]
+
+  @@map("retry_sessions")
 }
 
 enum AttemptStatus {

@@ -41,6 +41,12 @@ export function SiteHeader() {
             หน้าแรก
           </Link>
           <Link
+            href="/archive"
+            className="rounded-xl px-3 py-2 text-foreground/80 transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring"
+          >
+            คลังข้อสอบ
+          </Link>
+          <Link
             href="/admin"
             className="rounded-xl px-3 py-2 text-foreground/80 transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring"
           >

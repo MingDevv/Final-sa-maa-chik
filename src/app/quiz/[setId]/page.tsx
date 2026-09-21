@@ -11,12 +11,26 @@ export const dynamic = "force-dynamic";
 
 export default async function QuizPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ setId: string }>;
+  searchParams: Promise<{ retry?: string }>;
 }) {
   const { setId } = await params;
+  const { retry: retrySessionId } = await searchParams;
   const set = await questionSetService.getForPlay(setId);
   if (!set) notFound();
+
+  // โหมดฝึกซ้ำ: จำกัดเฉพาะข้อใน RetrySession (ข้อที่ผิด/ข้ามจาก attempt ต้นทาง)
+  let retryQuestionIds: string[] | null = null;
+  let retrySourceAttemptId: string | null = null;
+  if (retrySessionId) {
+    const rs = await db.retrySession.findUnique({ where: { id: retrySessionId } });
+    if (rs) {
+      retryQuestionIds = (rs.questionIds as string[]) ?? null;
+      retrySourceAttemptId = rs.sourceAttemptId;
+    }
+  }
 
   // ชีตสรุปของวิชานี้ — แนะนำให้อ่านก่อนเริ่มทำ
   const guide = await db.studyGuide.findUnique({
@@ -53,10 +67,14 @@ export default async function QuizPage({
       <QuizRunner
         set={{
           ...set,
-          title: set.title.th,
+          title: retryQuestionIds ? `ฝึกซ้ำเฉพาะข้อที่ผิด/ข้าม (${retryQuestionIds.length} ข้อ) — ${set.title.th}` : set.title.th,
           subjectName: set.subjectName.th,
           topicTitle: set.topicTitle?.th ?? null,
+          questions: retryQuestionIds
+            ? set.questions.filter((q) => retryQuestionIds.includes(q.id))
+            : set.questions,
         }}
+        retrySourceAttemptId={retrySourceAttemptId}
       />
     </div>
   );

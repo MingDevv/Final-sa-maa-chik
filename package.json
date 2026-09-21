@@ -16,6 +16,9 @@
     "db:seed": "tsx prisma/seed.ts",
     "seed:guides": "tsx prisma/seed-guides.ts",
     "seed:exams": "tsx prisma/seed-exams.ts",
+    "seed:day2": "tsx prisma/seed-day2.ts",
+    "seed:guides:day2": "tsx prisma/seed-guides-day2.ts",
+    "seed:exams:day2": "tsx prisma/seed-exams-day2.ts",
     "db:studio": "prisma studio",
     "dev:db": "node scripts/dev-db.mjs"
   },

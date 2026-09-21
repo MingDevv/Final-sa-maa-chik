@@ -71,7 +71,7 @@ export const subjectService = {
 
   async getSubjectByCode(code: string) {
     const subject = await subjectRepository.findByCode(code);
-    if (!subject || subject.status !== "PUBLISHED") return null;
+    if (!subject || (subject.status !== "PUBLISHED" && subject.status !== "ARCHIVED")) return null;
     const topics = subject.topics
       .filter((t) => t.status === "PUBLISHED")
       .map(toTopicDto);
@@ -82,6 +82,7 @@ export const subjectService = {
       nameEn: (subject.name as LocalizedText)?.en ?? null,
       color: subject.color,
       icon: subject.icon,
+      status: subject.status,
       topics,
     };
   },

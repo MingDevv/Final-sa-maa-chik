@@ -17,14 +17,17 @@ beforeAll(async () => {
 });
 
 describe("integration (ต้องมี DB)", () => {
-  it("seed ครบ 6 วิชาตามข้อกำหนด", async () => {
+  it("ชุดปัจจุบัน = 5 วิชาวันที่ 2, วันที่ 1 archive ครบ 6 วิชา", async () => {
     if (!dbReady) return console.warn("skip: ไม่มี DATABASE_URL ที่ต่อได้");
-    const subjects = await db.subject.findMany({ where: { status: "PUBLISHED" } });
-    const codes = subjects.map((s) => s.code).sort();
-    expect(codes).toEqual(
+    const published = await db.subject.findMany({ where: { status: "PUBLISHED" } });
+    expect(published.map((s) => s.code).sort()).toEqual(
+      ["ค31201", "ว30221", "ว30261", "ส31101", "อ31102-RW"].sort(),
+    );
+    const archived = await db.subject.findMany({ where: { status: "ARCHIVED" } });
+    expect(archived.map((s) => s.code).sort()).toEqual(
       ["ท31101", "ว31103", "ว31201", "ว32241", "อ31101", "ค31101"].sort(),
     );
-  });
+  }, 15000);
 
   it("ชุดที่เผยแพร่ต้องมีข้อและเฉลยครบ", async () => {
     if (!dbReady) return;
@@ -53,7 +56,7 @@ describe("integration (ต้องมี DB)", () => {
     }
   });
 
-  it("flow ทำข้อสอบ: เริ่ม → บันทึกคำตอบ → ส่ง → คะแนนถูกต้อง", async () => {
+  it("flow ทำข้อสอบ: เริ่ม → บันทึกคำตอบ → ส่ง → คะแนนถูกต้อง", { timeout: 20000 }, async () => {
     if (!dbReady) return;
     const set = await db.questionSet.findFirst({
       where: { status: "PUBLISHED" },

@@ -69,7 +69,13 @@ const formatClock = (sec: number) => {
 };
 
 /** หน้าทำข้อสอบ: จับเวลา, autosave แบบ debounce, ปักธง, จำตำแหน่งข้อ, ส่งคำตอบ */
-export function QuizRunner({ set }: { set: PlaySet }) {
+export function QuizRunner({
+  set,
+  retrySourceAttemptId,
+}: {
+  set: PlaySet;
+  retrySourceAttemptId?: string | null;
+}) {
   const router = useRouter();
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, AnswerState>>({});
@@ -362,6 +368,16 @@ export function QuizRunner({ set }: { set: PlaySet }) {
       <div className="flex flex-wrap items-center gap-3 rounded-3xl border border-border bg-card p-4 shadow-soft">
         <div className="flex-1">
           <h1 className="text-base font-semibold md:text-lg">{set.title}</h1>
+          {retrySourceAttemptId && (
+            <a
+              href={`/quiz/${set.id}/result/${retrySourceAttemptId}`}
+              className="text-xs text-purple-brand underline underline-offset-2 hover:text-foreground"
+              target="_blank"
+              rel="noreferrer"
+            >
+              เปิดดูผลรอบเดิม (read-only)
+            </a>
+          )}
           <p className="text-xs text-muted-foreground">
             {set.subjectCode} {set.subjectName}
             {set.topicTitle ? ` · ${set.topicTitle}` : ""} · ข้อ {current + 1} จาก {set.questions.length}

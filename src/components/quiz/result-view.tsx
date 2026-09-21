@@ -131,10 +131,27 @@ export function ResultView({
     }
   };
 
+  const [retrying, setRetrying] = useState(false);
   const retryWrong = async () => {
-    // สร้างชุดใหม่จากเดิมเพื่อ "ฝึกข้อที่ผิดอีกครั้ง" (attempt ใหม่ของชุดเดียวกัน)
-    toast.info("เริ่มชุดฝึกใหม่จากชุดเดิม — ลองทำใหม่ทั้งชุด แล้วเทียบกับข้อที่พลาดครั้งก่อน");
-    router.push(`/quiz/${setId}`);
+    setRetrying(true);
+    try {
+      const res = await fetch("/api/retry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ attemptId }),
+      });
+      const json = await res.json();
+      if (json.ok && json.data.attemptId) {
+        toast.success(`สร้างรอบฝึกเฉพาะข้อที่ผิด/ข้าม ${json.data.wrongCount} ข้อ — เริ่มได้เลย`);
+        router.push(`/quiz/${setId}?retry=${json.data.retrySessionId}`);
+      } else {
+        toast.success(json.data?.message ?? "ไม่มีข้อที่ต้องฝึกซ้ำ");
+      }
+    } catch {
+      toast.error("เชื่อมต่อไม่สำเร็จ ลองอีกครั้ง");
+    } finally {
+      setRetrying(false);
+    }
   };
 
   return (
@@ -172,8 +189,9 @@ export function ResultView({
           </div>
           <div className="ml-auto flex flex-col gap-2">
             {wrongIds.length > 0 && (
-              <Button className="rounded-2xl" onClick={retryWrong}>
-                <RotateCcw className="mr-1 h-4 w-4" aria-hidden /> ฝึกข้อที่ผิดอีกครั้ง ({wrongIds.length})
+              <Button className="rounded-2xl" onClick={retryWrong} disabled={retrying}>
+                <RotateCcw className="mr-1 h-4 w-4" aria-hidden />
+                {retrying ? "กำลังสร้างรอบฝึก..." : `ฝึกเฉพาะข้อที่ผิด/ข้าม (${wrongIds.length})`}
               </Button>
             )}
             {pendingSelfCheck > 0 && (
