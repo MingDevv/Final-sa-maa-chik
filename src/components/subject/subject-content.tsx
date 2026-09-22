@@ -105,7 +105,7 @@ export function SubjectContent({
                     {difficultyLabel[set.difficulty]}
                   </Badge>
                   <Badge variant="outline" className="rounded-full">
-                    {set.questionCount} ข้อ · {set.recommendedMinutes} นาที
+                    {set.questionCount} ข้อ · ไม่จำกัดเวลา
                   </Badge>
                 </div>
               </div>

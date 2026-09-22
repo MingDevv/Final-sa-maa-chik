@@ -82,7 +82,6 @@ export function QuizRunner({
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, AnswerState>>({});
   const [current, setCurrent] = useState(0);
-  const [secondsLeft, setSecondsLeft] = useState(set.recommendedMinutes * 60);
   const [elapsed, setElapsed] = useState(0);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -179,10 +178,8 @@ export function QuizRunner({
           /* localStorage ใช้ไม่ได้ — ข้าม */
         }
         const startedAt = j2.data.startedAt ? new Date(j2.data.startedAt).getTime() : Date.now();
-        const total = set.recommendedMinutes * 60;
-        const usedSec = Math.floor((Date.now() - startedAt) / 1000);
-        setElapsed(Math.min(usedSec, total));
-        setSecondsLeft(Math.max(0, total - usedSec));
+        const usedSec = Math.max(0, Math.floor((Date.now() - startedAt) / 1000));
+        setElapsed(usedSec);
       }
     })();
     return () => {
@@ -201,10 +198,9 @@ export function QuizRunner({
     }
   }, [current, set.id]);
 
-  // ตัวจับเวลา
+  // ตัวจับเวลา (นับเวลาที่ใช้ไป — โหมดไม่จำกัดเวลา)
   useEffect(() => {
     const t = setInterval(() => {
-      setSecondsLeft((s) => s - 1);
       setElapsed((s) => s + 1);
     }, 1000);
     return () => clearInterval(t);
@@ -295,15 +291,7 @@ export function QuizRunner({
     [attemptId, submitting, set.questions, answers, confirmSubmit, elapsed, router, set.id],
   );
 
-  // หมดเวลาส่งอัตโนมัติ
-  useEffect(() => {
-    if (secondsLeft <= 0 && attemptId && !submitting) {
-      toast.warning("หมดเวลา! ระบบส่งคำตอบให้อัตโนมัติ");
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- ต้องส่งคำตอบทันทีเมื่อหมดเวลา
-      void submit(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [secondsLeft, attemptId, submitting]);
+
 
   const saveAnswer = useCallback(
     (questionId: string, patch: AnswerState, immediate = true) => {
@@ -391,12 +379,16 @@ export function QuizRunner({
           </p>
         </div>
         <Badge
-          variant={secondsLeft < 60 ? "destructive" : "secondary"}
+          variant="secondary"
           className="rounded-full font-mono text-sm"
+          title="โหมดไม่จำกัดเวลา"
           aria-live="off"
         >
-          <Clock className="mr-1 h-4 w-4" aria-hidden />
-          {formatClock(secondsLeft)}
+          <Clock className="mr-1.5 h-4 w-4 text-muted-foreground" aria-hidden />
+          <span>{formatClock(elapsed)}</span>
+          <span className="ml-1 text-[11px] font-sans text-muted-foreground">
+            (ไม่จำกัดเวลา)
+          </span>
         </Badge>
       </div>
 
