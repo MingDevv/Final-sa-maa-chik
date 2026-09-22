@@ -179,45 +179,78 @@ const CHEM = `# ชีตสรุปเคมี 1 — สารประกอ
 const ASTRO = `# ชีตสรุปดาราศาสตร์ — โครงสร้างโลก ทวีปเลื่อน แผ่ขยายพื้นมหาสมุทร (30 ปรนัย + 4 อัตนัย, 60 นาที)
 
 ## 1) โครงสร้างโลก + ศัพท์อังกฤษ (ต้องจำทั้งคู่)
-- แบ่งตามองค์ประกอบทางเคมี 3 ชั้น: **Crust** (เปลือกโลก), **Mantle** (เนื้อโลก), **Core** (แกนโลก)
-- แบ่งตามสมบัติเชิงกล 5 ชั้น: **Lithosphere** (ธรณีภาค = เปลือกโลก + ผิวบน mantle, แข็งเปราะ), **Asthenosphere** (ชั้นถัดลงมา, พลาสติกนุ่ม ไหลได้ช้า), **Mesosphere** (แข็ง), **Outer core** (เหลว — ทำให้เกิดสนามแม่เหล็กโลก), **Inner core** (ของแข็ง — แรงดันมหาศาล)
-- **เปลือกโลก 2 แบบ**: continental crust (granite, หนา ~30-70 km, หนาแน่นน้อย, เก่ากว่า) vs oceanic crust (basalt, บาง ~5-10 km, หนาแน่นกว่า, ใหม่กว่า)
-- **จุดหลอก**: outer core เป็น "เหลว" แต่ inner core เป็น "ของแข็ง" ทั้งที่ร้อนกว่า — เพราะแรงดันมหาศาลบีบให้แข็ง
-- **mini-checklist**: [ ] ศัพท์ 5 ชั้นเชิงกลสะกดได้ | [ ] สถานะ outer/inner core | [ ] granite vs basalt
+- แบ่งตามองค์ประกอบทางเคมี 3 ชั้น: **Crust (ครัสต์)** เปลือกโลก · **Mantle (แมนเทิล)** เนื้อโลก · **Core (คอร์)** แกนโลก
+- แบ่งตามสมบัติเชิงกล 5 ชั้น:
+  - **Lithosphere (ลิโธสเฟียร์)** = ธรณีภาค (เปลือกโลก + ผิวบน mantle, หินแข็งเปราะ)
+  - **Asthenosphere (แอสทีโนสเฟียร์)** = ฐานธรณีภาค (ชั้นถัดลงมา, พลาสติกนุ่ม ไหลได้ช้า)
+  - **Mesosphere (มีโซสเฟียร์)** = มัชฌิมภาค (เนื้อโลกตอนล่าง, ของแข็งแกร่ง)
+  - **Outer core (เอาเทอร์ คอร์)** = แกนโลกชั้นนอก (ของเหลว — ก่อให้เกิดสนามแม่เหล็กโลก)
+  - **Inner core (อินเนอร์ คอร์)** = แกนโลกชั้นใน (ของแข็ง — แรงดันมหาศาลบีบให้แข็ง)
+- **เปลือกโลก 2 แบบ**:
+  - **Continental crust (คอนติเนนทัล ครัสต์)** = เปลือกโลกทวีป ประกอบด้วยหินแกรนิต (**Granite / แกรนิต**) หนา ~30-70 km หนาแน่นน้อย (~2.7 g/cm³) เก่าแก่กว่า
+  - **Oceanic crust (โอเชียนิก ครัสต์)** = เปลือกโลกมหาสมุทร ประกอบด้วยหินบะซอลต์ (**Basalt / บะซอลต์**) บาง ~5-10 km หนาแน่นกว่า (~3.0 g/cm³) ใหม่กว่า
+- **จุดหลอก**: **Outer core (เอาเทอร์ คอร์)** เป็น "ของเหลว" แต่ **Inner core (อินเนอร์ คอร์)** เป็น "ของแข็ง" ทั้งที่ร้อนกว่า — เพราะแรงดันมหาศาลบีบให้แข็ง
+- **mini-checklist**: [ ] ศัพท์ 5 ชั้นเชิงกลสะกดและอ่านได้ | [ ] สถานะ outer/inner core | [ ] granite vs basalt
 
 ## 2) เปรียบเทียบการแบ่งชั้นโลก
 - ตามเคมี: ใช้ "ทำจากอะไร" (crust: granite/basalt, mantle: หินซิลิเกต, core: เหล็ก+นิกเกิล)
 - ตามสมบัติเชิงกล: ใช้ "แข็ง/นุ่ม/ไหล" (lithosphere แข็ง, asthenosphere นุ่มไหล, mesosphere แข็ง, outer เหลว, inner แข็ง)
 - **ตัวอย่างอ่านภาพตัดขวาง**: lithosphere ครอบคลุม crust + ส่วนบนสุดของ mantle — ไม่ใช่ชั้นเดียวกับ crust
-- **จุดหลอก**: mesosphere ≠ ชั้นบรรยากาศ mesosphere — โจทย์ระบุว่า "ภายในโลก" เสมอ
+- **จุดหลอก**: mesosphere ของโครงสร้างโลก ≠ ชั้นบรรยากาศ mesosphere — โจทย์ระบุว่า "ภายในโลก" เสมอ
 - **mini-checklist**: [ ] จับคู่ชั้นสองแบบได้ | [ ] ระบุสถานะแต่ละชั้น | [ ] อ่านภาพตัดขวางได้
 
-## 3) ทฤษฎีทวีปเลื่อน (Continental Drift) — Alfred Wegener (1912)
-- **ใจความ**: เมื่อ ~250 ล้านปีก่อนทวีปรวมกันเป็น **Pangaea** แล้วค่อย ๆ เลื่อนแยกออกจนเป็นทวีปปัจจุบัน
+## 3) ทฤษฎีทวีปเลื่อน — Continental Drift (คอนติเนนทัล ดริฟต์) — Alfred Wegener (อัลเฟรด เวเกเนอร์, 1912)
+- **ใจความ**: เมื่อ ~250 ล้านปีก่อนทวีปรวมกันเป็น **Pangaea (แพนเจีย)** แล้วค่อย ๆ เลื่อนแยกออกจนเป็นทวีปปัจจุบัน
 - **หลักฐาน 4 ข้อ (ต้องท่องได้ + อธิบายได้)**:
-  1. รูปขอบทวีปต่อกันได้พอดี (เช่น อเมริกาใต้ ↔ แอฟริกา)
-  2. ซากดึกดำบรรพ์: พบฟอสซิลสิ่งมีชีวิตบกชนิดเดียวกันคนละทวีป (Mesosaurus, Glossopteris)
+  1. รูปขอบทวีปต่อกันได้พอดี (เช่น ชายฝั่งอเมริกาใต้ ↔ แอฟริกา)
+  2. ซากดึกดำบรรพ์: พบฟอสซิลสิ่งมีชีวิตบกชนิดเดียวกันคนละทวีป (**Mesosaurus / มีโซซอรัส**, **Glossopteris / กลอสโซพเทอริส**)
   3. แนวหินและโครงสร้างภูเขาต่อเนื่องข้ามทวีป
-  4. ร่องรอยภูมิอากาศโบราณ: รอยแผลหิมะน้ำแข็งในเขตร้อนเดิม, ถ่านหินในเขตหนาว
-- **จุดอ่อนของ Wegener**: อธิบาย "แรงผลัก" ไม่ได้ → ทฤษฎีไม่ถูกยอมรับจนกว่าจะมีการแผ่ขยายพื้นมหาสมุทร
-- **mini-checklist**: [ ] Pangaea + ชื่อ Wegener | [ ] หลักฐาน 4 ข้อพร้อมตัวอย่าง | [ ] จุดอ่อนของทฤษฎี
+  4. ร่องรอยภูมิอากาศโบราณ: รอยแผลธารน้ำแข็งในเขตร้อนเดิม, ถ่านหินในเขตหนาว
+- **จุดอ่อนของ Wegener (เวเกเนอร์)**: อธิบาย "แรงผลัก" ไม่ได้ → ทฤษฎีไม่ถูกยอมรับจนกว่าจะมีการค้นพบการแผ่ขยายพื้นมหาสมุทร
+- **mini-checklist**: [ ] Pangaea (แพนเจีย) + ชื่อ Alfred Wegener (อัลเฟรด เวเกเนอร์) | [ ] หลักฐาน 4 ข้อพร้อมตัวอย่าง Mesosaurus / Glossopteris | [ ] จุดอ่อนของทฤษฎี
 
-## 4) การแผ่ขยายพื้นมหาสมุทร (Seafloor Spreading) — Harry Hess
-- **ใจความ**: แมกมาพุขึ้นที่ **สันเขากลางมหาสมุทร** → เย็นตัวเป็น oceanic crust ใหม่ → พื้นมหาสมุทรเคลื่อนออกจากสันเขาทั้งสองข้าง → หน้าเก่าจมลงที่ **ร่องลึกก้นสมุทร**
-- **หลักฐาน**: อายุหินพื้นมหาสมุทร "ใหม่ที่สุดตรงสันเขา แก่ขึ้นเมื่อไกลออก" | แถบแม่เหล็กสลับขั้วสมมาตรสองข้างสันเขา
-- **เชื่อมโยง**: กลไกขับเคลื่อน = **convection current** (กระแสการพาใน mantle/asthenosphere) → กลายเป็นรากฐาน **Plate Tectonics** (แผ่นเปลือกโลก = lithosphere แตกเป็นแผ่นเคลื่อนบน asthenosphere)
+## 4) การแผ่ขยายพื้นมหาสมุทร — Seafloor Spreading (ซีฟลอร์ สเปรดดิง) — Harry Hess (แฮร์รี เฮสส์)
+- **ใจความ**: แมกมาพุขึ้นที่ **สันเขากลางมหาสมุทร (Mid-ocean ridge / มิด-โอเชียน ริดจ์)** → เย็นตัวเป็น oceanic crust ใหม่ → พื้นมหาสมุทรเคลื่อนออกจากสันเขาทั้งสองข้าง → แผ่นเก่าจมลงมุดตัวที่ **ร่องลึกก้นสมุทร (Ocean trench / โอเชียน เทรนช์)**
+- **หลักฐาน**: อายุหินพื้นมหาสมุทร "ใหม่ที่สุดตรงสันเขา แก่ขึ้นเมื่อไกลออก" | แถบแม่เหล็กโลกสลับขั้วสมมาตรสองข้างสันเขา (**Paleomagnetism / เพลิโอแมกเนทิซึม**)
+- **เชื่อมโยง**: กลไกขับเคลื่อน = **Convection current (คอนเวกชัน เคอร์เรนต์ — กระแสการพาความร้อน)** ในชั้น mantle/asthenosphere → กลายเป็นรากฐาน **Plate Tectonics (เพลต เทกโทนิกส์ — ทฤษฎีการแปรสัณฐานแผ่นธรณีภาค)**
 - **mini-checklist**: [ ] สันเขากลางมหาสมุทร = จุดเกิดใหม่ | [ ] อายุหิน/แถบแม่เหล็กเป็นหลักฐาน | [ ] convection current เชื่อม plate tectonics
 
 ## 5) การอ่านภาพ/ตีความข้อมูล (ข้อสอบชอบออก)
-- ภาพตัดขวางโลก: จับคู่ชื่อชั้นกับตำแหน่ง — lithosphere บนสุดบาง ๆ, asthenosphere ใต้ลงไป
-- แผนที่ Pangaea: ตรงข้าม = แอฟริกาตะวันตกกับอเมริกาใต้ตะวันออก
-- กราฟอายุหินพื้นมหาสมุทร: อ่านทิศ "ใหม่→เก่า" จากสันเขา
+- ภาพตัดขวางโลก: จับคู่ชื่อชั้นกับตำแหน่ง — Lithosphere (ลิโธสเฟียร์) บนสุดบาง ๆ, Asthenosphere (แอสทีโนสเฟียร์) ใต้ลงไป
+- แผนที่ Pangaea (แพนเจีย): ตรงข้าม = แอฟริกาตะวันตกกับอเมริกาใต้ตะวันออก
+- กราฟอายุหินพื้นมหาสมุทร: อ่านทิศ "ใหม่ → แก่" จากสันเขา
 - **mini-checklist**: [ ] ชี้ชั้นจากภาพได้ | [ ] สรุปแนวโน้มจากกราฟได้
 
 ## 6) อัตนัย 4 ข้อ — สูตรตอบ "ข้อสรุป + หลักฐาน + อธิบาย"
 - โครงคำตอบ: (1) ข้อสรุปตรงคำถาม 1 ประโยค (2) ยกหลักฐานเฉพาะเจาะจง (3) อธิบายว่าหลักฐานชี้ไปทางไหนอย่างไร (4) ใช้ศัพท์ถูก (Crust/Mantle/Wegener/Pangaea/convection)
 - พื้นที่วาดภาพตัดขวาง: วาด 5 ชั้น + ชี้ arrow current + ระบุชื่ออังกฤษกำกับ
-- Mind map: ใส่ "โครงสร้างโลก / ทวีปเลื่อน / แผ่ขยายพื้นมหาสมุทร / plate tectonics" เป็นกิ่งหลัก 4 กิ่ง`;
+- Mind map: ใส่ "โครงสร้างโลก / ทวีปเลื่อน / แผ่ขยายพื้นมหาสมุทร / plate tectonics" เป็นกิ่งหลัก 4 กิ่ง
+
+## ตารางศัพท์ดาราศาสตร์และธรณีวิทยา (พร้อมคำอ่านไทย)
+| คำศัพท์อังกฤษ | คำอ่านไทย | ความหมายสั้น |
+| --- | --- | --- |
+| Crust | ครัสต์ | เปลือกโลก |
+| Mantle | แมนเทิล | เนื้อโลก |
+| Core | คอร์ | แกนโลก |
+| Lithosphere | ลิโธสเฟียร์ | ธรณีภาค (เปลือกโลก + ผิวบนเนื้อโลก แข็งเปราะ) |
+| Asthenosphere | แอสทีโนสเฟียร์ | ฐานธรณีภาค (หินหนืดพลาสติก พาความร้อน) |
+| Mesosphere | มีโซสเฟียร์ | มัชฌิมภาค (เนื้อโลกตอนล่าง ของแข็ง) |
+| Outer core | เอาเทอร์ คอร์ | แกนโลกชั้นนอก (ของเหลว ก่อสนามแม่เหล็กโลก) |
+| Inner core | อินเนอร์ คอร์ | แกนโลกชั้นใน (ของแข็ง แรงดันมหาศาล) |
+| Continental crust | คอนติเนนทัล ครัสต์ | เปลือกโลกทวีป (หินแกรนิต หนา เบากว่า) |
+| Oceanic crust | โอเชียนิก ครัสต์ | เปลือกโลกมหาสมุทร (หินบะซอลต์ บาง แน่นกว่า) |
+| Granite | แกรนิต | หินอัคนีแทรกซอนของเปลือกโลกทวีป |
+| Basalt | บะซอลต์ | หินอัคนีพุของเปลือกโลกมหาสมุทร |
+| Continental Drift | คอนติเนนทัล ดริฟต์ | ทฤษฎีทวีปเลื่อน (อัลเฟรด เวเกเนอร์) |
+| Pangaea | แพนเจีย | มหาทวีปโบราณผืนเดียวเมื่อ 250 ล้านปีก่อน |
+| Mesosaurus | มีโซซอรัส | ซากดึกดำบรรพ์สัตว์เลื้อยคลานน้ำจืดโบราณ |
+| Glossopteris | กลอสโซพเทอริส | ซากดึกดำบรรพ์เฟิร์นโบราณ |
+| Seafloor Spreading | ซีฟลอร์ สเปรดดิง | การแผ่ขยายพื้นมหาสมุทร (แฮร์รี เฮสส์) |
+| Mid-ocean ridge | มิด-โอเชียน ริดจ์ | สันเขากลางมหาสมุทร (จุดเกิดเปลือกโลกใหม่) |
+| Ocean trench | โอเชียน เทรนช์ | ร่องลึกก้นสมุทร (แนวมุดตัวของแผ่นเปลือกโลก) |
+| Paleomagnetism | เพลิโอแมกเนทิซึม | ภาวะแม่เหล็กโลกบรรพกาล (แถบสลับขั้วสมมาตร) |
+| Convection current | คอนเวกชัน เคอร์เรนต์ | กระแสการพาความร้อนในเนื้อโลก |
+| Plate Tectonics | เพลต เทกโทนิกส์ | ทฤษฎีการแปรสัณฐานแผ่นธรณีภาค |`;
 
 const SOCIAL = `# ชีตสรุปสังคมศึกษา (พุทธศาสนา) — 40 ข้อ ตามสัดส่วน 8/6/8/10/8
 
@@ -350,84 +383,85 @@ const SOCIAL = `# ชีตสรุปสังคมศึกษา (พุท
 const ENGLISH = `# English Reading & Writing — Vocabulary Units 1-4 + Reading
 
 ## วิธีใช้ชีตนี้
-- คำศัพท์ทุกคำมี: part of speech + ความหมาย + ประโยคตัวอย่าง (ประโยคใหม่ ไม่ใช่ข้อสอบจริง)
-- ท่องแบบกลุ่ม unit แล้วปิดความหมายทดสอบตัวเอง
+- คำศัพท์ทุกคำมี: **คำอ่านภาษาไทยในวงเล็บ ( )** + part of speech + ความหมาย + ประโยคตัวอย่าง
+- ท่องศัพท์พร้อมออกเสียงให้คุ้นชิน แล้วปิดความหมายทดสอบตนเองก่อนสอบ
 
 ## Unit 1: Body Mass and Weight
-| คำศัพท์ | POS | ความหมาย | ประโยคตัวอย่าง |
+| คำศัพท์ (คำอ่านไทย) | POS | ความหมาย | ประโยคตัวอย่าง |
 | --- | --- | --- | --- |
-| diagnose | v. | วินิจฉัยโรค | The doctor will diagnose the problem today. |
-| gauge | v./n. | วัด/ประเมิน | Use a ruler to gauge the thickness. |
-| thickness | n. | ความหนา | The thickness of the glass is 5 mm. |
-| crude | adj. | ดิบ ๆ หยาบ ๆ | This is a crude estimate, not exact. |
-| calculator | n. | เครื่องคำนวณ | Use a calculator for precise numbers. |
-| plug into | phr.v. | เสียบเข้ากับ | Plug the data into the model. |
-| obese | adj. | อ้วนมาก (ทางการแพทย์) | Obese patients need a health plan. |
-| precise | adj. | เที่ยงตรง | We need precise measurements. |
-| estimate | v./n. | ประมาณ | Scientists estimate the density first. |
-| composition | n. | องค์ประกอบ | The composition of the sample matters. |
-| rely on | phr.v. | พึ่งพา | Do not rely on one result alone. |
-| squeeze | v. | บีบ | Squeeze the device gently. |
-| accurate | adj. | แม่นยำ | The scale gives an accurate reading. |
-| determine | v. | กำหนด/พิจารณา | Determine the mass before starting. |
-| reliable | adj. | เชื่อถือได้ | Repeat the test to get reliable data. |
-| density | n. | ความหนาแน่น | Density equals mass over volume. |
+| diagnose (ได-แอ็ก-โนส) | v. | วินิจฉัยโรค | The doctor will diagnose the problem today. |
+| gauge (เกจ) | v./n. | วัด/ประเมิน | Use a ruler to gauge the thickness. |
+| thickness (ธิก-เนส) | n. | ความหนา | The thickness of the glass is 5 mm. |
+| crude (ครูด) | adj. | ดิบ ๆ หยาบ ๆ | This is a crude estimate, not exact. |
+| calculator (แคล-คิว-เล-เทอร์) | n. | เครื่องคำนวณ | Use a calculator for precise numbers. |
+| plug into (พลัค อิน-ทู) | phr.v. | เสียบเข้ากับ | Plug the data into the model. |
+| obese (โอ-บีส) | adj. | อ้วนมาก (ทางการแพทย์) | Obese patients need a health plan. |
+| precise (พรี-ไซส์) | adj. | เที่ยงตรง/แม่นยำ | We need precise measurements. |
+| estimate (เอส-ทิ-เมท) | v./n. | ประมาณ | Scientists estimate the density first. |
+| composition (คอม-โพ-ซิ-ชัน) | n. | องค์ประกอบ | The composition of the sample matters. |
+| rely on (รี-ลาย ออน) | phr.v. | พึ่งพา | Do not rely on one result alone. |
+| squeeze (สควีซ) | v. | บีบ/คั้น | Squeeze the device gently. |
+| accurate (แอค-คิว-เรท) | adj. | แม่นยำ | The scale gives an accurate reading. |
+| determine (ดี-เทอร์-มิน) | v. | กำหนด/พิจารณา | Determine the mass before starting. |
+| reliable (รี-ลาย-อะ-เบิล) | adj. | เชื่อถือได้ | Repeat the test to get reliable data. |
+| density (เดน-ซิ-ที) | n. | ความหนาแน่น | Density equals mass over volume. |
+| criticism (คริ-ทิ-ซิ-ซึม) | n. | การวิพากษ์วิจารณ์ | Constructive criticism helps improve work. |
 
 ## Unit 2: Headaches
-| คำศัพท์ | POS | ความหมาย | ประโยคตัวอย่าง |
+| คำศัพท์ (คำอ่านไทย) | POS | ความหมาย | ประโยคตัวอย่าง |
 | --- | --- | --- | --- |
-| tumor | n. | เนื้องอก | A scan can detect a tumor. |
-| chemistry | n. | เคมี/สารเคมีในร่างกาย | Brain chemistry can trigger pain. |
-| acid | n. | กรด | Some foods contain acid. |
-| physiological | adj. | เกี่ยวกับสรีรวิทยา | Stress has physiological effects. |
-| productivity | n. | ผลิตภาพ/ประสิทธิผล | Headaches reduce productivity. |
-| stimulus | n. | สิ่งกระตุ้น | Light is a common stimulus. |
-| severe | adj. | รุนแรง | A severe headache needs rest. |
-| suffer from | phr.v. | ประสบทุกข์ทรมานจาก | Many people suffer from migraines. |
-| prescribe | v. | สั่งจ่ายยา | The doctor will prescribe medicine. |
-| classify | v. | จัดหมวดหมู่ | Doctors classify headaches by cause. |
-| infection | n. | การติดเชื้อ | An infection can cause fever. |
-| trigger | v./n. | กระตุ้น/สิ่งกระตุ้น | Identify what triggers the pain. |
-| abnormal | adj. | ผิดปกติ | An abnormal result needs more tests. |
-| occur | v. | เกิดขึ้น | Headaches often occur at night. |
+| tumor (ทิว-เมอร์) | n. | เนื้องอก | A scan can detect a tumor. |
+| chemistry (เคม-มิ-สตริ) | n. | เคมี/สารเคมีในร่างกาย | Brain chemistry can trigger pain. |
+| acid (แอ-ซิด) | n. | กรด | Some foods contain acid. |
+| physiological (ฟิส-ซิ-โอ-โล-จิ-เคิล) | adj. | เกี่ยวกับสรีรวิทยา | Stress has physiological effects. |
+| productivity (โพร-ดัก-ทิ-วิ-ที) | n. | ผลิตภาพ/ประสิทธิผล | Headaches reduce productivity. |
+| stimulus (สติม-มิว-ลัส) | n. | สิ่งกระตุ้น | Light is a common stimulus. |
+| severe (ซี-เวียร์) | adj. | รุนแรง | A severe headache needs rest. |
+| suffer from (ซัฟ-เฟอร์ ฟรอม) | phr.v. | ประสบทุกข์ทรมานจาก | Many people suffer from migraines. |
+| prescribe (พรี-สไครบ์) | v. | สั่งจ่ายยา | The doctor will prescribe medicine. |
+| classify (แคลส-ซิ-ฟาย) | v. | จัดหมวดหมู่ | Doctors classify headaches by cause. |
+| infection (อิน-เฟก-ชัน) | n. | การติดเชื้อ | An infection can cause fever. |
+| trigger (ทริก-เกอร์) | v./n. | กระตุ้น/สิ่งกระตุ้น | Identify what triggers the pain. |
+| abnormal (แอบ-นอร์-มัล) | adj. | ผิดปกติ | An abnormal result needs more tests. |
+| occur (ออ-เคอร์) | v. | เกิดขึ้น | Headaches often occur at night. |
 
 ## Unit 3: Should I Stay or Should I Go?
-| คำศัพท์ | POS | ความหมาย | ประโยคตัวอย่าง |
+| คำศัพท์ (คำอ่านไทย) | POS | ความหมาย | ประโยคตัวอย่าง |
 | --- | --- | --- | --- |
-| flexible | adj. | ยืดหยุ่น | A flexible schedule helps students. |
-| reputation | n. | ชื่อเสียง | The school has a good reputation. |
-| guarantee | v./n. | รับประกัน | No one can guarantee success. |
-| worthwhile | adj. | คุ้มค่า | The course is worthwhile. |
-| exclusive | adj. | พิเศษเฉพาะ/ไม่รวมผู้อื่น | It is an exclusive program. |
-| independent | adj. | อิสระ | Independent learners do well. |
-| applicant | n. | ผู้สมัคร | Each applicant must submit a form. |
-| debt | n. | หนี้ | Study loans can create debt. |
-| adapt | v. | ปรับตัว | Students adapt to new schools. |
-| domestic | adj. | ภายในประเทศ | Domestic universities are cheaper. |
-| adolescent | n./adj. | วัยรุ่น | Adolescents learn differently. |
-| undergraduate | n. | นักศึกษาปริญญาตรี | Undergraduate life is busy. |
-| statistically | adv. | ทางสถิติ | Statistically, more students stay local. |
-| bilingual | adj. | สองภาษา | A bilingual program is popular. |
-| curriculum | n. | หลักสูตร | The curriculum includes English. |
-| aspect | n. | ด้าน/แง่มุม | Consider every aspect carefully. |
+| flexible (เฟลก-ซิ-เบิล) | adj. | ยืดหยุ่น | A flexible schedule helps students. |
+| reputation (เรพ-พิว-เท-ชัน) | n. | ชื่อเสียง | The school has a good reputation. |
+| guarantee (แก-รัน-ตี) | v./n. | รับประกัน | No one can guarantee success. |
+| worthwhile (เวิร์ธ-วายล์) | adj. | คุ้มค่า | The course is worthwhile. |
+| exclusive (เอ็กซ์-คลู-ซิฟ) | adj. | พิเศษเฉพาะ/ไม่รวมผู้อื่น | It is an exclusive program. |
+| independent (อิน-ดิ-เพน-เดนต์) | adj. | อิสระ | Independent learners do well. |
+| applicant (แอพ-พลิ-คันต์) | n. | ผู้สมัคร | Each applicant must submit a form. |
+| debt (เด็ท) | n. | หนี้สิน | Study loans can create debt. |
+| adapt (อะ-แดปต์) | v. | ปรับตัว | Students adapt to new schools. |
+| domestic (โด-เมส-ติก) | adj. | ภายในประเทศ | Domestic universities are cheaper. |
+| adolescent (แอด-เดอะ-เลส-เซนต์) | n./adj. | วัยรุ่น | Adolescents learn differently. |
+| undergraduate (อัน-เดอร์-แกรด-จู-เอท) | n. | นักศึกษาปริญญาตรี | Undergraduate life is busy. |
+| statistically (สถะ-ทิส-ทิ-คลี) | adv. | ทางสถิติ | Statistically, more students stay local. |
+| bilingual (ไบ-ลิง-กวล) | adj. | สองภาษา | A bilingual program is popular. |
+| curriculum (เคอร์-ริก-คิว-ลัม) | n. | หลักสูตร | The curriculum includes English. |
+| aspect (แอส-เปกต์) | n. | ด้าน/แง่มุม | Consider every aspect carefully. |
 
 ## Unit 4: Under COVID-19
-| คำศัพท์ | POS | ความหมาย | ประโยคตัวอย่าง |
+| คำศัพท์ (คำอ่านไทย) | POS | ความหมาย | ประโยคตัวอย่าง |
 | --- | --- | --- | --- |
-| generalize | v. | สรุปกว้าง ๆ | Do not generalize from one case. |
-| closure | n. | การปิด | School closures changed learning. |
-| occupation | n. | อาชีพ | Many occupations moved online. |
-| behavioral | adj. | เกี่ยวกับพฤติกรรม | Behavioral changes appeared. |
-| innate | adj. | แต่กำเนิด | Innate habits are hard to change. |
-| continuity | n. | ความต่อเนื่อง | Continuity of study is important. |
+| generalize (เจน-เนอ-ระ-ไลซ์) | v. | สรุปกว้าง ๆ | Do not generalize from one case. |
+| closure (โคล-เชอร์) | n. | การปิด | School closures changed learning. |
+| occupation (ออค-คิว-เพ-ชัน) | n. | อาชีพ | Many occupations moved online. |
+| behavioral (บิ-เฮฟ-เวีย-รอล) | adj. | เกี่ยวกับพฤติกรรม | Behavioral changes appeared. |
+| innate (อิน-เนต) | adj. | แต่กำเนิด/โดยสัญชาตญาณ | Innate habits are hard to change. |
+| continuity (คอน-ทิ-นู-อิ-ที) | n. | ความต่อเนื่อง | Continuity of study is important. |
 
 ## Reading Comprehension — กลยุทธ์ทำข้อสอบ
 1. **อ่านคำถามก่อนบทอ่าน** — รู้ว่ากำลังหาอะไร
 2. **หา keyword** จากคำถามใน passage — คำตอบมักอยู่ใกล้ ๆ
 3. **คำถาม main idea** → ดู topic sentence (ประโยคแรก/ท้ายย่อหน้า)
-4. **คำถามความหมายคำศัพท์** → อ่านบริบทรอบคำ แทนคำที่ไม่รู้ด้วยคาดเดา แล้วเทียบตัวเลือก
+4. **คำถามความหมายคำศัพท์** → อ่านบริบทรอบคำ แทนคำที่ไม่รู้ด้วยการคาดเดา แล้วเทียบตัวเลือก
 5. **คำถาม inference** → คำตอบต้องมีหลักฐานในเรื่องรองรับ ห้ามใช้ความรู้นอกเรื่อง
-6. คำศัพท์ใน passage จะใช้กลุ่มคำ Units 1-4 — ทบทวนตารางด้านบนก่อนสอบ`;
+6. คำศัพท์ใน passage จะใช้กลุ่มคำ Units 1-4 — ทบทวนตารางคำอ่านและความหมายด้านบนก่อนสอบ`;
 
 export const GUIDES: Record<string, string> = {
   "ค31201": MATH,

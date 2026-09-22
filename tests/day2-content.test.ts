@@ -101,6 +101,15 @@ describe("Day 2 Content Audit & Quality Gates", () => {
         expect(q.explanation!.length).toBeGreaterThan(10);
       }
     });
+
+    it("ชีตสรุปดาราศาสตร์ มีคำศัพท์อังกฤษพร้อมคำอ่านภาษาไทยกำกับในวงเล็บ", () => {
+      const astroGuide = GUIDES["ว30261"];
+      expect(astroGuide).toBeDefined();
+      expect(astroGuide).toContain("Lithosphere (ลิโธสเฟียร์)");
+      expect(astroGuide).toContain("Asthenosphere (แอสทีโนสเฟียร์)");
+      expect(astroGuide).toContain("Pangaea (แพนเจีย)");
+      expect(astroGuide).toContain("ตารางศัพท์ดาราศาสตร์และธรณีวิทยา (พร้อมคำอ่านไทย)");
+    });
   });
 
   describe("สังคมศึกษา (Social Day 2)", () => {
@@ -173,6 +182,15 @@ describe("Day 2 Content Audit & Quality Gates", () => {
       for (const word of missingWords) {
         expect(allText).toContain(word.toLowerCase());
       }
+    });
+
+    it("ชีตสรุปภาษาอังกฤษ มีคำอ่านภาษาไทยกำกับในวงเล็บหลังคำศัพท์ครบทุก Unit", () => {
+      const engGuide = GUIDES["อ31102-RW"];
+      expect(engGuide).toBeDefined();
+      expect(engGuide).toContain("diagnose (ได-แอ็ก-โนส)");
+      expect(engGuide).toContain("tumor (ทิว-เมอร์)");
+      expect(engGuide).toContain("flexible (เฟลก-ซิ-เบิล)");
+      expect(engGuide).toContain("generalize (เจน-เนอ-ระ-ไลซ์)");
     });
   });
 
