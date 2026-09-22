@@ -4,6 +4,7 @@ import { chemExam } from "../prisma/seed-exams-day2/chem";
 import { astroExam } from "../prisma/seed-exams-day2/astro";
 import { socialExam } from "../prisma/seed-exams-day2/social";
 import { englishExam } from "../prisma/seed-exams-day2/english";
+import { GUIDES } from "../prisma/seed-guides-day2";
 import { scoreAttemptAnswers } from "@/server/services/attempt-service";
 import type { AttemptRow } from "@/server/repositories/attempt-repository";
 
@@ -123,6 +124,23 @@ describe("Day 2 Content Audit & Quality Gates", () => {
       const raw = JSON.stringify(socialExam);
       expect(raw.includes("พระธรรมทูต")).toBe(true);
       expect(raw.includes("ทิศ 6") || raw.includes("ทิศเบื้อง")).toBe(true);
+    });
+
+    it("ชีตสรุปสังคมศึกษา มีเนื้อหาการสังคายนาพระไตรปิฎก 10 ครั้ง และรัชกาลสำคัญครบถ้วน", () => {
+      const socialGuide = GUIDES["ส31101"];
+      expect(socialGuide).toBeDefined();
+      expect(socialGuide).toContain("สรุปเจาะลึกการสังคายนาพระไตรปิฎก");
+      for (let i = 1; i <= 10; i++) {
+        expect(socialGuide).toContain(`ครั้งที่ ${i}`);
+      }
+      expect(socialGuide).toContain("พระเจ้าติโลกราช");
+      expect(socialGuide).toContain("รัชกาลที่ 1");
+      expect(socialGuide).toContain("ฉบับทองใหญ่");
+      expect(socialGuide).toContain("รัชกาลที่ 9");
+      expect(socialGuide).toContain("รัชกาลที่ 5");
+      expect(socialGuide).toContain("รัชกาลที่ 7");
+      expect(socialGuide).toContain("ฉบับสยามรัฐ");
+      expect(socialGuide).toContain("ใบลาน");
     });
   });
 
