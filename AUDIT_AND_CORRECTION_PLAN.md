@@ -155,13 +155,13 @@
 
 ## ผลตรวจซ้ำ (22 กันยายน 2569)
 
-การแก้ไขรอบล่าสุดปิดปัญหาระดับบล็อกและช่องว่างความพร้อมใช้งานแล้ว:
-- `npm run build` ผ่าน 100% ไม่มี warning (`metadataBase` กำหนดแล้ว)
-- `npm run lint` ผ่าน 100% ไม่มี warning (0 errors, 0 warnings)
-- `vitest run` ผ่าน 100% ทั้ง 40 tests และคอนฟิกเป็น `.mts` ไม่มี ESM/CJS warning
+การแก้ไขรอบล่าสุดปิดปัญหา RetrySession สำคัญแล้ว แต่ยัง **ไม่พร้อมเผยแพร่**:
+- `npm run build` **ล้ม** เพราะ `src/app/api/admin/login/route.ts` ใช้ `z` และ `NextResponse` โดยไม่ได้ import
+- `npm run test` ผ่าน 43 tests แต่ยังไม่มี smoke test เส้นทาง login จึงจับข้อผิดพลาด TypeScript นี้ไม่ได้
+- ต้องคืน `import { z } from "zod"` และ `import { NextResponse } from "next/server"` จากนั้นรัน build ใหม่
 - API Service ยืนยันเจ้าของ `retrySession` และ `setId` ใน `POST /api/attempts` เรียบร้อย
 - ป้องกันการบันทึกคำตอบหรือ self-check ข้ามข้อที่ไม่อยู่ในชุด หรือไม่อยู่ในรอบ retry
 - กระดาษทดมีระบบยืนยันก่อนลบหน้า (ป้องกันกดพลาด)
-- เนื้อหาวันที่ 2 (5 วิชา) ผ่าน automated audit checklist ทุกข้อ
+- เนื้อหาวันที่ 2 (5 วิชา) ผ่าน automated audit checklist เชิงโครงสร้าง; ยังคงต้องให้ผู้สอนตรวจความถูกต้องเชิงวิชาจาก PDF
 
-สถานะระบบ: **พร้อมเผยแพร่และนำขึ้น Production**
+สถานะระบบ: **ห้ามเผยแพร่จนกว่าจะคืน import login และ `npm run build` ผ่าน**
