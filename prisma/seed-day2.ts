@@ -115,7 +115,7 @@ async function main() {
   console.log("seed-day2: เริ่ม...");
 
   // 1) รอบสอบวันที่ 2 (ACTIVE) และย้ายวันที่ 1 เป็น ARCHIVED
-  const term = await db.examTerm.upsert({
+  await db.examTerm.upsert({
     where: { id: "final-m4-day-2" },
     update: { status: "ACTIVE" },
     create: {
@@ -178,8 +178,11 @@ async function main() {
             title: lt(doc.title),
             subjectId: subject.id,
             storageKey: doc.key,
-            mimeType: doc.key.endsWith(".pdf") ? "application/pdf" : "image/jpeg",
-            pageCount: doc.pages ?? undefined,
+            mimeType: doc.key.endsWith(".pdf")
+              ? "application/pdf"
+              : doc.key.endsWith(".png")
+                ? "image/png"
+                : "image/jpeg",
             status: "READY",
             metadata: { policy: "reference-only", source: "seed-day2" },
           },

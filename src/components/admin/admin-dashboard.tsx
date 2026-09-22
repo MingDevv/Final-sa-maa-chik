@@ -138,7 +138,7 @@ export function AdminDashboard({ subjects: initialSubjects }: { subjects: Subjec
             onClick={async () => {
               await fetch("/api/admin/login", { method: "DELETE" });
               toast.success("ออกจากระบบผู้ดูแลแล้ว");
-              window.location.href = "/admin";
+              window.location.reload();
             }}
           >
             ออกจากระบบ

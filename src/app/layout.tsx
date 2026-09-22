@@ -13,6 +13,9 @@ const plexThai = IBM_Plex_Sans_Thai({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://final-sa-maa-chik.vercel.app",
+  ),
   title: {
     default: "Final-sa-maa-chik — ติวสอบปลายภาค ม.4",
     template: "%s | Final-sa-maa-chik",

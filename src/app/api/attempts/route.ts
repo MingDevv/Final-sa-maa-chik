@@ -11,6 +11,7 @@ export async function POST(request: Request) {
       setId: body.setId,
       mode: body.mode,
       owner: session.ownerKey,
+      retrySessionId: body.retrySessionId,
     });
     if (!attemptId) return handleApiError(new Error("NOT_FOUND"));
     return ok({ attemptId });

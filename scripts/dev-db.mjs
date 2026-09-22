@@ -20,13 +20,13 @@ async function main() {
   try {
     await pg.initialise();
     console.log("[dev-db] initialised");
-  } catch (e) {
+  } catch {
     console.log("[dev-db] initialise skipped (มีข้อมูลอยู่แล้ว?)");
   }
   try {
     await pg.start();
     console.log("[dev-db] started on :5432");
-  } catch (e) {
+  } catch {
     console.log("[dev-db] start skipped (อาจรันอยู่แล้ว)");
   }
   try {

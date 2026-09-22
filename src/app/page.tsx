@@ -28,9 +28,6 @@ import { localizedToString } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-const greetingForHour = (h: number) =>
-  h < 11 ? "สวัสดีตอนเช้า" : h < 15 ? "สวัสดีตอนบ่าย" : h < 18 ? "สวัสดีตอนเย็น" : "สวัสดียามค่ำ";
-
 /** จับกรณี DB ยังไม่พร้อม (เช่นเพิ่ง deploy บน Vercel ยังไม่ตั้ง DATABASE_URL) — แสดงคำแนะนำแทนหน้าพัง */
 async function loadDashboard() {
   try {
@@ -120,7 +117,6 @@ export default async function DashboardPage() {
   }
 
   const lastSet = recent[0];
-  const hour = new Date().getHours();
 
   return (
     <div className="flex flex-col gap-6">
@@ -146,7 +142,7 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">วิชาเรียน ({subjects.length} วิชา)</h2>
           <Badge variant="secondary" className="rounded-full">
-            <CalendarDays className="mr-1 h-3.5 w-3.5" aria-hidden /> สอบปลายภาค 1/2569
+            <CalendarDays className="mr-1 h-3.5 w-3.5" aria-hidden /> {termInfo.name || "สอบปลายภาค"}
           </Badge>
         </div>
         {subjects.length === 0 ? (

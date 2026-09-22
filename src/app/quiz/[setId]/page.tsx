@@ -6,6 +6,7 @@ import { QuizRunner } from "@/components/quiz/quiz-runner";
 import { MarkdownLite } from "@/components/study-guide/markdown-lite";
 import { questionSetService } from "@/server/services/question-set-service";
 import { db } from "@/lib/db";
+import { getSession } from "@/server/session";
 
 export const dynamic = "force-dynamic";
 
@@ -18,18 +19,26 @@ export default async function QuizPage({
 }) {
   const { setId } = await params;
   const { retry: retrySessionId } = await searchParams;
+  const session = await getSession();
   const set = await questionSetService.getForPlay(setId);
   if (!set) notFound();
 
-  // โหมดฝึกซ้ำ: จำกัดเฉพาะข้อใน RetrySession (ข้อที่ผิด/ข้ามจาก attempt ต้นทาง)
+  // โหมดฝึกซ้ำ: ตรวจสิทธิ์เจ้าของและจำกัดเฉพาะข้อใน RetrySession (ข้อที่ผิด/ข้ามจาก attempt ต้นทาง)
   let retryQuestionIds: string[] | null = null;
   let retrySourceAttemptId: string | null = null;
   if (retrySessionId) {
     const rs = await db.retrySession.findUnique({ where: { id: retrySessionId } });
-    if (rs) {
-      retryQuestionIds = (rs.questionIds as string[]) ?? null;
-      retrySourceAttemptId = rs.sourceAttemptId;
+    if (!rs) {
+      notFound();
     }
+    const isOwner = session.userId
+      ? rs.ownerUserId === session.userId
+      : rs.ownerGuestId === session.guestSessionId;
+    if (!isOwner) {
+      notFound();
+    }
+    retryQuestionIds = (rs.questionIds as string[]) ?? null;
+    retrySourceAttemptId = rs.sourceAttemptId;
   }
 
   // ชีตสรุปของวิชานี้ — แนะนำให้อ่านก่อนเริ่มทำ
@@ -74,6 +83,7 @@ export default async function QuizPage({
             ? set.questions.filter((q) => retryQuestionIds.includes(q.id))
             : set.questions,
         }}
+        retrySessionId={retrySessionId}
         retrySourceAttemptId={retrySourceAttemptId}
       />
     </div>

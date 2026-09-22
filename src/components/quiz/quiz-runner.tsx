@@ -71,9 +71,11 @@ const formatClock = (sec: number) => {
 /** หน้าทำข้อสอบ: จับเวลา, autosave แบบ debounce, ปักธง, จำตำแหน่งข้อ, ส่งคำตอบ */
 export function QuizRunner({
   set,
+  retrySessionId,
   retrySourceAttemptId,
 }: {
   set: PlaySet;
+  retrySessionId?: string | null;
   retrySourceAttemptId?: string | null;
 }) {
   const router = useRouter();
@@ -106,7 +108,11 @@ export function QuizRunner({
           const res = await fetch("/api/attempts", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ setId: set.id, mode: "EXAM" }),
+            body: JSON.stringify({
+              setId: set.id,
+              mode: "EXAM",
+              retrySessionId: retrySessionId ?? null,
+            }),
           });
           const json = await res.json();
           if (cancelled) return; // StrictMode ยิงซ้ำ — เงียบไว้ ไม่ใช่ความผิดพลาดจริง
@@ -182,6 +188,7 @@ export function QuizRunner({
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- เริ่มต้นรอบสอบและ restore สถานะครั้งเดียวต่อ setId
   }, [set.id]);
 
   // จำตำแหน่งข้อปัจจุบัน — เริ่มบันทึกหลัง hydrate เท่านั้น (กันทับค่าที่เคยจำไว้ตอน mount)

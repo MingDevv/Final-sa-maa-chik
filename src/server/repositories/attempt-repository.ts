@@ -5,6 +5,7 @@ export type AttemptRow = Prisma.AttemptGetPayload<{
   include: {
     set: { include: { subject: true; topic: true; questions: { orderBy: { sortOrder: "asc" } } } };
     answers: true;
+    retrySession: true;
   };
 }>;
 
@@ -14,6 +15,7 @@ export const attemptRepository = {
     userId?: string | null;
     guestSessionId?: string | null;
     mode: "EXAM" | "PRACTICE";
+    retrySessionId?: string | null;
   }) {
     return db.attempt.create({
       data: {
@@ -21,6 +23,7 @@ export const attemptRepository = {
         userId: data.userId ?? null,
         guestSessionId: data.guestSessionId ?? null,
         mode: data.mode,
+        retrySessionId: data.retrySessionId ?? null,
       },
     });
   },
@@ -37,6 +40,7 @@ export const attemptRepository = {
           },
         },
         answers: true,
+        retrySession: true,
       },
     });
   },
@@ -85,13 +89,18 @@ export const attemptRepository = {
     return db.attempt.update({ where: { id }, data: { status: "ABANDONED" } });
   },
 
-  async findLastActive(setId: string, owner: { userId?: string; guestSessionId?: string }) {
+  async findLastActive(
+    setId: string,
+    owner: { userId?: string; guestSessionId?: string },
+    retrySessionId?: string | null,
+  ) {
     return db.attempt.findFirst({
       where: {
         setId,
         status: "IN_PROGRESS",
         userId: owner.userId ?? null,
         guestSessionId: owner.guestSessionId ?? null,
+        retrySessionId: retrySessionId ?? null,
       },
       orderBy: { startedAt: "desc" },
     });

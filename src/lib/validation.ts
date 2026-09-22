@@ -113,6 +113,7 @@ export const updateQuestionSetSchema = z.object({
   difficulty: difficultySchema.optional(),
   recommendedMinutes: z.number().int().min(1).max(300).optional(),
   status: contentStatusSchema.optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
   shuffleQuestions: z.boolean().optional(),
   shuffleOptions: z.boolean().optional(),
   revealMode: revealModeSchema.optional(),
@@ -123,6 +124,7 @@ export const updateQuestionSetSchema = z.object({
 export const startAttemptSchema = z.object({
   setId: z.string().min(1),
   mode: attemptModeSchema.default("EXAM"),
+  retrySessionId: z.string().optional().nullable(),
 });
 
 export const saveAnswerSchema = z.object({

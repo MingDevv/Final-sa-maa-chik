@@ -1,7 +1,7 @@
 // แนวข้อสอบภาษาอังกฤษอ่าน-เขียน (วันที่ 2) — Vocabulary Units 1-4 + Reading
 // สถานะ: DRAFT — ต้นทางยังไม่ระบุจำนวนข้อ ผู้ดูแลต้องยืนยันก่อน publish
 // ตัวเลือกหลอกใช้คำศัพท์จริงจากหน่วยเดียวกัน
-import type { ExamSetDef, ExamQ } from "./types";
+import type { ExamSetDef, ExamQ } from "../seed-exams/types";
 
 type Vocab = { word: string; pos: string; meaning: string; unit: string };
 
@@ -17,6 +17,12 @@ const UNITS: Record<string, Vocab[]> = {
     { word: "composition", pos: "n.", meaning: "องค์ประกอบ", unit: "Unit 1" },
     { word: "reliable", pos: "adj.", meaning: "เชื่อถือได้", unit: "Unit 1" },
     { word: "density", pos: "n.", meaning: "ความหนาแน่น", unit: "Unit 1" },
+    { word: "plug into", pos: "phr.v.", meaning: "เสียบเข้ากับ/ป้อนข้อมูล", unit: "Unit 1" },
+    { word: "rely on", pos: "phr.v.", meaning: "พึ่งพา/อาศัย", unit: "Unit 1" },
+    { word: "squeeze", pos: "v.", meaning: "บีบ/คั้น", unit: "Unit 1" },
+    { word: "accurate", pos: "adj.", meaning: "แม่นยำ/ถูกต้อง", unit: "Unit 1" },
+    { word: "determine", pos: "v.", meaning: "กำหนด/พิจารณา", unit: "Unit 1" },
+    { word: "criticism", pos: "n.", meaning: "การวิพากษ์วิจารณ์", unit: "Unit 1" },
   ],
   "Unit 2: Headaches": [
     { word: "tumor", pos: "n.", meaning: "เนื้องอก", unit: "Unit 2" },
@@ -29,6 +35,10 @@ const UNITS: Record<string, Vocab[]> = {
     { word: "classify", pos: "v.", meaning: "จัดหมวดหมู่", unit: "Unit 2" },
     { word: "infection", pos: "n.", meaning: "การติดเชื้อ", unit: "Unit 2" },
     { word: "abnormal", pos: "adj.", meaning: "ผิดปกติ", unit: "Unit 2" },
+    { word: "chemistry", pos: "n.", meaning: "เคมี/สารเคมีในร่างกาย", unit: "Unit 2" },
+    { word: "suffer from", pos: "phr.v.", meaning: "ประสบทุกข์ทรมานจาก", unit: "Unit 2" },
+    { word: "trigger", pos: "v./n.", meaning: "กระตุ้น/สิ่งกระตุ้น", unit: "Unit 2" },
+    { word: "occur", pos: "v.", meaning: "เกิดขึ้น", unit: "Unit 2" },
   ],
   "Unit 3: Should I Stay or Should I Go?": [
     { word: "flexible", pos: "adj.", meaning: "ยืดหยุ่น", unit: "Unit 3" },
@@ -41,6 +51,12 @@ const UNITS: Record<string, Vocab[]> = {
     { word: "debt", pos: "n.", meaning: "หนี้", unit: "Unit 3" },
     { word: "bilingual", pos: "adj.", meaning: "สองภาษา", unit: "Unit 3" },
     { word: "curriculum", pos: "n.", meaning: "หลักสูตร", unit: "Unit 3" },
+    { word: "adapt", pos: "v.", meaning: "ปรับตัว", unit: "Unit 3" },
+    { word: "domestic", pos: "adj.", meaning: "ภายในประเทศ", unit: "Unit 3" },
+    { word: "adolescent", pos: "n./adj.", meaning: "วัยรุ่น", unit: "Unit 3" },
+    { word: "undergraduate", pos: "n.", meaning: "นักศึกษาปริญญาตรี", unit: "Unit 3" },
+    { word: "statistically", pos: "adv.", meaning: "ทางสถิติ", unit: "Unit 3" },
+    { word: "aspect", pos: "n.", meaning: "ด้าน/แง่มุม", unit: "Unit 3" },
   ],
   "Unit 4: Under COVID-19": [
     { word: "generalize", pos: "v.", meaning: "สรุปกว้าง ๆ", unit: "Unit 4" },
@@ -52,18 +68,19 @@ const UNITS: Record<string, Vocab[]> = {
   ],
 };
 
-const KEY = ["A", "B", "C", "D"];
-
 /** สร้างข้อ "เลือกความหมาย" — ตัวเลือกหลอกดึงจากคำศัพท์อื่นในหน่วยเดียวกัน */
 function vocabQ(all: Vocab[], target: Vocab): ExamQ {
   const others = all.filter((v) => v.word !== target.word).slice(0, 3).map((v) => v.meaning);
-  const options = [target.meaning, ...others];
+  const targetIdx = target.word.length % 4;
+  const options = [...others];
+  options.splice(targetIdx, 0, target.meaning);
   return {
     type: "MCQ",
     prompt: `คำว่า "${target.word}" (${target.unit}) มีความหมายตรงกับข้อใด`,
     options,
-    answer: 0,
+    answer: targetIdx,
     explanation: `${target.word} (${target.pos}) = ${target.meaning} — จากคลังคำศัพท์ ${target.unit}`,
+    points: 1,
   };
 }
 

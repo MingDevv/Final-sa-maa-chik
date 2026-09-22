@@ -3,10 +3,9 @@
  * รันอัตโนมัติเมื่อ DB พร้อม — ถ้าต่อ DB ไม่ได้จะ skip ทั้งชุด
  * รันเฉพาะตอนมี DB: npm run test:integration
  */
-import { beforeAll, describe, expect, it } from "vitest";
-import { PrismaClient } from "@prisma/client";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { db } from "@/lib/db";
 
-const db = new PrismaClient();
 let dbReady = false;
 
 beforeAll(async () => {
@@ -14,6 +13,10 @@ beforeAll(async () => {
     .$queryRaw`SELECT 1`
     .then(() => true)
     .catch(() => false);
+});
+
+afterAll(async () => {
+  await db.$disconnect();
 });
 
 describe("integration (ต้องมี DB)", () => {
@@ -45,7 +48,7 @@ describe("integration (ต้องมี DB)", () => {
         }
       }
     }
-  });
+  }, 15000);
 
   it("เอกสารตัวอย่างถูก mark เป็น reference-only (นโยบายเนื้อหาอ้างอิง)", async () => {
     if (!dbReady) return;
@@ -54,7 +57,7 @@ describe("integration (ต้องมี DB)", () => {
       const meta = (d.metadata ?? {}) as { policy?: string };
       expect(meta.policy).toBe("reference-only");
     }
-  });
+  }, 15000);
 
   it("flow ทำข้อสอบ: เริ่ม → บันทึกคำตอบ → ส่ง → คะแนนถูกต้อง", { timeout: 20000 }, async () => {
     if (!dbReady) return;
@@ -92,3 +95,4 @@ describe("integration (ต้องมี DB)", () => {
     await db.attempt.delete({ where: { id: attempt.id } });
   });
 });
+

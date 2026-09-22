@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { NotebookPen } from "lucide-react";
 import { BackButton } from "@/components/back-button";

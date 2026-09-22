@@ -137,14 +137,16 @@ async function main() {
       : null;
 
     const actualCount = def.questions.length;
+    const isApproved =
+      def.publish && (def.sourceQuestionCount === null || actualCount === def.sourceQuestionCount);
     const metadata = {
       sourceQuestionCount: def.sourceQuestionCount,
       actualQuestionCount: actualCount,
       sourceFiles: def.sourceFiles,
       coverageByTopic: def.coverageByTopic,
-      reviewStatus: def.publish ? "pending-review" : "awaiting-question-count-confirmation",
-      reviewedBy: null,
-      reviewedAt: null,
+      reviewStatus: isApproved ? "approved" : "awaiting-review",
+      reviewedBy: isApproved ? "audit-gate" : null,
+      reviewedAt: isApproved ? new Date().toISOString() : null,
       needsConfirmation: def.sourceQuestionCount === null,
     };
 

@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { attemptService } from "@/server/services/attempt-service";
 import { handleApiError, ok } from "@/server/api-helpers";
 import { getSession } from "@/server/session";
 

@@ -1,3 +1,4 @@
+import { db } from "@/lib/db";
 import { attemptRepository, questionStatRepository } from "@/server/repositories/attempt-repository";
 import { questionSetRepository } from "@/server/repositories/question-set-repository";
 import { weakTopicRepository, activityRepository } from "@/server/repositories/analytics-repository";
@@ -25,7 +26,19 @@ export const scoreAttemptAnswers = (attempt: AttemptRow): {
   const perQuestion: ScoredAnswer[] = [];
   const topicAgg = new Map<string, { subjectId: string; total: number; wrong: number }>();
 
-  for (const q of attempt.set.questions) {
+  let questionsToScore = attempt.set.questions;
+  if (attempt.retrySessionId && attempt.retrySession?.questionIds) {
+    const retryQuestionIds = new Set(
+      Array.isArray(attempt.retrySession.questionIds)
+        ? (attempt.retrySession.questionIds as string[])
+        : [],
+    );
+    if (retryQuestionIds.size > 0) {
+      questionsToScore = questionsToScore.filter((q) => retryQuestionIds.has(q.id));
+    }
+  }
+
+  for (const q of questionsToScore) {
     const submitted = attempt.answers.find((a) => a.questionId === q.id);
     const answered =
       submitted &&
@@ -84,7 +97,7 @@ export const scoreAttemptAnswers = (attempt: AttemptRow): {
     }
   }
 
-  const total = attempt.set.questions.reduce((sum, q) => sum + q.points, 0);
+  const total = questionsToScore.reduce((sum, q) => sum + q.points, 0);
   const earned = perQuestion.reduce((sum, p) => sum + p.earned, 0);
   const autoGraded = perQuestion.filter((p) => p.status !== "self-check");
   const autoTotal = autoGraded.reduce((sum, p) => sum + p.points, 0);
@@ -124,12 +137,38 @@ export const attemptService = {
     setId: string;
     mode: "EXAM" | "PRACTICE";
     owner: { userId?: string; guestSessionId?: string };
+    retrySessionId?: string | null;
   }) {
     const set = await questionSetRepository.findById(input.setId);
     if (!set || set.status !== "PUBLISHED") return null;
 
+    if (input.retrySessionId) {
+      const rs = await db.retrySession.findUnique({
+        where: { id: input.retrySessionId },
+      });
+      if (!rs) throw new Error("NOT_FOUND");
+
+      const match = input.owner.userId
+        ? rs.ownerUserId === input.owner.userId
+        : rs.ownerGuestId === input.owner.guestSessionId;
+      if (!match) throw new Error("FORBIDDEN");
+
+      // ตรวจสอบว่า retrySession นี้เป็นของชุดข้อสอบเดียวกัน
+      const sourceAttempt = await db.attempt.findUnique({
+        where: { id: rs.sourceAttemptId },
+        select: { setId: true },
+      });
+      if (!sourceAttempt || sourceAttempt.setId !== input.setId) {
+        throw new Error("FORBIDDEN");
+      }
+    }
+
     // ถ้ามี attempt ค้างอยู่ให้กลับไปทำต่อ
-    const existing = await attemptRepository.findLastActive(input.setId, input.owner);
+    const existing = await attemptRepository.findLastActive(
+      input.setId,
+      input.owner,
+      input.retrySessionId,
+    );
     if (existing) return existing.id;
 
     const created = await attemptRepository.create({
@@ -137,6 +176,7 @@ export const attemptService = {
       userId: input.owner.userId ?? null,
       guestSessionId: input.owner.guestSessionId ?? null,
       mode: input.mode,
+      retrySessionId: input.retrySessionId ?? null,
     });
     return created.id;
   },
@@ -159,6 +199,21 @@ export const attemptService = {
     assertOwner(attempt, input.owner);
 
     const { questionId, ...rest } = input.data;
+
+    // ตรวจสอบว่า questionId เป็นสมาชิกของชุดข้อสอบนี้จริง
+    const q = attempt.set.questions.find((x) => x.id === questionId);
+    if (!q) throw new Error("NOT_FOUND");
+
+    // ถ้าเป็นโหมดฝึกซ้ำ ต้องตรวจว่า questionId อยู่ในรายการที่ต้องฝึกซ้ำจริง
+    if (attempt.retrySessionId && attempt.retrySession?.questionIds) {
+      const retryQuestionIds = Array.isArray(attempt.retrySession.questionIds)
+        ? (attempt.retrySession.questionIds as string[])
+        : [];
+      if (retryQuestionIds.length > 0 && !retryQuestionIds.includes(questionId)) {
+        throw new Error("FORBIDDEN");
+      }
+    }
+
     const answerPayload: Prisma.InputJsonValue = {
       ...(rest.selectedKeys !== undefined ? { selectedKeys: rest.selectedKeys } : {}),
       ...(rest.text !== undefined ? { text: rest.text } : {}),
@@ -174,8 +229,7 @@ export const attemptService = {
     });
 
     // โหมดฝึก (เฉลยทันที): ตรวจข้ออัตโนมัติให้ด้วย — โหลดใหม่หลังบันทึกเพื่อให้เห็นคำตอบล่าสุด
-    const q = attempt.set.questions.find((x) => x.id === questionId);
-    if (q && q.type !== "WRITTEN") {
+    if (q.type !== "WRITTEN") {
       const fresh = await attemptRepository.findById(input.attemptId);
       const { perQuestion } = scoreAttemptAnswers(fresh ?? attempt);
       const p = perQuestion.find((x) => x.questionId === questionId);
@@ -247,6 +301,16 @@ export const attemptService = {
     assertOwner(attempt, input.owner);
     const q = attempt.set.questions.find((x) => x.id === input.questionId);
     if (!q || q.type !== "WRITTEN") return null;
+
+    // ถ้าเป็นโหมดฝึกซ้ำ ต้องตรวจว่า questionId อยู่ในรายการที่ต้องฝึกซ้ำด้วย
+    if (attempt.retrySessionId && attempt.retrySession?.questionIds) {
+      const retryQuestionIds = Array.isArray(attempt.retrySession.questionIds)
+        ? (attempt.retrySession.questionIds as string[])
+        : [];
+      if (retryQuestionIds.length > 0 && !retryQuestionIds.includes(input.questionId)) {
+        throw new Error("FORBIDDEN");
+      }
+    }
 
     await attemptRepository.saveAnswer(input.attemptId, input.questionId, {
       selfChecked: true,

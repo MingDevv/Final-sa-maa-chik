@@ -7,7 +7,6 @@
  * รัน: npm run db:seed
  */
 import { PrismaClient } from "@prisma/client";
-import path from "node:path";
 
 const db = new PrismaClient();
 

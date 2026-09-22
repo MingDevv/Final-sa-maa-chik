@@ -64,7 +64,9 @@ export const Whiteboard = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const strokesRef = useRef<Stroke[]>([]);
-  const redoRef = useRef<Stroke[]>([]);
+  const undoHistoryRef = useRef<Stroke[][]>([]);
+  const redoHistoryRef = useRef<Stroke[][]>([]);
+  const erasingSnapshotRef = useRef<Stroke[] | null>(null);
   const activeRef = useRef<Stroke | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout>>(null);
   const [tool, setTool] = useState<Tool>("pen");
@@ -159,7 +161,7 @@ export const Whiteboard = ({
     for (const s of highlighters) paintStroke(ctx, s);
     for (const s of pens) paintStroke(ctx, s);
     if (activeRef.current) paintStroke(ctx, activeRef.current);
-  }, [drawTemplate]);
+  }, [drawTemplate, paintStroke]);
 
   /** fit canvas = กว้างเท่า container สูงตามสัดส่วน logical — logical coordinate คงที่ */
   const fitCanvas = useCallback(() => {
@@ -182,7 +184,6 @@ export const Whiteboard = ({
         strokesRef.current = Array.isArray(data.strokes) ? data.strokes : [];
         // eslint-disable-next-line react-hooks/set-state-in-effect -- restore ร่างจาก localStorage ตอน mount
         if (data.template) setTemplate(data.template);
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- อัปเดตสถานะหลัง restore
         setHasContent(strokesRef.current.length > 0);
       }
     } catch {
@@ -191,13 +192,17 @@ export const Whiteboard = ({
   }, [storageKey]);
 
   useEffect(() => {
+    const handleFullscreenChange = () => {
+      setFullscreenTick(Boolean(document.fullscreenElement));
+      fitCanvas();
+    };
     const t = setTimeout(() => fitCanvas(), 60);
     window.addEventListener("resize", fitCanvas);
-    document.addEventListener("fullscreenchange", fitCanvas);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
     return () => {
       clearTimeout(t);
       window.removeEventListener("resize", fitCanvas);
-      document.removeEventListener("fullscreenchange", fitCanvas);
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
   }, [fitCanvas]);
 
@@ -248,7 +253,6 @@ export const Whiteboard = ({
       (s) => !s.points.some((p) => Math.hypot(p.x - pt.x, p.y - pt.y) < threshold),
     );
     if (strokesRef.current.length !== before) {
-      redoRef.current = [];
       redraw();
     }
   };
@@ -260,6 +264,7 @@ export const Whiteboard = ({
     e.currentTarget.setPointerCapture(e.pointerId);
     const pt = toLogical(e);
     if (isErasing(e)) {
+      erasingSnapshotRef.current = [...strokesRef.current];
       eraseAt(pt);
       return;
     }
@@ -292,11 +297,22 @@ export const Whiteboard = ({
   };
 
   const onPointerUp = () => {
+    if (erasingSnapshotRef.current) {
+      if (strokesRef.current.length !== erasingSnapshotRef.current.length) {
+        undoHistoryRef.current.push(erasingSnapshotRef.current);
+        if (undoHistoryRef.current.length > 30) undoHistoryRef.current.shift();
+        redoHistoryRef.current = [];
+        persist();
+      }
+      erasingSnapshotRef.current = null;
+    }
     if (activeRef.current) {
       const s = activeRef.current;
       if (s.points.length > 0) {
+        undoHistoryRef.current.push([...strokesRef.current]);
+        if (undoHistoryRef.current.length > 30) undoHistoryRef.current.shift();
         strokesRef.current.push(s);
-        redoRef.current = [];
+        redoHistoryRef.current = [];
       }
       activeRef.current = null;
       redraw();
@@ -305,20 +321,34 @@ export const Whiteboard = ({
   };
 
   const undo = () => {
-    const s = strokesRef.current.pop();
-    if (s) redoRef.current.push(s);
-    redraw();
-    persist();
+    const prev = undoHistoryRef.current.pop();
+    if (prev !== undefined) {
+      redoHistoryRef.current.push([...strokesRef.current]);
+      strokesRef.current = prev;
+      redraw();
+      persist();
+    }
   };
   const redo = () => {
-    const s = redoRef.current.pop();
-    if (s) strokesRef.current.push(s);
-    redraw();
-    persist();
+    const next = redoHistoryRef.current.pop();
+    if (next !== undefined) {
+      undoHistoryRef.current.push([...strokesRef.current]);
+      strokesRef.current = next;
+      redraw();
+      persist();
+    }
   };
   const clear = () => {
     if (strokesRef.current.length === 0) return;
-    redoRef.current = [];
+    if (
+      typeof window !== "undefined" &&
+      !window.confirm("ต้องการล้างกระดาษทดทั้งหมดหรือไม่? (สามารถกดย้อนกลับ Undo ได้)")
+    ) {
+      return;
+    }
+    undoHistoryRef.current.push([...strokesRef.current]);
+    if (undoHistoryRef.current.length > 30) undoHistoryRef.current.shift();
+    redoHistoryRef.current = [];
     strokesRef.current = [];
     redraw();
     persist();
@@ -342,6 +372,20 @@ export const Whiteboard = ({
     a.download = `scratch-${storageKey.replace(/[^\w-]/g, "_")}.png`;
     a.click();
   };
+
+  const changeTemplate = (t: Template) => {
+    setTemplate(t);
+    try {
+      const existing = localStorage.getItem(`fep_wb2:${storageKey}`);
+      const data: Serialized = existing
+        ? { ...(JSON.parse(existing) as Serialized), template: t }
+        : { strokes: strokesRef.current, template: t };
+      localStorage.setItem(`fep_wb2:${storageKey}`, JSON.stringify(data));
+    } catch {
+      /* ignore */
+    }
+  };
+
   const toggleFullscreen = async () => {
     if (!document.fullscreenElement && wrapRef.current) {
       await wrapRef.current.requestFullscreen().catch(() => undefined);
@@ -441,7 +485,7 @@ export const Whiteboard = ({
               aria-checked={template === t.id}
               aria-label={`พื้นกระดาษแบบ${t.label}`}
               title={`พื้นแบบ${t.label}`}
-              onClick={() => setTemplate(t.id)}
+              onClick={() => changeTemplate(t.id)}
               className={cn(
                 "flex h-7 items-center rounded-lg border px-2 text-[10px] transition-colors",
                 template === t.id

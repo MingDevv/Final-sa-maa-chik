@@ -24,6 +24,7 @@ export async function GET(
       recommendedMinutes: set.recommendedMinutes,
       status: set.status,
       version: set.version,
+      metadata: set.metadata,
       shuffleQuestions: set.shuffleQuestions,
       shuffleOptions: set.shuffleOptions,
       revealMode: set.revealMode,
@@ -53,7 +54,26 @@ export async function PATCH(
     const { id } = await params;
     const body = updateQuestionSetSchema.parse(await req.json());
     const update: Record<string, unknown> = { ...body };
-    if (body.status) {
+    if (body.status === "PUBLISHED") {
+      const existing = await questionSetRepository.findById(id);
+      if (!existing) return handleApiError(new Error("NOT_FOUND"));
+      const meta = (existing.metadata as Record<string, unknown>) || {};
+      const newMeta = (body.metadata as Record<string, unknown>) || meta;
+      if (newMeta.reviewStatus !== "approved") {
+        return handleApiError(
+          new Error("CANNOT_PUBLISH_UNAPPROVED: reviewStatus must be approved"),
+        );
+      }
+      if (
+        typeof newMeta.sourceQuestionCount === "number" &&
+        existing.questions.length !== newMeta.sourceQuestionCount
+      ) {
+        return handleApiError(
+          new Error(
+            `CANNOT_PUBLISH_COUNT_MISMATCH: actual ${existing.questions.length} ≠ source ${newMeta.sourceQuestionCount}`,
+          ),
+        );
+      }
       // ทุกครั้งที่เผยแพร่หลังแก้ไข เพิ่มเวอร์ชัน (versioning แยกตามรอบสอบด้วย termId)
       update.version = { increment: 1 };
     }

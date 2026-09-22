@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Archive, ArrowLeft, History } from "lucide-react";
+import { Archive, History } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BackButton } from "@/components/back-button";
