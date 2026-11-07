@@ -40,7 +40,7 @@ export function AdminLogin() {
     <div className="mx-auto max-w-md pt-10">
       <Card className="rounded-3xl shadow-soft-lg">
         <CardHeader className="items-center pb-2 text-center">
-          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-gradient-to-br from-wine to-purple-brand text-white shadow-soft">
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl brand-tile shadow-soft">
             <Lock className="h-7 w-7" aria-hidden />
           </span>
           <CardTitle className="pt-2 text-lg">เข้าสู่ระบบผู้ดูแล</CardTitle>

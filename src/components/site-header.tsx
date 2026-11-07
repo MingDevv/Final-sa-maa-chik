@@ -7,6 +7,12 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
+const NAV = [
+  { href: "/", label: "หน้าแรก" },
+  { href: "/archive", label: "คลังข้อสอบ" },
+  { href: "/admin", label: "ผู้ดูแล" },
+];
+
 export function SiteHeader() {
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
@@ -18,44 +24,39 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-3 px-4 md:px-6">
         <Link
           href="/"
-          className="flex items-center gap-2 rounded-xl px-2 py-1 font-semibold text-wine transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring dark:text-primary"
+          className="flex items-center gap-2 rounded-lg px-2 py-1 font-semibold text-foreground transition-colors hover:bg-secondary"
           aria-label="หน้าแรก Final-sa-maa-chik"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-2xl bg-gradient-to-br from-wine to-purple-brand text-white shadow-soft">
+          <span className="brand-tile flex h-8 w-8 items-center justify-center rounded-lg">
             <GraduationCap className="h-5 w-5" aria-hidden />
           </span>
           <span className="whitespace-nowrap text-sm md:text-[15px]">Final-sa-maa-chik</span>
         </Link>
 
         <nav className="flex items-center gap-1 text-sm" aria-label="เมนูหลัก">
-          <Link
-            href="/"
-            className={`rounded-xl px-3 py-2 transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring ${
-              pathname === "/" ? "bg-secondary font-medium text-wine dark:text-primary" : "text-foreground/80"
-            }`}
-          >
-            หน้าแรก
-          </Link>
-          <Link
-            href="/archive"
-            className="rounded-xl px-3 py-2 text-foreground/80 transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring"
-          >
-            คลังข้อสอบ
-          </Link>
-          <Link
-            href="/admin"
-            className="rounded-xl px-3 py-2 text-foreground/80 transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring"
-          >
-            ผู้ดูแล
-          </Link>
+          {NAV.map((item) => {
+            const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={`rounded-lg px-3 py-2 transition-colors hover:bg-secondary ${
+                  active ? "bg-secondary font-semibold text-primary" : "text-foreground/75 hover:text-foreground"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-xl"
+            className="h-10 w-10 rounded-lg"
             aria-label={mounted && resolvedTheme === "dark" ? "สลับเป็นโหมดสว่าง" : "สลับเป็นโหมดมืด"}
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
           >

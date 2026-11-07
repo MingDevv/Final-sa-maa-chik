@@ -31,32 +31,32 @@ export default async function SubjectPage({
         <BackButton fallbackHref="/" label="ย้อนกลับหน้าแรก" />
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      {/* หัววิชา: ชื่อก่อน แล้วค่อยปุ่มชีตสรุปทางขวา (มือถือจะลงมาอยู่ใต้ชื่อ) */}
+      <header className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <span
+            className="subject-icon flex h-14 w-14 shrink-0 items-center justify-center rounded-xl"
+            style={{ "--sc": subject.color } as React.CSSProperties}
+            aria-hidden
+          >
+            <FileText className="h-7 w-7" />
+          </span>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-semibold leading-tight">{subject.name}</h1>
+              {subject.status === "ARCHIVED" && (
+                <Badge variant="secondary" className="rounded-full">ชุดเก่า — คลังข้อสอบที่ผ่านมา</Badge>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground">{subject.code}</p>
+          </div>
+        </div>
         <Link
           href={`/study-guide/${encodeURIComponent(subject.code)}`}
-          className="lift flex items-center gap-2 rounded-2xl border border-wine/30 bg-soft-pink/60 px-4 py-2 text-sm font-medium text-wine hover:bg-soft-pink dark:border-primary/40 dark:bg-secondary dark:text-primary dark:hover:bg-secondary/70 focus-visible:outline-2 focus-visible:outline-ring"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
         >
-          <NotebookPen className="h-4 w-4" aria-hidden /> อ่านชีตสรุปก่อนสอบ (มีสูตรครบ)
+          <NotebookPen className="h-4 w-4" aria-hidden /> อ่านชีตสรุปก่อนสอบ
         </Link>
-      </div>
-
-      <header className="flex flex-wrap items-center gap-3">
-        <span
-          className="flex h-14 w-14 items-center justify-center rounded-3xl text-white shadow-soft"
-          style={{ backgroundColor: subject.color }}
-          aria-hidden
-        >
-          <FileText className="h-7 w-7" />
-        </span>
-        <div className="flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-semibold">{subject.name}</h1>
-            {subject.status === "ARCHIVED" && (
-              <Badge variant="secondary" className="rounded-full">ชุดเก่า — คลังข้อสอบที่ผ่านมา</Badge>
-            )}
-          </div>
-          <p className="text-sm text-muted-foreground">{subject.code}</p>
-        </div>
       </header>
 
       <SubjectContent

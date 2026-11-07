@@ -31,7 +31,7 @@ export default async function ArchivePage() {
       </div>
 
       <header className="flex items-center gap-3">
-        <span className="flex h-12 w-12 items-center justify-center rounded-3xl bg-gradient-to-br from-wine to-purple-brand text-white shadow-soft" aria-hidden>
+        <span className="flex h-12 w-12 items-center justify-center rounded-3xl brand-tile shadow-soft" aria-hidden>
           <Archive className="h-6 w-6" />
         </span>
         <div>

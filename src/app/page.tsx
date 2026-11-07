@@ -74,7 +74,7 @@ export default async function DashboardPage() {
       <div className="mx-auto max-w-2xl pt-10">
         <Card className="rounded-3xl shadow-soft-lg">
           <CardHeader className="items-center pb-2 text-center">
-            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-gradient-to-br from-wine to-purple-brand text-white shadow-soft text-2xl">
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl brand-tile shadow-soft text-2xl">
               🔧
             </span>
             <CardTitle className="pt-2 text-lg">ยังเชื่อมต่อฐานข้อมูลไม่ได้</CardTitle>
@@ -119,7 +119,7 @@ export default async function DashboardPage() {
   const lastSet = recent[0];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-10">
       <Hero
         countdown={termInfo.countdown}
         termName={termInfo.name}
@@ -138,9 +138,9 @@ export default async function DashboardPage() {
       </section>
 
       {/* การ์ดวิชา (ดึงจากฐานข้อมูลเสมอ) */}
-      <section aria-label="รายวิชา" className="flex flex-col gap-3">
+      <section aria-label="รายวิชา" className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">วิชาเรียน ({subjects.length} วิชา)</h2>
+          <h2 className="text-xl font-semibold">วิชาเรียน <span className="font-normal text-muted-foreground">({subjects.length} วิชา)</span></h2>
           <Badge variant="secondary" className="rounded-full">
             <CalendarDays className="mr-1 h-3.5 w-3.5" aria-hidden /> {termInfo.name || "สอบปลายภาค"}
           </Badge>
@@ -152,7 +152,7 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {subjects.map((s) => (
               <Link
                 key={s.id}
@@ -160,26 +160,26 @@ export default async function DashboardPage() {
                 className="lift focus-visible:outline-2 focus-visible:outline-ring"
                 aria-label={`เข้าวิชา ${s.code} ${s.name}`}
               >
-                <Card className="h-full rounded-3xl border-border/70 shadow-soft hover:shadow-soft-lg">
+                <Card className="h-full rounded-2xl border-border shadow-none transition-colors hover:border-primary/40 hover:shadow-soft">
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-3">
                       <span
-                        className="flex h-11 w-11 items-center justify-center rounded-2xl text-white"
-                        style={{ backgroundColor: s.color }}
+                        className="subject-icon flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+                        style={{ "--sc": s.color } as React.CSSProperties}
                         aria-hidden
                       >
                         <BookOpen className="h-5 w-5" />
                       </span>
                       <div>
-                        <CardTitle className="text-base">{s.name}</CardTitle>
-                        <CardDescription className="text-xs">{s.code}</CardDescription>
+                        <CardTitle className="text-base leading-snug">{s.name}</CardTitle>
+                        <CardDescription className="text-sm">{s.code}</CardDescription>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                    <span className="rounded-full bg-muted px-2 py-1">{s.topicCount} หัวข้อ</span>
-                    <span className="rounded-full bg-muted px-2 py-1">{s.documentCount} ชีท</span>
-                    <span className="rounded-full bg-muted px-2 py-1">{s.questionSetCount} ชุดข้อสอบ</span>
+                  <CardContent className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                    <span>{s.questionSetCount} ชุดข้อสอบ</span>
+                    <span>{s.documentCount} ชีท</span>
+                    <span>{s.topicCount} หัวข้อ</span>
                   </CardContent>
                 </Card>
               </Link>
@@ -190,12 +190,12 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* ทบทวนจุดอ่อนวันนี้ */}
-        <Card className="rounded-3xl shadow-soft">
+        <Card className="rounded-2xl shadow-none">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
-              <Brain className="h-5 w-5 text-purple-brand" aria-hidden /> ทบทวนจุดอ่อนวันนี้
+              <Brain className="h-5 w-5 text-primary" aria-hidden /> ทบทวนจุดอ่อนวันนี้
             </CardTitle>
-            <CardDescription className="text-xs">
+            <CardDescription className="text-sm">
               หัวข้อที่ควรกลับไปทบทวนจากผลการทำข้อสอบล่าสุด
             </CardDescription>
           </CardHeader>
@@ -227,10 +227,12 @@ export default async function DashboardPage() {
         </Card>
 
         {/* ปุ่มลัด + ผลล่าสุด */}
-        <Card className="rounded-3xl shadow-soft">
+        <Card className="rounded-2xl shadow-none">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">เริ่มเรียนต่อ</CardTitle>
-            <CardDescription className="text-xs">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Play className="h-5 w-5 text-primary" aria-hidden /> เริ่มเรียนต่อ
+            </CardTitle>
+            <CardDescription className="text-sm">
               กลับไปทำข้อสอบที่ค้างไว้ หรือเปิดชีทอ่านต่อได้เลย
             </CardDescription>
           </CardHeader>
@@ -277,13 +279,13 @@ function StatCard({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-3xl border border-border/70 bg-card p-4 shadow-soft">
-      <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-secondary text-wine dark:text-primary">
+    <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
         {icon}
       </span>
       <div>
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="font-semibold">{value}</p>
+        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className="text-lg font-semibold leading-tight">{value}</p>
       </div>
     </div>
   );

@@ -55,80 +55,86 @@
 }
 
 :root {
-  /* พาเลตหลัก: แดงไวน์ / แดงปะการัง / ชมพูอ่อน / ม่วง / ลาเวนเดอร์ */
+  /* พาเลต "แดงสบายตา": แดงเป็นสีหลักสีเดียว ที่เหลือเป็นเทาอุ่น ๆ
+     purple-brand / lavender คงชื่อไว้ (ใช้อยู่หลายไฟล์) แต่เปลี่ยนเป็นโทนแดงเข้ม/ชมพูจาง
+     เพื่อตัดสีม่วงออกทั้งเว็บโดยไม่ต้องไล่แก้ทุกคอมโพเนนต์ */
   --wine: #9f1239;
-  --coral: #e11d48;
-  --soft-pink: #fff1f2;
-  --purple-brand: #7c3aed;
-  --lavender: #f3e8ff;
-  --ink: #251b2b;
+  --coral: #be123c;
+  --soft-pink: #fdf2f4;
+  --purple-brand: #7f1d1d;
+  --lavender: #fce8ec;
+  --ink: #1f1a1c;
 
-  --background: #fffbfc;
-  --foreground: #251b2b;
+  --background: #faf8f7;
+  --foreground: #1f1a1c;
   --card: #ffffff;
-  --card-foreground: #251b2b;
+  --card-foreground: #1f1a1c;
   --popover: #ffffff;
-  --popover-foreground: #251b2b;
-  --primary: #9f1239;
-  --primary-foreground: #fff1f2;
-  --secondary: #fff1f2;
+  --popover-foreground: #1f1a1c;
+  --primary: #be123c;
+  --primary-foreground: #ffffff;
+  --secondary: #fdf2f4;
   --secondary-foreground: #9f1239;
-  --muted: #faf3f6;
-  --muted-foreground: #6b5566;
-  --accent: #f3e8ff;
-  --accent-foreground: #5b21b6;
+  --muted: #f4f0ef;
+  --muted-foreground: #5f5559;
+  --accent: #fbeef1;
+  --accent-foreground: #9f1239;
   --destructive: #dc2626;
-  --border: #f3dbe2;
-  --input: #f0d4dc;
-  --ring: #e11d48;
-  --chart-1: #9f1239;
-  --chart-2: #e11d48;
-  --chart-3: #7c3aed;
-  --chart-4: #f472b6;
-  --chart-5: #c4b5fd;
-  /* มุมโค้งการ์ด 20-24px: radius-xl = radius * 1.4 ≈ 20px */
-  --radius: 0.9rem;
-  --sidebar: #fff5f7;
-  --sidebar-foreground: #251b2b;
-  --sidebar-primary: #9f1239;
-  --sidebar-primary-foreground: #fff1f2;
-  --sidebar-accent: #f3e8ff;
-  --sidebar-accent-foreground: #5b21b6;
-  --sidebar-border: #f3dbe2;
-  --sidebar-ring: #e11d48;
+  --border: #e9e2e0;
+  --input: #ddd4d2;
+  --ring: #be123c;
+  --chart-1: #be123c;
+  --chart-2: #f43f5e;
+  --chart-3: #9f1239;
+  --chart-4: #fda4af;
+  --chart-5: #78716c;
+  --radius: 0.75rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1f1a1c;
+  --sidebar-primary: #be123c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fbeef1;
+  --sidebar-accent-foreground: #9f1239;
+  --sidebar-border: #e9e2e0;
+  --sidebar-ring: #be123c;
 }
 
 .dark {
-  --background: #1c1119;
-  --foreground: #f6eef3;
-  --card: #2a1a26;
-  --card-foreground: #f6eef3;
-  --popover: #2a1a26;
-  --popover-foreground: #f6eef3;
+  --wine: #fda4af;
+  --coral: #fb7185;
+  --soft-pink: #2a1d20;
+  --purple-brand: #9f1239;
+  --lavender: #2a1d20;
+  --background: #151112;
+  --foreground: #f3eeef;
+  --card: #1e191a;
+  --card-foreground: #f3eeef;
+  --popover: #1e191a;
+  --popover-foreground: #f3eeef;
   --primary: #fb7185;
   --primary-foreground: #2a0a12;
-  --secondary: #3d1f30;
+  --secondary: #2a1d20;
   --secondary-foreground: #fda4af;
-  --muted: #341f2d;
-  --muted-foreground: #c9a8ba;
-  --accent: #372647;
-  --accent-foreground: #d8b4fe;
+  --muted: #262022;
+  --muted-foreground: #b5a9ad;
+  --accent: #2a1d20;
+  --accent-foreground: #fda4af;
   --destructive: #f87171;
-  --border: #442a3a;
-  --input: #4b2e40;
+  --border: #322a2c;
+  --input: #3d3335;
   --ring: #fb7185;
   --chart-1: #fb7185;
-  --chart-2: #e11d48;
-  --chart-3: #a78bfa;
-  --chart-4: #f472b6;
-  --chart-5: #c4b5fd;
-  --sidebar: #241522;
-  --sidebar-foreground: #f6eef3;
+  --chart-2: #f43f5e;
+  --chart-3: #fda4af;
+  --chart-4: #be123c;
+  --chart-5: #a8a29e;
+  --sidebar: #1e191a;
+  --sidebar-foreground: #f3eeef;
   --sidebar-primary: #fb7185;
   --sidebar-primary-foreground: #2a0a12;
-  --sidebar-accent: #372647;
-  --sidebar-accent-foreground: #d8b4fe;
-  --sidebar-border: #442a3a;
+  --sidebar-accent: #2a1d20;
+  --sidebar-accent-foreground: #fda4af;
+  --sidebar-border: #322a2c;
   --sidebar-ring: #fb7185;
 }
 
@@ -141,21 +147,13 @@
   }
   body {
     @apply bg-background text-foreground min-h-screen;
-    background-image: linear-gradient(
-      155deg,
-      color-mix(in srgb, var(--soft-pink) 70%, transparent) 0%,
-      color-mix(in srgb, var(--background) 85%, transparent) 45%,
-      color-mix(in srgb, var(--lavender) 55%, transparent) 100%
-    );
-    background-attachment: fixed;
+    font-size: 16px;
+    line-height: 1.6;
   }
-  .dark body {
-    background-image: linear-gradient(
-      155deg,
-      color-mix(in srgb, #2a1a26 90%, transparent) 0%,
-      var(--background) 50%,
-      color-mix(in srgb, #372647 85%, transparent) 100%
-    );
+  /* เส้นโฟกัสชัดเจนสำหรับคนใช้คีย์บอร์ด */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 }
 
@@ -163,27 +161,45 @@
   /* เงานุ่มสำหรับการ์ด */
   .shadow-soft {
     box-shadow:
-      0 2px 8px rgb(159 18 57 / 0.05),
-      0 12px 32px rgb(124 58 237 / 0.06);
+      0 1px 2px rgb(31 26 28 / 0.04),
+      0 4px 12px rgb(31 26 28 / 0.04);
   }
   .dark .shadow-soft {
     box-shadow:
-      0 2px 8px rgb(0 0 0 / 0.3),
-      0 12px 32px rgb(0 0 0 / 0.25);
+      0 1px 2px rgb(0 0 0 / 0.3),
+      0 4px 12px rgb(0 0 0 / 0.2);
   }
   .shadow-soft-lg {
     box-shadow:
-      0 4px 12px rgb(159 18 57 / 0.07),
-      0 20px 48px rgb(124 58 237 / 0.09);
+      0 2px 4px rgb(31 26 28 / 0.05),
+      0 12px 28px rgb(31 26 28 / 0.07);
+  }
+  /* กล่องไอคอนแบรนด์: แดงทึบ ไอคอนขาว (คงที่ทั้งโหมดสว่าง/มืด) */
+  .brand-tile {
+    background-color: #be123c;
+    color: #ffffff;
+  }
+  .dark .brand-tile {
+    background-color: #9f1239;
+  }
+  /* ไอคอนวิชา: พื้นจางจากสีประจำวิชา (--sc) — โหมดมืดทำสีให้สว่างขึ้นให้มองเห็น */
+  .subject-icon {
+    background-color: color-mix(in srgb, var(--sc) 12%, transparent);
+    color: var(--sc);
+  }
+  .dark .subject-icon {
+    background-color: color-mix(in srgb, var(--sc) 22%, transparent);
+    color: color-mix(in srgb, var(--sc) 45%, white);
   }
   /* transition เบา ๆ สำหรับ hover */
   .lift {
     transition:
-      transform 0.18s ease,
-      box-shadow 0.18s ease;
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
   }
   .lift:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
   }
   /* animation ของหน้าปก: วงกลมลอย + ข้อความเลื่อนขึ้น */
   @keyframes fep-float {
@@ -219,5 +235,20 @@
   }
   .animate-fade-up-delay-2 {
     animation: fep-fade-up 0.6s ease-out 0.24s both;
+  }
+  /* ผู้ใช้ที่ตั้งค่า "ลดการเคลื่อนไหว" ไม่ต้องเห็นอะไรลอย/เด้ง */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-float-slow,
+    .animate-fade-up,
+    .animate-fade-up-delay-1,
+    .animate-fade-up-delay-2 {
+      animation: none;
+    }
+    .lift,
+    .lift:hover {
+      transition: none;
+      transform: none;
+    }
   }
 }

@@ -13,7 +13,7 @@ export default function NotFound() {
   return (
     <div className="flex flex-col items-center gap-6 py-14 text-center">
       <span
-        className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-wine to-purple-brand text-white shadow-soft"
+        className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl brand-tile shadow-soft"
         aria-hidden
       >
         <SearchX className="h-8 w-8" />
