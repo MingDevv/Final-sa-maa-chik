@@ -40,7 +40,9 @@ async function loadDashboard() {
       analyticsService.dashboard(session.ownerKey),
       analyticsService.weakTopics(session.ownerKey),
       analyticsService.recentAttempts(session.ownerKey),
-      reviewService.dueSummary(session.ownerKey).catch(() => ({ due: 0, dangerous: 0, total: 0 })),
+      reviewService
+        .dueSummary(session.ownerKey)
+        .catch(() => ({ due: 0, dangerous: 0, total: 0, examDaysLeft: null, cram: false })),
     ]);
     let termInfo: { name: string; countdown: string | null } = {
       name: "สอบปลายภาค 1/2569",
@@ -64,7 +66,7 @@ async function loadDashboard() {
       summary: { totalQuestionsDone: 0, totalStudyMinutes: 0, currentStreak: 0, quizzesTaken: 0, averagePercent: 0, activeDays: 0 },
       weakTopics: [],
       recent: [],
-      review: { due: 0, dangerous: 0, total: 0 },
+      review: { due: 0, dangerous: 0, total: 0, examDaysLeft: null as number | null, cram: false },
       termInfo: { name: "", countdown: null },
       dbReady: false as const,
     };
@@ -142,7 +144,11 @@ export default async function DashboardPage() {
             <BrainCircuit className="h-7 w-7" aria-hidden />
           </span>
           <div>
-            <p className="text-sm font-medium text-white/85">ทบทวนวันนี้ · เว้นระยะ 1 → 3 → 7 → 14 → 30 วัน</p>
+            <p className="text-sm font-medium text-white/85">
+              {review.cram
+                ? `🔥 โหมดใกล้สอบ · อีก ${review.examDaysLeft} วันสอบ · ทบทวนทุกวันจนถึงวันก่อนสอบ`
+                : "ทบทวนวันนี้ · เว้นระยะ 1 → 3 → 7 → 14 → 30 วัน"}
+            </p>
             <p className="text-2xl font-bold md:text-3xl">
               {review.due > 0 ? `${review.due} ข้อรอทบทวน` : "วันนี้ไม่มีข้อค้าง 🎉"}
             </p>

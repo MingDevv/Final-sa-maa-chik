@@ -1,7 +1,13 @@
 import { db } from "@/lib/db";
 import { getStorage } from "@/server/storage";
 import { checkMcqAnswer, checkShortAnswer } from "@/lib/exam/answer-checking";
-import { endOfTodayBangkok, nextCard, type ReviewOutcome } from "@/lib/review/leitner";
+import {
+  daysUntilExam,
+  endOfTodayBangkok,
+  isCramMode,
+  nextCard,
+  type ReviewOutcome,
+} from "@/lib/review/leitner";
 import { localizedToString, type QuestionAnswer } from "@/lib/types";
 
 type Owner = { userId?: string; guestSessionId?: string };
@@ -19,11 +25,34 @@ const liveCard = {
   question: { type: { in: ["MCQ", "SHORT_ANSWER"] as ("MCQ" | "SHORT_ANSWER")[] }, set: { status: "PUBLISHED" as const } },
 };
 
-async function applyOutcome(owner: Owner, questionId: string, outcome: ReviewOutcome, now = new Date()) {
+/** วันสอบที่ใกล้ที่สุดที่ยังไม่ผ่าน (จากรอบสอบที่ ACTIVE) — ใช้บีบรอบทบทวนช่วงใกล้สอบ */
+export async function upcomingExamDate(now = new Date()): Promise<Date | null> {
+  try {
+    const terms = await db.examTerm.findMany({
+      where: { status: "ACTIVE", examDate: { not: null } },
+      select: { examDate: true },
+    });
+    const upcoming = terms
+      .map((t) => t.examDate!)
+      .filter((d) => (daysUntilExam(d, now) ?? -1) >= 0)
+      .sort((a, b) => a.getTime() - b.getTime());
+    return upcoming[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function applyOutcome(
+  owner: Owner,
+  questionId: string,
+  outcome: ReviewOutcome,
+  examDate: Date | null,
+  now = new Date(),
+) {
   const where = ownerWhere(owner);
   if (!where) return;
   const existing = await db.reviewCard.findFirst({ where: { ...where, questionId } });
-  const next = nextCard(existing ? { box: existing.box } : null, outcome, now);
+  const next = nextCard(existing ? { box: existing.box } : null, outcome, now, examDate);
 
   if (next.action === "none") return;
   if (next.action === "graduate") {
@@ -51,32 +80,38 @@ async function applyOutcome(owner: Owner, questionId: string, outcome: ReviewOut
 export const reviewService = {
   /** หลังส่งข้อสอบ: ข้อที่ผิด / ถูกแต่เดา → เข้าคิวทบทวน */
   async recordFromAttempt(owner: Owner, items: Array<{ questionId: string } & ReviewOutcome>) {
+    const examDate = await upcomingExamDate();
     for (const item of items) {
-      await applyOutcome(owner, item.questionId, item);
+      await applyOutcome(owner, item.questionId, item, examDate);
     }
   },
 
   /** จำนวนข้อที่ต้องทบทวนวันนี้ + ข้ออันตราย (มั่นใจแต่ผิด) */
   async dueSummary(owner: Owner) {
+    const examDate = await upcomingExamDate();
+    const exam = { examDaysLeft: daysUntilExam(examDate), cram: isCramMode(examDate) };
     const where = ownerWhere(owner);
-    if (!where) return { due: 0, dangerous: 0, total: 0 };
+    if (!where) return { due: 0, dangerous: 0, total: 0, ...exam };
     const today = endOfTodayBangkok();
     const [due, dangerous, total] = await Promise.all([
       db.reviewCard.count({ where: { ...where, ...liveCard, dueAt: { lte: today } } }),
       db.reviewCard.count({ where: { ...where, ...liveCard, dueAt: { lte: today }, confidentWrong: true } }),
       db.reviewCard.count({ where: { ...where, ...liveCard } }),
     ]);
-    return { due, dangerous, total };
+    return { due, dangerous, total, ...exam };
   },
 
   /** รายการข้อที่ถึงรอบทบทวน — ข้ออันตรายก่อน แล้วเรียงตามที่ค้างนานสุด (ไม่ส่งเฉลยออกไป) */
-  async listDue(owner: Owner, limit = 20) {
+  async listDue(owner: Owner, opts: { all?: boolean; limit?: number } = {}) {
     const where = ownerWhere(owner);
     if (!where) return [];
+    // all = ติวก่อนสอบ: ทบทวนทุกข้อในคิว (ไม่รอรอบ) เริ่มจากข้ออันตราย → กล่องต่ำ (ยังจำไม่ได้)
     const cards = await db.reviewCard.findMany({
-      where: { ...where, ...liveCard, dueAt: { lte: endOfTodayBangkok() } },
-      orderBy: [{ confidentWrong: "desc" }, { dueAt: "asc" }],
-      take: limit,
+      where: { ...where, ...liveCard, ...(opts.all ? {} : { dueAt: { lte: endOfTodayBangkok() } }) },
+      orderBy: opts.all
+        ? [{ confidentWrong: "desc" }, { box: "asc" }, { dueAt: "asc" }]
+        : [{ confidentWrong: "desc" }, { dueAt: "asc" }],
+      take: opts.limit ?? (opts.all ? 60 : 30),
       include: {
         question: {
           include: { set: { include: { subject: { select: { code: true, name: true, color: true } } } } },
@@ -132,7 +167,7 @@ export const reviewService = {
       throw new Error("NOT_FOUND");
     }
 
-    await applyOutcome(owner, q.id, { correct: isCorrect, confident: input.confident });
+    await applyOutcome(owner, q.id, { correct: isCorrect, confident: input.confident }, await upcomingExamDate());
     const after = await db.reviewCard.findUnique({ where: { id: card.id }, select: { box: true, dueAt: true } });
 
     return {
