@@ -10,7 +10,8 @@ export async function POST(request: Request) {
   if (!body.success) return fail("กรุณาใส่รหัสผู้ดูแล", 422);
 
   const expected = process.env.ADMIN_CODE;
-  if (!expected) {
+  const cookieValue = adminCookieValue();
+  if (!expected || !cookieValue) {
     return fail("ยังไม่ได้ตั้งค่า ADMIN_CODE ในไฟล์ .env — การล็อกอินผู้ดูแลถูกปิดอยู่", 503);
   }
   if (body.data.code !== expected) {
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
   }
 
   const response = NextResponse.json({ ok: true, data: { loggedIn: true } });
-  response.cookies.set(ADMIN_COOKIE, adminCookieValue(), {
+  response.cookies.set(ADMIN_COOKIE, cookieValue, {
     httpOnly: true,
     sameSite: "lax",
     maxAge: 60 * 60 * 24 * 30,
