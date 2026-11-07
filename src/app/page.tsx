@@ -140,7 +140,7 @@ export default async function DashboardPage() {
       {/* การ์ดวิชา (ดึงจากฐานข้อมูลเสมอ) */}
       <section aria-label="รายวิชา" className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">วิชาเรียน <span className="font-normal text-muted-foreground">({subjects.length} วิชา)</span></h2>
+          <h2 className="text-2xl font-bold tracking-tight">วิชาเรียน <span className="font-normal text-muted-foreground">({subjects.length} วิชา)</span></h2>
           <Badge variant="secondary" className="rounded-full">
             <CalendarDays className="mr-1 h-3.5 w-3.5" aria-hidden /> {termInfo.name || "สอบปลายภาค"}
           </Badge>
@@ -160,7 +160,10 @@ export default async function DashboardPage() {
                 className="lift focus-visible:outline-2 focus-visible:outline-ring"
                 aria-label={`เข้าวิชา ${s.code} ${s.name}`}
               >
-                <Card className="h-full rounded-2xl border-border shadow-none transition-colors hover:border-primary/40 hover:shadow-soft">
+                <Card
+                  className="subject-stripe h-full rounded-2xl border-border shadow-none transition-shadow hover:shadow-soft-lg"
+                  style={{ "--sc": s.color } as React.CSSProperties}
+                >
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-3">
                       <span
@@ -177,7 +180,7 @@ export default async function DashboardPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                    <span>{s.questionSetCount} ชุดข้อสอบ</span>
+                    <span className="font-semibold text-foreground">{s.questionSetCount} ชุดข้อสอบ</span>
                     <span>{s.documentCount} ชีท</span>
                     <span>{s.topicCount} หัวข้อ</span>
                   </CardContent>
@@ -285,7 +288,7 @@ function StatCard({
       </span>
       <div>
         <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="text-lg font-semibold leading-tight">{value}</p>
+        <p className="text-xl font-bold leading-tight">{value}</p>
       </div>
     </div>
   );

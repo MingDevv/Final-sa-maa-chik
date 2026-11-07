@@ -191,6 +191,38 @@
     background-color: color-mix(in srgb, var(--sc) 22%, transparent);
     color: color-mix(in srgb, var(--sc) 45%, white);
   }
+  /* hero: แดงไล่เฉดเข้ม + แสงจาง ๆ มุมซ้ายบน ให้มีมิติแต่ไม่ฉูดฉาด */
+  .hero-red {
+    background:
+      radial-gradient(120% 90% at 0% 0%, rgb(255 255 255 / 0.14), transparent 55%),
+      linear-gradient(135deg, #e11d48 0%, #be123c 40%, #881337 100%);
+  }
+  .dark .hero-red {
+    background:
+      radial-gradient(120% 90% at 0% 0%, rgb(255 255 255 / 0.08), transparent 55%),
+      linear-gradient(135deg, #9f1239 0%, #6b0f2a 55%, #3f0617 100%);
+  }
+  /* แถบสีประจำวิชาด้านบนการ์ด */
+  .subject-stripe {
+    border-top: 4px solid var(--sc);
+  }
+  /* ตัวหนังสือวิ่งที่ footer — เลื่อนครึ่งหนึ่งของแถว (มีข้อความซ้ำ 2 ชุด) จึงต่อกันไม่สะดุด */
+  @keyframes fep-marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: fep-marquee 28s linear infinite;
+  }
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
   /* transition เบา ๆ สำหรับ hover */
   .lift {
     transition:
@@ -242,7 +274,8 @@
     .animate-float-slow,
     .animate-fade-up,
     .animate-fade-up-delay-1,
-    .animate-fade-up-delay-2 {
+    .animate-fade-up-delay-2,
+    .marquee-track {
       animation: none;
     }
     .lift,

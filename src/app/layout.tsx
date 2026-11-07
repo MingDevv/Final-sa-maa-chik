@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 const plexThai = IBM_Plex_Sans_Thai({
   weight: ["300", "400", "500", "600", "700"],
@@ -60,9 +61,7 @@ export default function RootLayout({
             <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-6 md:px-6">
               {children}
             </main>
-            <footer className="border-t border-border/60 py-6 text-center text-xs text-muted-foreground">
-              Final-sa-maa-chik · ทำด้วยความตั้งใจเพื่อการสอบปลายภาค
-            </footer>
+            <SiteFooter />
           </div>
           <Toaster position="top-center" richColors />
         </ThemeProvider>
