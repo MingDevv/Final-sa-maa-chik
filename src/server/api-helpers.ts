@@ -22,15 +22,17 @@ export const handleApiError = (error: unknown) => {
 
 export const ADMIN_COOKIE = "fep_admin";
 
-/** ค่า cookie แอดมิน = sha256(ADMIN_CODE) — ไม่เก็บรหัสดิบไว้ในเครื่องผู้ใช้ */
-export const adminCookieValue = (): string =>
-  createHash("sha256")
-    .update(process.env.ADMIN_CODE ?? "Ming888")
-    .digest("hex");
+/** ค่า cookie แอดมิน = sha256(ADMIN_CODE) — ไม่เก็บรหัสดิบไว้ในเครื่องผู้ใช้
+ *  ถ้าไม่ได้ตั้ง ADMIN_CODE ใน .env จะคืน null = ล็อกอินแอดมินไม่ได้ทุกช่องทาง */
+export const adminCookieValue = (): string | null => {
+  const code = process.env.ADMIN_CODE;
+  return code ? createHash("sha256").update(code).digest("hex") : null;
+};
 
 /** ตรวจว่า request เป็นผู้ดูแล: ผ่าน cookie จากหน้าล็อกอิน หรือ header x-admin-token */
 export const isAdminRequest = (request: Request): boolean => {
   const expectedHash = adminCookieValue();
+  if (!expectedHash) return false;
   const cookie = request.headers.get("cookie") ?? "";
   const hasCookie = cookie
     .split(";")
@@ -45,7 +47,7 @@ export const isAdminRequest = (request: Request): boolean => {
 };
 
 /**
- * การ์ดเข้าถึงส่วนผู้ดูแล — ต้องล็อกอินด้วยรหัส ADMIN_CODE (ค่าเริ่มต้น Ming888)
+ * การ์ดเข้าถึงส่วนผู้ดูแล — ต้องล็อกอินด้วยรหัส ADMIN_CODE จาก .env (ไม่มีค่าเริ่มต้น)
  * หรือส่ง header x-admin-token กรณีตั้ง ADMIN_TOKEN ไว้ (สำหรับ script/import)
  */
 export const assertAdmin = (request: Request) => {

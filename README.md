@@ -93,7 +93,7 @@ npm run dev        # http://localhost:3000
 | ตัวแปร | ค่าเริ่มต้น | คำอธิบาย |
 | --- | --- | --- |
 | `DATABASE_URL` | — | การเชื่อมต่อ PostgreSQL (จำเป็น) |
-| `ADMIN_CODE` | `Ming888` | รหัสเข้าหน้าผู้ดูแล `/admin` (แนะนำเปลี่ยนบน production) |
+| `ADMIN_CODE` | — (ต้องตั้งเอง) | รหัสเข้าหน้าผู้ดูแล `/admin` — ถ้าไม่ตั้งใน `.env` จะล็อกอินแอดมินไม่ได้เลย |
 | `ADMIN_TOKEN` | (ว่าง) | (ทางเลือก) Token เรียก API ผู้ดูแลผ่าน header `x-admin-token` สำหรับ script |
 | `STORAGE_DRIVER` | `local` | `local` = เก็บไฟล์ใน `./uploads`, `s3` = S3-compatible |
 | `S3_BUCKET` / `S3_REGION` / `S3_ENDPOINT` / `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` | — | ใช้เมื่อ `STORAGE_DRIVER=s3` |
@@ -127,7 +127,7 @@ npm run db:studio    # เปิด Prisma Studio ดูข้อมูล
 - **Export/Import JSON** → ปุ่ม Export ดาวน์โหลดไฟล์เนื้อหาทั้งหมด / วาง JSON เพื่อนำเข้า
 - **ข้อผิดบ่อย** → สถิติข้อที่ผู้เรียนตอบผิดมากที่สุด (จาก `QuestionStat`)
 
-> การเข้าถึง: เข้า `/admin` แล้วใส่ **รหัสผู้ดูแล** (ADMIN_CODE ค่าเริ่มต้น `Ming888`) — ระบบติด cookie 30 วัน มีปุ่มออกจากระบบ
+> การเข้าถึง: เข้า `/admin` แล้วใส่ **รหัสผู้ดูแล** (ADMIN_CODE จาก `.env` — ตั้งรหัสของคุณเอง, ไม่ตั้ง = ล็อกอินไม่ได้) — ระบบติด cookie 30 วัน มีปุ่มออกจากระบบ
 
 ## การเพิ่มชุดข้อสอบด้วย JSON
 

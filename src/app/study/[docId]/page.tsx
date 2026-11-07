@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { createHash } from "node:crypto";
 import { cookies } from "next/headers";
 import { ArrowLeft } from "lucide-react";
-import { ADMIN_COOKIE } from "@/server/api-helpers";
+import { ADMIN_COOKIE, adminCookieValue } from "@/server/api-helpers";
 import { Button } from "@/components/ui/button";
 import { documentService } from "@/server/services/document-service";
 import { getReadOnlySession } from "@/server/read-session";
@@ -23,10 +22,8 @@ export default async function StudyPage({
     cookies(),
   ]);
   if (!doc) notFound();
-  const expectedAdmin = createHash("sha256")
-    .update(process.env.ADMIN_CODE ?? "Ming888")
-    .digest("hex");
-  const isAdmin = cookieStore.get(ADMIN_COOKIE)?.value === expectedAdmin;
+  const expectedAdmin = adminCookieValue();
+  const isAdmin = !!expectedAdmin && cookieStore.get(ADMIN_COOKIE)?.value === expectedAdmin;
 
   const [progress, annotations] = await Promise.all([
     documentService.getProgress(session.ownerKey, doc.id),
