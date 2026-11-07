@@ -1,6 +1,6 @@
 /**
  * สคริปต์ล้างเนื้อหาข้อสอบและชีตสรุปเก่าทั้งหมดออก
- * คงโครงสร้างวิชาหลัก 8 วิชาไว้ เพื่อเตรียมรับข้อมูลแนวข้อสอบชุดใหม่
+ * คงโครงสร้างวิชาหลัก 10 วิชาไว้ เพื่อเตรียมรับข้อมูลแนวข้อสอบชุดใหม่
  * 
  * รัน: npx tsx prisma/reset-clean-subjects.ts
  */
@@ -45,7 +45,7 @@ async function main() {
     },
   });
 
-  // 3. กำหนดโครงสร้างวิชาหลัก 8 วิชา
+  // 3. กำหนดโครงสร้างวิชาหลัก 10 วิชา
   const coreSubjects = [
     {
       code: "ค31101",
@@ -76,18 +76,25 @@ async function main() {
       sortOrder: 4,
     },
     {
+      code: "ว31103",
+      name: lt("วิทยาศาสตร์ชีวภาพ", "Biological Science"),
+      color: "#C026D3",
+      icon: "leaf",
+      sortOrder: 5,
+    },
+    {
       code: "ว32241",
       name: lt("ชีววิทยา", "Biology"),
       color: "#15803D",
       icon: "dna",
-      sortOrder: 5,
+      sortOrder: 6,
     },
     {
       code: "ว30261",
       name: lt("โลก ดาราศาสตร์ และอวกาศ", "Earth and Space Science"),
       color: "#4338CA",
       icon: "orbit",
-      sortOrder: 6,
+      sortOrder: 7,
     },
     {
       code: "ภาษาไทย",
@@ -95,7 +102,7 @@ async function main() {
       name: lt("ภาษาไทย", "Thai Language"),
       color: "#B45309",
       icon: "book-open",
-      sortOrder: 7,
+      sortOrder: 8,
     },
     {
       code: "ภาษาอังกฤษ",
@@ -103,14 +110,14 @@ async function main() {
       name: lt("ภาษาอังกฤษ", "English"),
       color: "#7C3AED",
       icon: "languages",
-      sortOrder: 8,
+      sortOrder: 9,
     },
     {
       code: "ส31101",
       name: lt("สังคมศึกษา ศาสนา และวัฒนธรรม", "Social Studies"),
       color: "#D97706",
       icon: "landmark",
-      sortOrder: 9,
+      sortOrder: 10,
     },
   ];
 
@@ -136,7 +143,7 @@ async function main() {
     });
   }
 
-  console.log("✨ เตรียมโครงสร้างวิชาหลัก 8-9 วิชาเรียบร้อย พร้อมรับข้อสอบชุดใหม่!");
+  console.log("✨ เตรียมโครงสร้างวิชาหลัก 10 วิชาเรียบร้อย พร้อมรับข้อสอบชุดใหม่!");
 }
 
 main()
