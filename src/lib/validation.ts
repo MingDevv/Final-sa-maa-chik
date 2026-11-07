@@ -136,6 +136,13 @@ export const saveAnswerSchema = z.object({
   sketchKey: z.string().nullable().optional(),
   flagged: z.boolean().optional(),
   selfChecked: z.boolean().optional(),
+  confidence: z.enum(["SURE", "GUESS"]).nullable().optional(),
+});
+
+export const reviewAnswerSchema = z.object({
+  selectedKeys: z.array(z.string()).optional(),
+  text: z.string().max(500).optional(),
+  confident: z.boolean(),
 });
 
 export const submitAttemptSchema = z.object({

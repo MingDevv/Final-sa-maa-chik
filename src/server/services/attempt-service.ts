@@ -3,6 +3,7 @@ import { attemptRepository, questionStatRepository } from "@/server/repositories
 import { questionSetRepository } from "@/server/repositories/question-set-repository";
 import { weakTopicRepository, activityRepository } from "@/server/repositories/analytics-repository";
 import { checkMcqAnswer, checkShortAnswer } from "@/lib/exam/answer-checking";
+import { reviewService } from "@/server/services/review-service";
 import type { AttemptScore, ScoredAnswer } from "@/lib/types";
 import type { AttemptRow } from "@/server/repositories/attempt-repository";
 import type { Prisma } from "@prisma/client";
@@ -193,6 +194,7 @@ export const attemptService = {
       sketchKey?: string | null;
       flagged?: boolean;
       selfChecked?: boolean;
+      confidence?: "SURE" | "GUESS" | null;
     };
   }) {
     const attempt = await attemptRepository.findById(input.attemptId);
@@ -214,18 +216,30 @@ export const attemptService = {
       }
     }
 
-    const answerPayload: Prisma.InputJsonValue = {
-      ...(rest.selectedKeys !== undefined ? { selectedKeys: rest.selectedKeys } : {}),
-      ...(rest.text !== undefined ? { text: rest.text } : {}),
-      ...(rest.tex !== undefined ? { tex: rest.tex } : {}),
-      ...(rest.finalAnswer !== undefined ? { finalAnswer: rest.finalAnswer } : {}),
-    };
+    // ส่ง answer เฉพาะเมื่อ patch นี้มีส่วนของคำตอบจริง — ถ้าเป็นแค่ปักธง/บอกความมั่นใจ
+    // ต้องไม่เขียนทับคำตอบเดิมด้วย {} (เดิมทำให้ข้อที่ตอบแล้วกลายเป็น "ไม่ได้ตอบ" ตอนส่ง)
+    const hasAnswerPart =
+      rest.selectedKeys !== undefined ||
+      rest.text !== undefined ||
+      rest.tex !== undefined ||
+      rest.finalAnswer !== undefined;
+    const previous = (attempt.answers.find((a) => a.questionId === questionId)?.answer ?? {}) as Record<string, unknown>;
+    const answerPayload: Prisma.InputJsonValue | undefined = hasAnswerPart
+      ? ({
+          ...previous,
+          ...(rest.selectedKeys !== undefined ? { selectedKeys: rest.selectedKeys } : {}),
+          ...(rest.text !== undefined ? { text: rest.text } : {}),
+          ...(rest.tex !== undefined ? { tex: rest.tex } : {}),
+          ...(rest.finalAnswer !== undefined ? { finalAnswer: rest.finalAnswer } : {}),
+        } as Prisma.InputJsonValue)
+      : undefined;
 
     await attemptRepository.saveAnswer(input.attemptId, questionId, {
       answer: answerPayload,
       sketchKey: rest.sketchKey,
       flagged: rest.flagged,
       selfChecked: rest.selfChecked,
+      confidence: rest.confidence,
     });
 
     // โหมดฝึก (เฉลยทันที): ตรวจข้ออัตโนมัติให้ด้วย — โหลดใหม่หลังบันทึกเพื่อให้เห็นคำตอบล่าสุด
@@ -282,6 +296,23 @@ export const attemptService = {
       if (w.topicId === "no-topic") continue;
       await weakTopicRepository.record(input.owner, w);
     }
+    // ทบทวนแบบเว้นระยะ: ข้อผิด / ถูกแต่เดา → เข้าคิว (ล้มเหลวก็ไม่ขวางการส่งข้อสอบ)
+    try {
+      const reviewItems = result.perQuestion
+        .filter((p) => p.status === "correct" || p.status === "incorrect")
+        .map((p) => {
+          const c = attempt.answers.find((a) => a.questionId === p.questionId)?.confidence ?? null;
+          return {
+            questionId: p.questionId,
+            correct: p.status === "correct",
+            confident: c === null ? null : c === "SURE",
+          };
+        });
+      await reviewService.recordFromAttempt(input.owner, reviewItems);
+    } catch (e) {
+      console.error("review queue update failed", e);
+    }
+
     await activityRepository.recordToday(input.owner, {
       quizSeconds: durationSec,
       questionsDone: result.perQuestion.filter((p) => p.status !== "skipped").length,

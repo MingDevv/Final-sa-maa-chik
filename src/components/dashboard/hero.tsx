@@ -16,7 +16,7 @@ export const examCountdownText = (examDate: Date | null): string | null => {
   return `อีก ${days} วันก็สอบแล้ว`;
 };
 
-/** ปกหน้าแรก — พื้นแดงทึบเรียบ ๆ ไม่มีของลอย อ่านง่าย ปุ่มหลัก 1 ปุ่ม + ปุ่มรอง 1 ปุ่ม */
+/** ปกหน้าแรก — แดงไล่หลายเฉด + ลูกแก้วเรืองแสง (ลอยช้า ๆ ปิดเองถ้าตั้งค่าลดการเคลื่อนไหว) */
 export function Hero({
   countdown,
   termName,
@@ -31,14 +31,17 @@ export function Hero({
       className="hero-red relative overflow-hidden rounded-3xl px-6 py-10 text-white md:px-12 md:py-14"
       aria-label="ปกเว็บ"
     >
-      {/* ไอคอนหมวกใหญ่จาง ๆ มุมขวา — ตกแต่งอย่างเดียว ไม่ขยับ */}
+      {/* ลูกแก้วเรืองแสง + หมวกบัณฑิตจาง ๆ — ตกแต่งอย่างเดียว */}
+      <span className="orb animate-float -right-16 -top-20 h-72 w-72 bg-[radial-gradient(circle_at_30%_30%,rgb(253_224_71/0.55),rgb(249_115_22/0.25)_45%,transparent_70%)]" aria-hidden />
+      <span className="orb animate-float-slow -bottom-24 right-40 h-64 w-64 bg-[radial-gradient(circle_at_40%_40%,rgb(244_114_182/0.55),transparent_70%)]" aria-hidden />
+      <span className="orb animate-float-slow left-[45%] top-8 h-24 w-24 bg-[radial-gradient(circle,rgb(255_255_255/0.35),transparent_70%)]" aria-hidden />
       <GraduationCap
         className="pointer-events-none absolute -bottom-10 -right-6 h-64 w-64 rotate-[-12deg] text-white/10 md:h-80 md:w-80"
         aria-hidden
       />
       <div className="relative flex max-w-2xl flex-col gap-5">
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 backdrop-blur-sm">
             <CalendarDays className="h-4 w-4" aria-hidden />
             {termName}
           </span>
@@ -52,7 +55,7 @@ export function Hero({
 
         <h1 className="text-4xl font-bold leading-[1.15] tracking-tight md:text-5xl">
           พร้อมพิชิต
-          <span className="block text-[#fecdd3]">ข้อสอบปลายภาค ม.4</span>
+          <span className="text-gradient-fire block pb-1">ข้อสอบปลายภาค ม.4</span>
         </h1>
 
         <p className="max-w-xl text-base leading-relaxed text-white/90 md:text-lg">
@@ -64,7 +67,7 @@ export function Hero({
           <Button
             asChild
             size="lg"
-            className="h-12 rounded-xl bg-white px-6 text-base font-semibold text-[#9f1239] shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5 hover:bg-white focus-visible:outline-white motion-reduce:hover:translate-y-0"
+            className="h-12 rounded-xl bg-white px-6 text-base font-semibold text-[#be123c] shadow-xl shadow-orange-900/30 transition-transform hover:-translate-y-0.5 hover:bg-white focus-visible:outline-white motion-reduce:hover:translate-y-0"
           >
             <Link href="/subjects">
               <Play className="mr-1.5 h-4 w-4" aria-hidden /> เริ่มทำข้อสอบ

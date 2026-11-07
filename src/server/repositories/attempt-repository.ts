@@ -54,6 +54,7 @@ export const attemptRepository = {
       flagged?: boolean;
       selfChecked?: boolean;
       isCorrect?: boolean | null;
+      confidence?: "SURE" | "GUESS" | null;
     },
   ) {
     const { answer, ...rest } = data;

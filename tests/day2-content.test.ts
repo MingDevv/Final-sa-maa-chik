@@ -298,6 +298,7 @@ describe("Day 2 Content Audit & Quality Gates", () => {
             flagged: false,
             selfChecked: false,
             isCorrect: true,
+            confidence: null,
             answeredAt: new Date(),
           },
         ],

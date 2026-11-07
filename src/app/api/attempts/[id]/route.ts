@@ -22,6 +22,7 @@ export async function GET(
         questionId: a.questionId,
         answer: a.answer,
         flagged: a.flagged,
+        confidence: a.confidence,
         selfChecked: a.selfChecked,
         isCorrect: a.isCorrect,
       })),

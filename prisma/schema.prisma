@@ -222,6 +222,7 @@ model Question {
   set      QuestionSet     @relation(fields: [setId], references: [id], onDelete: Cascade)
   answers  AttemptAnswer[]
   stats    QuestionStat?
+  reviewCards ReviewCard[]
 
   @@index([setId])
   @@map("questions")
@@ -309,6 +310,7 @@ model AttemptAnswer {
   isCorrect     Boolean?
   selfChecked   Boolean? // ผู้ใช้ติ๊กตรวจวิธีทำเอง (ข้อเขียน)
   flagged       Boolean  @default(false) // ปักธงข้อที่ไม่แน่ใจ
+  confidence    Confidence? // ผู้ทำบอกเองก่อนส่ง: มั่นใจ / เดา (ใช้หา "มั่นใจแต่ผิด")
   answeredAt    DateTime @default(now())
 
   attempt  Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
@@ -316,6 +318,35 @@ model AttemptAnswer {
 
   @@unique([attemptId, questionId])
   @@map("attempt_answers")
+}
+
+enum Confidence {
+  SURE // มั่นใจ
+  GUESS // เดา / ไม่แน่ใจ
+  @@map("confidence")
+}
+
+// ---------- ทบทวนแบบเว้นระยะ (Leitner) ----------
+// ข้อที่ตอบผิด หรือถูกเพราะเดา จะได้ "บัตร" กลับมาทบทวนตามรอบ 1 → 3 → 7 → 14 → 30 วัน
+model ReviewCard {
+  id             String   @id @default(cuid())
+  userId         String?
+  guestSessionId String?
+  questionId     String
+  box            Int      @default(1) // กล่อง 1-5 (ยิ่งสูงยิ่งจำได้แม่น เว้นนานขึ้น)
+  dueAt          DateTime // ถึงเวลาทบทวนเมื่อไร
+  confidentWrong Boolean  @default(false) // ครั้งล่าสุด "มั่นใจแต่ผิด" — จัดเป็นข้ออันตราย ขึ้นก่อน
+  reviewCount    Int      @default(0)
+  lapses         Int      @default(0) // จำนวนครั้งที่ตอบผิดซ้ำ
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([guestSessionId, questionId])
+  @@unique([userId, questionId])
+  @@index([guestSessionId, dueAt])
+  @@map("review_cards")
 }
 
 // ---------- จุดอ่อน / ความคืบหน้า ----------

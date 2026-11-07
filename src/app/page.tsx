@@ -2,6 +2,8 @@ import Link from "next/link";
 import {
   BookOpen,
   Brain,
+  BrainCircuit,
+  ChevronRight,
   CalendarDays,
   Flame,
   ListChecks,
@@ -24,6 +26,7 @@ import { db } from "@/lib/db";
 import { Hero, examCountdownText } from "@/components/dashboard/hero";
 import { analyticsService } from "@/server/services/analytics-service";
 import { getReadOnlySession } from "@/server/read-session";
+import { reviewService } from "@/server/services/review-service";
 import { localizedToString } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -32,11 +35,12 @@ export const dynamic = "force-dynamic";
 async function loadDashboard() {
   try {
     const session = await getReadOnlySession();
-    const [subjects, summary, weakTopics, recent] = await Promise.all([
+    const [subjects, summary, weakTopics, recent, review] = await Promise.all([
       subjectService.listSubjects(),
       analyticsService.dashboard(session.ownerKey),
       analyticsService.weakTopics(session.ownerKey),
       analyticsService.recentAttempts(session.ownerKey),
+      reviewService.dueSummary(session.ownerKey).catch(() => ({ due: 0, dangerous: 0, total: 0 })),
     ]);
     let termInfo: { name: string; countdown: string | null } = {
       name: "สอบปลายภาค 1/2569",
@@ -53,13 +57,14 @@ async function loadDashboard() {
     } catch {
       /* ไม่มีรอบสอบก็แสดงปกได้ */
     }
-    return { subjects, summary, weakTopics, recent, termInfo, dbReady: true as const };
+    return { subjects, summary, weakTopics, recent, review, termInfo, dbReady: true as const };
   } catch {
     return {
       subjects: [],
       summary: { totalQuestionsDone: 0, totalStudyMinutes: 0, currentStreak: 0, quizzesTaken: 0, averagePercent: 0, activeDays: 0 },
       weakTopics: [],
       recent: [],
+      review: { due: 0, dangerous: 0, total: 0 },
       termInfo: { name: "", countdown: null },
       dbReady: false as const,
     };
@@ -67,7 +72,7 @@ async function loadDashboard() {
 }
 
 export default async function DashboardPage() {
-  const { subjects, summary, weakTopics, recent, termInfo, dbReady } = await loadDashboard();
+  const { subjects, summary, weakTopics, recent, review, termInfo, dbReady } = await loadDashboard();
 
   if (!dbReady) {
     return (
@@ -126,21 +131,47 @@ export default async function DashboardPage() {
         subjectCount={subjects.length}
       />
 
+      {/* ทบทวนวันนี้ (spaced repetition) — CTA เด่นที่สุดรองจาก hero */}
+      <Link
+        href="/review"
+        className="cta-fire group relative flex flex-col gap-4 overflow-hidden rounded-3xl p-6 text-white shadow-[0_18px_40px_-14px_rgb(225_29_72/0.55)] transition-transform hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 sm:flex-row sm:items-center sm:justify-between md:p-8"
+      >
+        <span className="orb -left-10 -top-16 h-48 w-48 bg-[radial-gradient(circle,rgb(253_224_71/0.4),transparent_70%)]" aria-hidden />
+        <div className="relative flex items-center gap-4">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+            <BrainCircuit className="h-7 w-7" aria-hidden />
+          </span>
+          <div>
+            <p className="text-sm font-medium text-white/85">ทบทวนวันนี้ · เว้นระยะ 1 → 3 → 7 → 14 → 30 วัน</p>
+            <p className="text-2xl font-bold md:text-3xl">
+              {review.due > 0 ? `${review.due} ข้อรอทบทวน` : "วันนี้ไม่มีข้อค้าง 🎉"}
+            </p>
+            {review.dangerous > 0 && (
+              <p className="text-sm font-semibold text-yellow-200">⚠ มี {review.dangerous} ข้อที่เคยมั่นใจแต่ผิด</p>
+            )}
+          </div>
+        </div>
+        <span className="relative inline-flex h-11 items-center justify-center gap-1.5 self-start rounded-xl bg-white px-5 font-semibold text-[#be123c] sm:self-auto">
+          {review.due > 0 ? "เริ่มทบทวน" : "ดูคิวทบทวน"}
+          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+        </span>
+      </Link>
+
       {/* สรุปความคืบหน้ารวม */}
       <section
         className="grid grid-cols-2 gap-3 sm:grid-cols-4"
         aria-label="สรุปความคืบหน้ารวม"
       >
-        <StatCard icon={<ListChecks className="h-4 w-4" aria-hidden />} label="ข้อที่ทำแล้ว" value={`${summary.totalQuestionsDone} ข้อ`} />
-        <StatCard icon={<Timer className="h-4 w-4" aria-hidden />} label="เวลาเรียนรวม" value={`${summary.totalStudyMinutes} นาที`} />
-        <StatCard icon={<Flame className="h-4 w-4" aria-hidden />} label="Streak" value={`${summary.currentStreak} วัน`} />
-        <StatCard icon={<TrendingUp className="h-4 w-4" aria-hidden />} label="คะแนนเฉลี่ย" value={`${summary.averagePercent}%`} />
+        <StatCard tone="from-rose-500 to-red-600" icon={<ListChecks className="h-5 w-5" aria-hidden />} label="ข้อที่ทำแล้ว" value={`${summary.totalQuestionsDone} ข้อ`} />
+        <StatCard tone="from-orange-400 to-orange-600" icon={<Timer className="h-5 w-5" aria-hidden />} label="เวลาเรียนรวม" value={`${summary.totalStudyMinutes} นาที`} />
+        <StatCard tone="from-amber-400 to-yellow-500" icon={<Flame className="h-5 w-5" aria-hidden />} label="Streak" value={`${summary.currentStreak} วัน`} />
+        <StatCard tone="from-pink-500 to-fuchsia-600" icon={<TrendingUp className="h-5 w-5" aria-hidden />} label="คะแนนเฉลี่ย" value={`${summary.averagePercent}%`} />
       </section>
 
       {/* การ์ดวิชา (ดึงจากฐานข้อมูลเสมอ) */}
       <section aria-label="รายวิชา" className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">วิชาเรียน <span className="font-normal text-muted-foreground">({subjects.length} วิชา)</span></h2>
+          <h2 className="text-2xl font-bold tracking-tight"><span className="text-gradient-red">วิชาเรียน</span> <span className="font-normal text-muted-foreground">({subjects.length} วิชา)</span></h2>
           <Badge variant="secondary" className="rounded-full">
             <CalendarDays className="mr-1 h-3.5 w-3.5" aria-hidden /> {termInfo.name || "สอบปลายภาค"}
           </Badge>
@@ -161,7 +192,7 @@ export default async function DashboardPage() {
                 aria-label={`เข้าวิชา ${s.code} ${s.name}`}
               >
                 <Card
-                  className="subject-stripe h-full rounded-2xl border-border shadow-none transition-shadow hover:shadow-soft-lg"
+                  className="subject-stripe glass h-full rounded-2xl shadow-none transition-shadow hover:shadow-[0_14px_34px_-14px_var(--sc)]"
                   style={{ "--sc": s.color } as React.CSSProperties}
                 >
                   <CardHeader className="pb-3">
@@ -193,7 +224,7 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* ทบทวนจุดอ่อนวันนี้ */}
-        <Card className="rounded-2xl shadow-none">
+        <Card className="glass rounded-2xl shadow-none">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <Brain className="h-5 w-5 text-primary" aria-hidden /> ทบทวนจุดอ่อนวันนี้
@@ -230,7 +261,7 @@ export default async function DashboardPage() {
         </Card>
 
         {/* ปุ่มลัด + ผลล่าสุด */}
-        <Card className="rounded-2xl shadow-none">
+        <Card className="glass rounded-2xl shadow-none">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <Play className="h-5 w-5 text-primary" aria-hidden /> เริ่มเรียนต่อ
@@ -276,14 +307,16 @@ function StatCard({
   icon,
   label,
   value,
+  tone,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
+  tone: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
+    <div className="glass flex items-center gap-3 rounded-2xl border p-4">
+      <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-md ${tone}`}>
         {icon}
       </span>
       <div>

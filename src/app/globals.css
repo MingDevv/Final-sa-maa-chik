@@ -149,6 +149,31 @@
     @apply bg-background text-foreground min-h-screen;
     font-size: 16px;
     line-height: 1.6;
+    position: relative;
+    isolation: isolate;
+  }
+  /* พื้นหลังหลากสี: แสงเรือง แดง/ส้ม/ชมพู/เหลือง ลอยช้า ๆ อยู่หลังทุกอย่าง */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: -20%;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(38% 32% at 12% 8%, rgb(251 113 133 / 0.38), transparent 70%),
+      radial-gradient(32% 30% at 88% 14%, rgb(251 146 60 / 0.30), transparent 70%),
+      radial-gradient(36% 34% at 80% 78%, rgb(244 114 182 / 0.28), transparent 70%),
+      radial-gradient(30% 28% at 18% 82%, rgb(250 204 21 / 0.22), transparent 70%),
+      radial-gradient(40% 36% at 50% 45%, rgb(225 29 72 / 0.10), transparent 75%);
+    filter: blur(20px);
+    animation: fep-aurora 30s ease-in-out infinite alternate;
+  }
+  .dark body::before {
+    background:
+      radial-gradient(38% 32% at 12% 8%, rgb(225 29 72 / 0.32), transparent 70%),
+      radial-gradient(32% 30% at 88% 14%, rgb(234 88 12 / 0.22), transparent 70%),
+      radial-gradient(36% 34% at 80% 78%, rgb(219 39 119 / 0.22), transparent 70%),
+      radial-gradient(30% 28% at 18% 82%, rgb(202 138 4 / 0.14), transparent 70%);
   }
   /* เส้นโฟกัสชัดเจนสำหรับคนใช้คีย์บอร์ด */
   :focus-visible {
@@ -191,16 +216,63 @@
     background-color: color-mix(in srgb, var(--sc) 22%, transparent);
     color: color-mix(in srgb, var(--sc) 45%, white);
   }
+  @keyframes fep-aurora {
+    from {
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+    to {
+      transform: translate3d(3%, -2%, 0) rotate(6deg);
+    }
+  }
+  /* การ์ดกระจกฝ้า: เห็นสีพื้นหลังทะลุนิด ๆ */
+  .glass {
+    background-color: color-mix(in srgb, var(--card) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-color: color-mix(in srgb, var(--border) 70%, white 30%);
+  }
+  .dark .glass {
+    background-color: color-mix(in srgb, var(--card) 72%, transparent);
+    border-color: rgb(255 255 255 / 0.08);
+  }
+  /* ตัวหนังสือไล่สี แดง→ส้ม */
+  .text-gradient-fire {
+    background: linear-gradient(90deg, #fecdd3, #fde68a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-red {
+    background: linear-gradient(90deg, #e11d48, #f97316);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* การ์ด CTA ทบทวน: ส้ม→แดง→ชมพู */
+  .cta-fire {
+    background: linear-gradient(120deg, #f97316 0%, #e11d48 50%, #db2777 100%);
+  }
   /* hero: แดงไล่เฉดเข้ม + แสงจาง ๆ มุมซ้ายบน ให้มีมิติแต่ไม่ฉูดฉาด */
   .hero-red {
     background:
       radial-gradient(120% 90% at 0% 0%, rgb(255 255 255 / 0.14), transparent 55%),
-      linear-gradient(135deg, #e11d48 0%, #be123c 40%, #881337 100%);
+      linear-gradient(125deg, #fb7185 0%, #e11d48 28%, #be123c 55%, #9f1239 78%, #ea580c 130%);
+    box-shadow:
+      0 20px 50px -12px rgb(225 29 72 / 0.45),
+      0 8px 20px -8px rgb(249 115 22 / 0.35);
   }
   .dark .hero-red {
     background:
       radial-gradient(120% 90% at 0% 0%, rgb(255 255 255 / 0.08), transparent 55%),
-      linear-gradient(135deg, #9f1239 0%, #6b0f2a 55%, #3f0617 100%);
+      linear-gradient(125deg, #be123c 0%, #9f1239 40%, #6b0f2a 75%, #7c2d12 120%);
+    box-shadow: 0 20px 50px -12px rgb(225 29 72 / 0.35);
+  }
+  /* ลูกแก้วเรืองแสงใน hero */
+  .orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(2px);
+    pointer-events: none;
   }
   /* แถบสีประจำวิชาด้านบนการ์ด */
   .subject-stripe {
@@ -275,7 +347,8 @@
     .animate-fade-up,
     .animate-fade-up-delay-1,
     .animate-fade-up-delay-2,
-    .marquee-track {
+    .marquee-track,
+    body::before {
       animation: none;
     }
     .lift,

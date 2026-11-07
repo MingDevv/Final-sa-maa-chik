@@ -8,7 +8,9 @@ import {
   ChevronRight,
   Clock,
   Flag,
+  HelpCircle,
   Send,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -56,6 +58,7 @@ interface AnswerState {
   finalAnswer?: string;
   sketchKey?: string | null;
   flagged?: boolean;
+  confidence?: "SURE" | "GUESS" | null;
 }
 
 const formatClock = (sec: number) => {
@@ -156,13 +159,14 @@ export function QuizRunner({
         const saved: Record<string, AnswerState> = {};
         for (const a of j2.data.answers ?? []) {
           const ans = (a.answer ?? {}) as AnswerState;
-          if (Object.keys(ans).length > 0 || a.flagged) {
+          if (Object.keys(ans).length > 0 || a.flagged || a.confidence) {
             saved[a.questionId] = {
               selectedKeys: ans.selectedKeys,
               text: ans.text,
               tex: ans.tex,
               finalAnswer: ans.finalAnswer,
               flagged: a.flagged || undefined,
+              confidence: a.confidence ?? undefined,
             };
           }
         }
@@ -552,6 +556,48 @@ export function QuizRunner({
             </p>
           </div>
         )}
+
+        {/* ความมั่นใจ: ถามหลังตอบแล้ว — ข้อ "มั่นใจแต่ผิด" และ "ถูกเพราะเดา" จะถูกส่งเข้าคิวทบทวน */}
+        {q.type !== "WRITTEN" &&
+          ((answers[q.id]?.selectedKeys?.length ?? 0) > 0 || Boolean(answers[q.id]?.text?.trim())) && (
+            <div
+              className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-dashed border-border bg-muted/40 p-3"
+              role="group"
+              aria-label="ความมั่นใจในคำตอบข้อนี้"
+            >
+              <span className="mr-1 text-sm font-medium">ตอบข้อนี้แบบไหน?</span>
+              {(
+                [
+                  { v: "SURE", label: "มั่นใจ", icon: <ShieldCheck className="mr-1 h-4 w-4" aria-hidden /> },
+                  { v: "GUESS", label: "เดา / ไม่ชัวร์", icon: <HelpCircle className="mr-1 h-4 w-4" aria-hidden /> },
+                ] as const
+              ).map((c) => {
+                const on = answers[q.id]?.confidence === c.v;
+                return (
+                  <button
+                    key={c.v}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => saveAnswer(q.id, { confidence: on ? null : c.v })}
+                    className={cn(
+                      "inline-flex h-10 items-center rounded-xl border px-4 text-sm font-medium transition-colors",
+                      on
+                        ? c.v === "SURE"
+                          ? "border-emerald-600 bg-emerald-600 text-white"
+                          : "border-amber-500 bg-amber-500 text-white"
+                        : "border-border bg-card hover:bg-secondary",
+                    )}
+                  >
+                    {c.icon}
+                    {c.label}
+                  </button>
+                );
+              })}
+              <span className="w-full text-xs text-muted-foreground">
+                ข้อที่เดาถูก หรือมั่นใจแต่ผิด ระบบจะเอากลับมาให้ทบทวนในวันถัด ๆ ไป
+              </span>
+            </div>
+          )}
       </article>
 
       {/* ปุ่มเลื่อนข้อ + ส่ง */}
