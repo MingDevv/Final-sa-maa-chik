@@ -13,6 +13,7 @@
 # testing
 /coverage
 /gui-test-screenshots
+backups/full-export-*.json
 
 # next.js
 /.next/
