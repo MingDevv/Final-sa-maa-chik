@@ -473,6 +473,27 @@ function SetsTab({
     }
   };
 
+  const removeSet = async (id: string, title: string) => {
+    if (
+      !confirm(
+        `ต้องการลบชุดข้อสอบ "${title}" ออกจากระบบถาวรหรือไม่?\n(คำเตือน: ข้อมูลคำถามและประวัติการทำในชุดนี้จะถูกลบทั้งหมด)`,
+      )
+    ) {
+      return;
+    }
+    const res = await fetch(`/api/admin/question-sets/${id}?force=true`, {
+      method: "DELETE",
+      headers: adminHeaders(),
+    });
+    const json = await res.json();
+    if (json.ok) {
+      toast.success("ลบชุดข้อสอบเรียบร้อยแล้ว");
+      refresh();
+    } else {
+      toast.error(json.error ?? "ลบไม่สำเร็จ");
+    }
+  };
+
   const importJson = async () => {
     setImporting(true);
     try {
@@ -547,6 +568,16 @@ function SetsTab({
                 เก็บถาวร
               </Button>
             )}
+            <Button
+              size="sm"
+              variant="ghost"
+              className="rounded-2xl text-destructive hover:bg-destructive/10 hover:text-destructive"
+              title="ลบชุดข้อสอบถาวร"
+              onClick={() => removeSet(s.id, s.title)}
+            >
+              <Trash2 className="h-4 w-4" aria-hidden />
+              <span className="sr-only">ลบ</span>
+            </Button>
           </div>
         </div>
       ))}

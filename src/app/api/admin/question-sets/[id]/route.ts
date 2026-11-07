@@ -84,7 +84,7 @@ export async function PATCH(
   }
 }
 
-/** DELETE ลบชุดข้อสอบ (เฉพาะฉบับร่าง — เผยแพร่แล้วให้ archive แทน) */
+/** DELETE ลบชุดข้อสอบ (รองรับลบถาวรด้วย ?force=true หรือลบฉบับร่าง) */
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -92,12 +92,19 @@ export async function DELETE(
   try {
     assertAdmin(req);
     const { id } = await params;
+    const url = new URL(req.url);
+    const force = url.searchParams.get("force") === "true";
+
     const set = await questionSetRepository.findById(id);
     if (!set) return handleApiError(new Error("NOT_FOUND"));
-    if (set.status === "PUBLISHED") {
+
+    // ถ้าเผยแพร่อยู่และไม่ได้สั่ง force delete ให้ย้ายเข้า archive เพื่อความปลอดภัย
+    if (set.status === "PUBLISHED" && !force) {
       await questionSetRepository.archive(id);
       return ok({ archived: true });
     }
+
+    // ลบชุดข้อสอบถาวร (Cascade ไปยัง questions และ attempts ที่เกี่ยวข้อง)
     await questionSetRepository.delete(id);
     return ok({ deleted: true });
   } catch (error) {
