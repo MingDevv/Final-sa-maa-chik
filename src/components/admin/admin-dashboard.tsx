@@ -444,6 +444,7 @@ function SetsTab({
 }) {
   const [importing, setImporting] = useState(false);
   const [importText, setImportText] = useState("");
+  const [importErrors, setImportErrors] = useState<string[]>([]);
 
   const publish = async (id: string) => {
     const res = await fetch(`/api/admin/question-sets/${id}`, {
@@ -496,6 +497,7 @@ function SetsTab({
 
   const importJson = async () => {
     setImporting(true);
+    setImportErrors([]);
     try {
       const parsed = JSON.parse(importText);
       const res = await fetch("/api/admin/import-export", {
@@ -509,9 +511,14 @@ function SetsTab({
         setImportText("");
         refresh();
       } else {
-        toast.error(json.error ?? "นำเข้าไม่สำเร็จ");
+        const details = Array.isArray(json.details) ? (json.details as string[]) : [];
+        setImportErrors(details);
+        toast.error(json.error ?? "นำเข้าไม่สำเร็จ", {
+          description: details.length ? "ดูรายการจุดที่ต้องแก้ใต้ช่องวาง JSON" : undefined,
+        });
       }
     } catch {
+      setImportErrors(["รูปแบบ JSON ผิด (เช่น ลืมจุลภาค , หรือวงเล็บไม่ครบ) — ลองวางใน jsonlint.com เพื่อหาตำแหน่ง"]);
       toast.error("JSON ไม่ถูกต้อง");
     } finally {
       setImporting(false);
@@ -540,6 +547,19 @@ function SetsTab({
           <Button onClick={importJson} disabled={importing || !importText.trim()} className="self-start rounded-2xl">
             <Upload className="mr-1 h-4 w-4" aria-hidden /> นำเข้า
           </Button>
+          {importErrors.length > 0 && (
+            <div
+              role="alert"
+              className="rounded-2xl border border-red-300 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+            >
+              <p className="mb-1 font-semibold">ยังไม่ได้บันทึก — แก้จุดเหล่านี้ก่อน:</p>
+              <ul className="ml-5 list-disc space-y-0.5">
+                {importErrors.map((e, i) => (
+                  <li key={i}>{e}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </CardContent>
       </Card>
 
