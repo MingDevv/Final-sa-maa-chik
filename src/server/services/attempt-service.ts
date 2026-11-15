@@ -195,6 +195,7 @@ export const attemptService = {
       flagged?: boolean;
       selfChecked?: boolean;
       confidence?: "SURE" | "GUESS" | null;
+      mode?: "EXAM" | "PRACTICE";
     };
   }) {
     const attempt = await attemptRepository.findById(input.attemptId);
@@ -234,6 +235,14 @@ export const attemptService = {
         } as Prisma.InputJsonValue)
       : undefined;
 
+    if (rest.mode && rest.mode !== attempt.mode) {
+      await db.attempt.update({
+        where: { id: input.attemptId },
+        data: { mode: rest.mode },
+      });
+      attempt.mode = rest.mode;
+    }
+
     await attemptRepository.saveAnswer(input.attemptId, questionId, {
       answer: answerPayload,
       sketchKey: rest.sketchKey,
@@ -254,8 +263,25 @@ export const attemptService = {
       }
       // เฉลยก่อนเวลาเฉพาะโหมดฝึก/ชุดที่ตั้งเฉลยทันที — โหมดสอบไม่เผยทาง response
       const mayReveal =
-        attempt.mode === "PRACTICE" || attempt.set.revealMode === "AFTER_EACH";
-      return { isCorrect: mayReveal ? p?.status === "correct" : null };
+        attempt.mode === "PRACTICE" || attempt.set.revealMode === "AFTER_EACH" || rest.mode === "PRACTICE";
+      if (mayReveal) {
+        const fullQ = (fresh ?? attempt).set.questions.find((x) => x.id === questionId);
+        const ansObj = fullQ?.answer as {
+          correctKey?: string;
+          correctKeys?: string[];
+          finalAnswer?: string;
+          steps?: string[];
+        } | null;
+        const correctKey =
+          ansObj?.correctKey ?? (ansObj?.correctKeys && ansObj.correctKeys[0]) ?? null;
+        return {
+          isCorrect: p?.status === "correct",
+          correctKey,
+          finalAnswer: ansObj?.finalAnswer ?? null,
+          explanation: fullQ?.explanation ?? null,
+        };
+      }
+      return { isCorrect: null };
     }
     return { isCorrect: null };
   },

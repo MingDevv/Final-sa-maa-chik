@@ -12,20 +12,35 @@ export async function GET(
     const { id } = await params;
     const attempt = await attemptService.getAttempt(id);
     if (!attempt) return handleApiError(new Error("ATTEMPT_NOT_FOUND"));
+    const mayReveal = attempt.mode === "PRACTICE" || attempt.set.revealMode === "AFTER_EACH";
     return ok({
       id: attempt.id,
       status: attempt.status,
       startedAt: attempt.startedAt,
       score: attempt.score,
       durationSec: attempt.durationSec,
-      answers: attempt.answers.map((a) => ({
-        questionId: a.questionId,
-        answer: a.answer,
-        flagged: a.flagged,
-        confidence: a.confidence,
-        selfChecked: a.selfChecked,
-        isCorrect: a.isCorrect,
-      })),
+      mode: attempt.mode,
+      answers: attempt.answers.map((a) => {
+        const fullQ = mayReveal ? attempt.set.questions.find((q) => q.id === a.questionId) : null;
+        const ansObj = fullQ?.answer as {
+          correctKey?: string;
+          correctKeys?: string[];
+          finalAnswer?: string;
+        } | null;
+        const correctKey =
+          ansObj?.correctKey ?? (ansObj?.correctKeys && ansObj.correctKeys[0]) ?? null;
+        return {
+          questionId: a.questionId,
+          answer: a.answer,
+          flagged: a.flagged,
+          confidence: a.confidence,
+          selfChecked: a.selfChecked,
+          isCorrect: a.isCorrect,
+          correctKey: mayReveal ? correctKey : null,
+          finalAnswer: mayReveal ? (ansObj?.finalAnswer ?? null) : null,
+          explanation: mayReveal ? (fullQ?.explanation ?? null) : null,
+        };
+      }),
     });
   } catch (error) {
     return handleApiError(error);

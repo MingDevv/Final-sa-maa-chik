@@ -23,10 +23,11 @@ export default async function QuizPage({
   searchParams,
 }: {
   params: Promise<{ setId: string }>;
-  searchParams: Promise<{ retry?: string }>;
+  searchParams: Promise<{ retry?: string; mode?: string }>;
 }) {
   const { setId } = await params;
-  const { retry: retrySessionId } = await searchParams;
+  const { retry: retrySessionId, mode: rawMode } = await searchParams;
+  const initialMode = rawMode === "EXAM" ? "EXAM" : "PRACTICE";
   const session = await getSession();
 
   if (setId === ENGLISH_QUESTION_SET_ID || setId.includes("english")) {
@@ -108,6 +109,30 @@ export default async function QuizPage({
     guideContent = ENGLISH_FUTURE_STUDY_GUIDE_MD;
   }
 
+  // สร้าง explanationsMap สำหรับโหมดฝึกซ้อมเฉลยทันที (Instant Feedback)
+  const explanationsMap: Record<string, { correctKey: string; explanation: string }> = {};
+  if (setId === ENGLISH_QUESTION_SET_ID || setId.includes("english")) {
+    ENGLISH_FUTURE_QUESTIONS_DATA.questions.forEach((q, idx) => {
+      explanationsMap[`q-english-${idx + 1}`] = {
+        correctKey: q.answer.correctKey,
+        explanation: q.explanation,
+      };
+    });
+    if (set && set.questions) {
+      set.questions.forEach((sq) => {
+        const item = ENGLISH_FUTURE_QUESTIONS_DATA.questions.find(
+          (eq) => eq.sortOrder === sq.sortOrder || eq.prompt.trim() === sq.prompt.trim()
+        );
+        if (item) {
+          explanationsMap[sq.id] = {
+            correctKey: item.answer.correctKey,
+            explanation: item.explanation,
+          };
+        }
+      });
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div className="-mb-2">
@@ -147,6 +172,8 @@ export default async function QuizPage({
         }}
         retrySessionId={retrySessionId}
         retrySourceAttemptId={retrySourceAttemptId}
+        initialMode={initialMode}
+        explanationsMap={explanationsMap}
       />
     </div>
   );

@@ -137,6 +137,7 @@ export const saveAnswerSchema = z.object({
   flagged: z.boolean().optional(),
   selfChecked: z.boolean().optional(),
   confidence: z.enum(["SURE", "GUESS"]).nullable().optional(),
+  mode: attemptModeSchema.optional(),
 });
 
 export const reviewAnswerSchema = z.object({

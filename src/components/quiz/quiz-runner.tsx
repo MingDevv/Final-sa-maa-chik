@@ -9,8 +9,10 @@ import {
   Clock,
   Flag,
   HelpCircle,
+  Lightbulb,
   Send,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -25,6 +27,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { KatexText } from "@/components/katex-text";
+import { MarkdownLite } from "@/components/study-guide/markdown-lite";
 import { ScratchPad } from "@/components/quiz/scratch-pad";
 import { Whiteboard } from "@/components/quiz/whiteboard";
 import { cn } from "@/lib/utils";
@@ -61,6 +64,13 @@ interface AnswerState {
   confidence?: "SURE" | "GUESS" | null;
 }
 
+interface FeedbackState {
+  isCorrect: boolean;
+  correctKey?: string | null;
+  finalAnswer?: string | null;
+  explanation?: string | null;
+}
+
 const formatClock = (sec: number) => {
   const s = Math.max(0, sec);
   const h = Math.floor(s / 3600);
@@ -71,19 +81,25 @@ const formatClock = (sec: number) => {
     : `${m}:${String(ss).padStart(2, "0")}`;
 };
 
-/** หน้าทำข้อสอบ: จับเวลา, autosave แบบ debounce, ปักธง, จำตำแหน่งข้อ, ส่งคำตอบ */
+/** หน้าทำข้อสอบ: โหมดฝึกซ้อมเฉลยทันที vs โหมดสอบจริง, autosave แบบ debounce, ปักธง, จำตำแหน่งข้อ, ส่งคำตอบ */
 export function QuizRunner({
   set,
   retrySessionId,
   retrySourceAttemptId,
+  initialMode = "PRACTICE",
+  explanationsMap,
 }: {
   set: PlaySet;
   retrySessionId?: string | null;
   retrySourceAttemptId?: string | null;
+  initialMode?: "EXAM" | "PRACTICE";
+  explanationsMap?: Record<string, { correctKey: string; explanation: string }>;
 }) {
   const router = useRouter();
   const [attemptId, setAttemptId] = useState<string | null>(null);
+  const [quizMode, setQuizMode] = useState<"EXAM" | "PRACTICE">(initialMode);
   const [answers, setAnswers] = useState<Record<string, AnswerState>>({});
+  const [revealedFeedback, setRevealedFeedback] = useState<Record<string, FeedbackState>>({});
   const [current, setCurrent] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
@@ -97,6 +113,23 @@ export function QuizRunner({
   const pendingPatches = useRef<Record<string, AnswerState>>({});
   const attemptIdRef = useRef<string | null>(null);
   const q = set.questions[current];
+
+  // สลับโหมดการทำข้อสอบ (ฝึกซ้อม vs สอบจริง)
+  const handleModeChange = (newMode: "EXAM" | "PRACTICE") => {
+    setQuizMode(newMode);
+    toast.success(
+      newMode === "PRACTICE"
+        ? "💡 โหมดฝึกซ้อม: ตอบปุ๊บรู้ผลทันที พร้อมคำอธิบายจุดหลอกข้อต่อข้อ"
+        : "🎯 โหมดสอบจริง: จับเวลา ซ่อนเฉลยระหว่างทำ รวมคะแนนเมื่อส่ง"
+    );
+    if (attemptIdRef.current && q) {
+      void fetch(`/api/attempts/${attemptIdRef.current}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questionId: q.id, mode: newMode }),
+      }).catch(() => undefined);
+    }
+  };
 
   // เริ่ม/กลับมาทำ attempt — ลองซ้ำอัตโนมัติเมื่อเครือข่าย/เซิร์ฟเวอร์ขัดข้องชั่วคราว
   useEffect(() => {
@@ -112,12 +145,12 @@ export function QuizRunner({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               setId: set.id,
-              mode: "EXAM",
+              mode: quizMode,
               retrySessionId: retrySessionId ?? null,
             }),
           });
           const json = await res.json();
-          if (cancelled) return; // StrictMode ยิงซ้ำ — เงียบไว้ ไม่ใช่ความผิดพลาดจริง
+          if (cancelled) return;
           if (json.ok) {
             id = json.data.attemptId as string;
             break;
@@ -140,6 +173,7 @@ export function QuizRunner({
       if (cancelled || !id) return;
       attemptIdRef.current = id;
       setAttemptId(id);
+
       // ส่งคำตอบที่ผู้ใช้ตอบค้างไว้ระหว่างรอเชื่อมต่อ (ถ้ามี)
       const queued = Object.entries(pendingPatches.current);
       for (const [qid, patch] of queued) {
@@ -147,16 +181,20 @@ export function QuizRunner({
         fetch(`/api/attempts/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ questionId: qid, ...patch }),
+          body: JSON.stringify({ questionId: qid, mode: quizMode, ...patch }),
         }).catch(() => undefined);
       }
 
-      // ดึงคำตอบที่ autosave ไว้ (ทำต่อจากที่ค้าง) — เงียบ ๆ ไม่เด้ง toast รบกวน
+      // ดึงคำตอบที่ autosave ไว้ (ทำต่อจากที่ค้าง)
       const r2 = await fetch(`/api/attempts/${id}`);
       const j2 = await r2.json();
       if (j2.ok && !hydratedRef.current) {
         hydratedRef.current = true;
+        if (j2.data.mode) {
+          setQuizMode(j2.data.mode);
+        }
         const saved: Record<string, AnswerState> = {};
+        const savedFeedback: Record<string, FeedbackState> = {};
         for (const a of j2.data.answers ?? []) {
           const ans = (a.answer ?? {}) as AnswerState;
           if (Object.keys(ans).length > 0 || a.flagged || a.confidence) {
@@ -165,14 +203,25 @@ export function QuizRunner({
               text: ans.text,
               tex: ans.tex,
               finalAnswer: ans.finalAnswer,
-              flagged: a.flagged || undefined,
-              confidence: a.confidence ?? undefined,
+              sketchKey: a.sketchKey,
+              flagged: a.flagged,
+              confidence: a.confidence,
+            };
+          }
+          if (a.isCorrect !== undefined && a.isCorrect !== null) {
+            setPerQuestionCorrect((prev) => ({ ...prev, [a.questionId]: a.isCorrect }));
+            savedFeedback[a.questionId] = {
+              isCorrect: a.isCorrect,
+              correctKey: a.correctKey,
+              finalAnswer: a.finalAnswer,
+              explanation: a.explanation,
             };
           }
         }
         if (Object.keys(saved).length > 0) setAnswers(saved);
+        if (Object.keys(savedFeedback).length > 0) setRevealedFeedback(savedFeedback);
 
-        // กลับไปข้อที่ทำค้าง + ตั้งเวลาให้ต่อเนื่องจากเวลาที่เริ่มจริง
+        // กลับไปข้อที่ทำค้าง
         try {
           const savedIdx = Number(localStorage.getItem(`fep_idx:${set.id}`));
           if (Number.isFinite(savedIdx) && savedIdx > 0 && savedIdx < set.questions.length) {
@@ -189,10 +238,10 @@ export function QuizRunner({
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- เริ่มต้นรอบสอบและ restore สถานะครั้งเดียวต่อ setId
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [set.id]);
 
-  // จำตำแหน่งข้อปัจจุบัน — เริ่มบันทึกหลัง hydrate เท่านั้น (กันทับค่าที่เคยจำไว้ตอน mount)
+  // จำตำแหน่งข้อปัจจุบัน
   useEffect(() => {
     if (!hydratedRef.current) return;
     try {
@@ -202,7 +251,7 @@ export function QuizRunner({
     }
   }, [current, set.id]);
 
-  // ตัวจับเวลา (นับเวลาที่ใช้ไป — โหมดไม่จำกัดเวลา)
+  // ตัวจับเวลา
   useEffect(() => {
     const t = setInterval(() => {
       setElapsed((s) => s + 1);
@@ -210,7 +259,7 @@ export function QuizRunner({
     return () => clearInterval(t);
   }, []);
 
-  /** อัปโหลดภาพกระดานที่ค้างไว้ (เรียกก่อนส่งคำตอบครั้งเดียว — ไม่หน่วงตอนเขียน) */
+  /** อัปโหลดภาพกระดานที่ค้างไว้ */
   async function flushPendingSketches() {
     const entries = Object.entries(pendingSketches.current);
     await Promise.all(
@@ -230,7 +279,7 @@ export function QuizRunner({
             });
           }
         } catch {
-          // อัปโหลดไม่สำเร็จ — คำตอบสุดท้ายยังส่งได้ปกติ
+          // อัปโหลดไม่สำเร็จ
         }
       }),
     );
@@ -261,9 +310,7 @@ export function QuizRunner({
       setSubmitting(true);
       setConfirmSubmit(false);
       try {
-        // ส่งภาพกระดานที่ค้างก่อน (ถ้ามี) แล้วค่อยส่งข้อสอบ
         await flushPendingSketches();
-        // กันคำตอบที่ยังค้างใน debounce (พิมพ์เสร็จปุ๊บส่งเลยปั๊บ)
         await Promise.all(
           Object.keys(pendingPatches.current).map((qid) => {
             const merged = pendingPatches.current[qid];
@@ -271,7 +318,7 @@ export function QuizRunner({
             return fetch(`/api/attempts/${attemptId}`, {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ questionId: qid, ...merged }),
+              body: JSON.stringify({ questionId: qid, mode: quizMode, ...merged }),
             }).catch(() => undefined);
           }),
         );
@@ -292,17 +339,32 @@ export function QuizRunner({
         setSubmitting(false);
       }
     },
-    [attemptId, submitting, set.questions, answers, confirmSubmit, elapsed, router, set.id],
+    [attemptId, submitting, set.questions, answers, confirmSubmit, elapsed, router, set.id, quizMode],
   );
-
-
 
   const saveAnswer = useCallback(
     (questionId: string, patch: AnswerState, immediate = true) => {
-      // อัปเดต UI ทันที (ลื่นไหล) แล้วค่อยส่งบันทึกเบื้องหลัง
       setAnswers((prev) => ({ ...prev, [questionId]: { ...prev[questionId], ...patch } }));
 
-      // รวม patch ล่าสุดไว้ตลอด (ตัวถัดไปทับตัวก่อน)
+      // ในโหมดฝึกซ้อม หรือ revealMode === AFTER_EACH: ถ้ามี explanationsMap ให้เฉลยทันที (0ms latency)
+      const isPractice = quizMode === "PRACTICE" || set.revealMode === "AFTER_EACH";
+      if (isPractice && patch.selectedKeys && patch.selectedKeys.length > 0) {
+        const selectedKey = patch.selectedKeys[0];
+        const local = explanationsMap?.[questionId];
+        if (local) {
+          const isRight = local.correctKey === selectedKey;
+          setPerQuestionCorrect((prev) => ({ ...prev, [questionId]: isRight }));
+          setRevealedFeedback((prev) => ({
+            ...prev,
+            [questionId]: {
+              isCorrect: isRight,
+              correctKey: local.correctKey,
+              explanation: local.explanation,
+            },
+          }));
+        }
+      }
+
       pendingPatches.current[questionId] = {
         ...(pendingPatches.current[questionId] ?? {}),
         ...patch,
@@ -310,7 +372,7 @@ export function QuizRunner({
 
       const send = async () => {
         const id = attemptIdRef.current;
-        if (!id) return; // ยังไม่มี attempt — ค้างไว้ใน pendingPatches รอส่งหลังได้ id
+        if (!id) return;
         const merged = pendingPatches.current[questionId];
         if (!merged) return;
         delete pendingPatches.current[questionId];
@@ -318,31 +380,38 @@ export function QuizRunner({
           const res = await fetch(`/api/attempts/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ questionId, ...merged }),
+            body: JSON.stringify({ questionId, mode: quizMode, ...merged }),
           });
           const json = await res.json();
-          if (json.ok && json.data?.isCorrect === true) {
-            setPerQuestionCorrect((prev) => ({ ...prev, [questionId]: true }));
-          } else if (json.ok && json.data?.isCorrect === false) {
-            setPerQuestionCorrect((prev) => ({ ...prev, [questionId]: false }));
+          if (json.ok && json.data) {
+            if (json.data.isCorrect !== null && json.data.isCorrect !== undefined) {
+              setPerQuestionCorrect((prev) => ({ ...prev, [questionId]: json.data.isCorrect }));
+              setRevealedFeedback((prev) => ({
+                ...prev,
+                [questionId]: {
+                  isCorrect: json.data.isCorrect,
+                  correctKey: json.data.correctKey ?? prev[questionId]?.correctKey,
+                  finalAnswer: json.data.finalAnswer ?? prev[questionId]?.finalAnswer,
+                  explanation: json.data.explanation ?? prev[questionId]?.explanation,
+                },
+              }));
+            }
           }
         } catch {
-          // autosave ล้มเหลวชั่วคราว — คำตอบยังอยู่ใน state และจะพยายามบันทึกใหม่เมื่อแก้
+          // autosave ล้มเหลวชั่วคราว
         }
       };
 
       const timer = saveTimers.current[questionId];
       if (timer) clearTimeout(timer);
       if (immediate) {
-        // MCQ/ปักธง/ยืนยัน — ส่งทันที
         delete saveTimers.current[questionId];
         void send();
       } else {
-        // พิมพ์ข้อความ — รอให้พิมพ์จบช่วง (500ms) ค่อยส่งรวมครั้งเดียว
         saveTimers.current[questionId] = setTimeout(send, 500);
       }
     },
-    [],
+    [quizMode, set.revealMode, explanationsMap],
   );
 
   const answeredCount = useMemo(
@@ -362,7 +431,6 @@ export function QuizRunner({
   // คีย์ลัดสำหรับการทำข้อสอบแบบลื่นไหล: 1-4 หรือ A-D ตอบข้อสอบ, ลูกศร ซ้าย-ขวา เลื่อนข้อ, F ปักธง
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // ข้ามถ้ากำลังพิมพ์ในช่อง input, textarea หรือ modal ยืนยันส่งข้อสอบกำลังเปิดอยู่
       if (
         document.activeElement?.tagName === "INPUT" ||
         document.activeElement?.tagName === "TEXTAREA" ||
@@ -371,7 +439,6 @@ export function QuizRunner({
         return;
       }
 
-      // เปลี่ยนข้อสอบ: ArrowLeft (ข้อก่อนหน้า), ArrowRight (ข้อถัดไป)
       if (e.key === "ArrowLeft") {
         e.preventDefault();
         setCurrent((c) => Math.max(0, c - 1));
@@ -380,7 +447,6 @@ export function QuizRunner({
         setCurrent((c) => Math.min(set.questions.length - 1, c + 1));
       }
 
-      // ปักธงทบทวน (Flag): กด f หรือ F
       if (e.key.toLowerCase() === "f") {
         e.preventDefault();
         if (q) {
@@ -389,7 +455,6 @@ export function QuizRunner({
         }
       }
 
-      // เลือกชอยส์ MCQ ด้วยปุ่ม 1-4 หรือ A-D
       if (q && q.type === "MCQ" && q.options) {
         const keyMap: Record<string, number> = {
           "1": 0, "a": 0, "A": 0,
@@ -412,11 +477,14 @@ export function QuizRunner({
 
   if (!q) return null;
 
+  const isPractice = quizMode === "PRACTICE" || set.revealMode === "AFTER_EACH";
+  const feedback = revealedFeedback[q.id];
+
   return (
     <div className="flex flex-col gap-4">
-      {/* แถบหัว: ชื่อชุด + เวลา + ความคืบหน้า */}
-      <div className="flex flex-wrap items-center gap-3 rounded-3xl border border-border bg-card p-4 shadow-soft">
-        <div className="flex-1">
+      {/* แถบหัว: ชื่อชุด + ตัวสลับโหมดฝึกซ้อม/สอบจริง + ตัวจับเวลา + ความคืบหน้า */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-border bg-card p-4 shadow-soft">
+        <div className="flex-1 min-w-[240px]">
           <h1 className="text-base font-semibold md:text-lg">{set.title}</h1>
           {retrySourceAttemptId && (
             <a
@@ -428,23 +496,53 @@ export function QuizRunner({
               เปิดดูผลรอบเดิม (read-only)
             </a>
           )}
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {set.subjectCode} {set.subjectName}
             {set.topicTitle ? ` · ${set.topicTitle}` : ""} · ข้อ {current + 1} จาก {set.questions.length}
           </p>
         </div>
-        <Badge
-          variant="secondary"
-          className="rounded-full font-mono text-sm"
-          title="โหมดไม่จำกัดเวลา"
-          aria-live="off"
-        >
-          <Clock className="mr-1.5 h-4 w-4 text-muted-foreground" aria-hidden />
-          <span>{formatClock(elapsed)}</span>
-          <span className="ml-1 text-[11px] font-sans text-muted-foreground">
-            (ไม่จำกัดเวลา)
-          </span>
-        </Badge>
+
+        {/* ตัวเลือกโหมด: ฝึกซ้อมเฉลยทันที vs สอบจริง */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex rounded-2xl bg-muted/80 p-1 border border-border/70 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => handleModeChange("PRACTICE")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer",
+                quizMode === "PRACTICE"
+                  ? "bg-primary text-primary-foreground shadow-2xs font-bold"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+              <span>โหมดฝึกซ้อม (เฉลยทันที)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeChange("EXAM")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer",
+                quizMode === "EXAM"
+                  ? "bg-card text-foreground shadow-2xs font-bold border border-border"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Clock className="h-3.5 w-3.5" />
+              <span>โหมดสอบจริง</span>
+            </button>
+          </div>
+
+          <Badge
+            variant="secondary"
+            className="rounded-full font-mono text-sm px-3 py-1 shadow-2xs"
+            title="เวลาที่ใช้ไป"
+            aria-live="off"
+          >
+            <Clock className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" aria-hidden />
+            <span>{formatClock(elapsed)}</span>
+          </Badge>
+        </div>
       </div>
 
       <div className="flex items-center gap-3">
@@ -463,16 +561,31 @@ export function QuizRunner({
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-secondary font-semibold text-wine dark:text-primary">
             {current + 1}
           </span>
-          <Button
-            variant={q && answers[q.id]?.flagged ? "default" : "outline"}
-            size="sm"
-            className="rounded-2xl"
-            aria-pressed={Boolean(answers[q.id]?.flagged)}
-            onClick={() => saveAnswer(q.id, { flagged: !answers[q.id]?.flagged })}
-          >
-            <Flag className="mr-1 h-4 w-4" aria-hidden />
-            {answers[q.id]?.flagged ? "ปักธงอยู่" : "ยังไม่แน่ใจ"}
-          </Button>
+          <div className="flex items-center gap-2">
+            {isPractice && feedback && (
+              <Badge
+                variant="outline"
+                className={cn(
+                  "font-semibold text-xs",
+                  feedback.isCorrect
+                    ? "border-emerald-600 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                    : "border-rose-500 bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                )}
+              >
+                {feedback.isCorrect ? "✓ ถูกต้อง" : "✗ ยังไม่ถูก"}
+              </Badge>
+            )}
+            <Button
+              variant={q && answers[q.id]?.flagged ? "default" : "outline"}
+              size="sm"
+              className="rounded-2xl"
+              aria-pressed={Boolean(answers[q.id]?.flagged)}
+              onClick={() => saveAnswer(q.id, { flagged: !answers[q.id]?.flagged })}
+            >
+              <Flag className="mr-1 h-4 w-4" aria-hidden />
+              {answers[q.id]?.flagged ? "ปักธงอยู่" : "ยังไม่แน่ใจ"}
+            </Button>
+          </div>
         </div>
 
         <div className="text-[15px] leading-relaxed">
@@ -480,7 +593,6 @@ export function QuizRunner({
         </div>
 
         {q.imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={q.imageUrl}
             alt="รูปประกอบโจทย์"
@@ -488,19 +600,21 @@ export function QuizRunner({
           />
         )}
 
-        {/* กระดาษทด — มีให้ทุกวิชา ทุกข้อ (เปิดเมื่อต้องคำนวณ/จดคิด) */}
+        {/* กระดาษทด */}
         <div className="mt-3">
           <ScratchPad setId={set.id} questionId={q.id} />
         </div>
 
-        {/* ตัวเลือก MCQ */}
+        {/* ตัวเลือก MCQ พร้อมเฉลยทันทีในโหมดฝึกซ้อม */}
         {q.type === "MCQ" && q.options && (
-          <div className="mt-4 flex flex-col gap-2" role="radiogroup" aria-label="ตัวเลือกคำตอบ">
+          <div className="mt-4 flex flex-col gap-2.5" role="radiogroup" aria-label="ตัวเลือกคำตอบ">
             {q.options.map((opt) => {
               const selected = answers[q.id]?.selectedKeys?.includes(opt.key) ?? false;
-              const reveal = set.revealMode === "AFTER_EACH" && perQuestionCorrect[q.id] !== undefined;
-              const isRight = perQuestionCorrect[q.id] === true && selected;
-              const isWrong = perQuestionCorrect[q.id] === false && selected;
+              const isAnswered = isPractice && feedback !== undefined;
+              const isRight = isAnswered && feedback.isCorrect && selected;
+              const isWrong = isAnswered && !feedback.isCorrect && selected;
+              const isTargetCorrect = isAnswered && opt.key === feedback.correctKey;
+
               return (
                 <button
                   key={opt.key}
@@ -509,37 +623,128 @@ export function QuizRunner({
                   aria-checked={selected}
                   onClick={() => saveAnswer(q.id, { selectedKeys: [opt.key] })}
                   className={cn(
-                    "flex items-start gap-3 rounded-2xl border p-3 text-left text-sm transition-colors hover:bg-secondary/60 focus-visible:outline-2 focus-visible:outline-ring",
-                    selected ? "border-wine bg-soft-pink/50 dark:border-primary dark:bg-secondary" : "border-border",
-                    reveal && isRight && "border-green-600 bg-green-50 dark:bg-green-950/40",
-                    reveal && isWrong && "border-red-500 bg-red-50 dark:bg-red-950/40",
+                    "flex items-start gap-3 rounded-2xl border p-3.5 text-left text-sm transition-all hover:bg-secondary/60 focus-visible:outline-2 focus-visible:outline-ring cursor-pointer select-none",
+                    selected && !isAnswered && "border-wine bg-soft-pink/50 dark:border-primary dark:bg-secondary",
+                    !selected && !isAnswered && "border-border",
+                    // ไฮไลต์เฉลยในโหมดฝึกซ้อม
+                    isRight && "border-emerald-600 bg-emerald-500/15 text-emerald-950 dark:border-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-100 ring-2 ring-emerald-500/20 font-medium",
+                    isWrong && "border-rose-500 bg-rose-500/15 text-rose-950 dark:border-rose-500 dark:bg-rose-950/40 dark:text-rose-100 ring-2 ring-rose-500/20 font-medium",
+                    !selected && isTargetCorrect && "border-emerald-500/80 border-dashed bg-emerald-500/10 text-emerald-900 dark:text-emerald-200 font-medium",
+                    isAnswered && !selected && !isTargetCorrect && "opacity-60 border-border"
                   )}
                 >
                   <span
                     className={cn(
-                      "flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border font-medium",
-                      selected ? "border-wine bg-wine text-white dark:border-primary dark:bg-primary" : "border-border",
+                      "flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border font-bold text-xs transition-colors",
+                      selected && !isAnswered && "border-wine bg-wine text-white dark:border-primary dark:bg-primary",
+                      !selected && !isAnswered && "border-border bg-card",
+                      isRight && "border-emerald-600 bg-emerald-600 text-white",
+                      isWrong && "border-rose-500 bg-rose-500 text-white",
+                      !selected && isTargetCorrect && "border-emerald-600 text-emerald-700 dark:text-emerald-300 font-extrabold bg-emerald-100/60 dark:bg-emerald-950/60"
                     )}
                   >
-                    {opt.key}
+                    {isRight ? "✓" : isWrong ? "✗" : opt.key}
                   </span>
-                  <span className="leading-relaxed">
+                  <span className="flex-1 leading-relaxed pt-0.5">
                     <KatexText text={opt.text} />
                   </span>
+                  {isRight && (
+                    <span className="shrink-0 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                      ✓ ตอบถูก
+                    </span>
+                  )}
+                  {isWrong && (
+                    <span className="shrink-0 text-xs font-semibold text-rose-600 dark:text-rose-400">
+                      ✗ ตอบผิด
+                    </span>
+                  )}
+                  {!selected && isTargetCorrect && (
+                    <span className="shrink-0 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                      คำตอบที่ถูก
+                    </span>
+                  )}
                 </button>
               );
             })}
-            {set.revealMode === "AFTER_EACH" && perQuestionCorrect[q.id] !== undefined && (
-              <p
-                className={cn(
-                  "text-sm font-medium",
-                  perQuestionCorrect[q.id] ? "text-green-700 dark:text-green-400" : "text-red-600 dark:text-red-400",
-                )}
-                aria-live="polite"
-              >
-                {perQuestionCorrect[q.id] ? "✓ ถูกต้อง!" : "✗ ยังไม่ถูก ลองคิดใหม่นะ"}
-              </p>
+          </div>
+        )}
+
+        {/* กล่องเฉลยละเอียดและวิเคราะห์จุดหลอก (Instant Feedback Card) */}
+        {isPractice && feedback && (
+          <div
+            className={cn(
+              "mt-5 rounded-3xl border-2 p-5 shadow-soft transition-all animate-fade-up",
+              feedback.isCorrect
+                ? "border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20"
+                : "border-rose-500/30 bg-rose-500/5 dark:bg-rose-950/20"
             )}
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-2xl bg-card border border-border text-base shadow-2xs">
+                  {feedback.isCorrect ? "🎉" : "💡"}
+                </span>
+                <div>
+                  <h4 className="text-sm font-bold text-foreground">
+                    {feedback.isCorrect
+                      ? "ยอดเยี่ยมมาก! ตอบถูกต้อง"
+                      : `ยังไม่ถูกต้อง — คำตอบที่ถูกต้องคือข้อ ${feedback.correctKey ?? ""}`}
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground">
+                    {feedback.isCorrect
+                      ? "เข้าใจโครงสร้างและคีย์เวิร์ดของประโยคนี้อย่างแม่นยำ"
+                      : "สังเกตเหตุผลและคำอธิบายไวยากรณ์ด้านล่างเพื่อแก้จุดหลอก"}
+                  </p>
+                </div>
+              </div>
+
+              <Badge
+                variant="outline"
+                className={cn(
+                  "font-semibold text-xs px-2.5 py-1",
+                  feedback.isCorrect
+                    ? "border-emerald-600 bg-emerald-600 text-white"
+                    : "border-rose-500 bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                )}
+              >
+                {feedback.isCorrect ? "+1 คะแนน" : "วิเคราะห์ทำความเข้าใจ"}
+              </Badge>
+            </div>
+
+            {feedback.explanation && (
+              <div className="mt-3.5 space-y-2">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+                  <Lightbulb className="h-3.5 w-3.5 text-amber-500" />
+                  คำอธิบายเฉลยและจุดสังเกต (Grammar Breakdown):
+                </span>
+                <div className="rounded-2xl border border-border/80 bg-card p-4 text-sm leading-relaxed shadow-2xs">
+                  <MarkdownLite content={feedback.explanation} />
+                </div>
+              </div>
+            )}
+
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-border/40">
+              <span className="text-xs text-muted-foreground">
+                ลองเลือกข้ออื่นเพื่อฝึก หรือกดข้อถัดไป
+              </span>
+              {current < set.questions.length - 1 ? (
+                <Button
+                  size="sm"
+                  onClick={() => setCurrent((c) => Math.min(set.questions.length - 1, c + 1))}
+                  className="rounded-xl font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  ข้อถัดไป ({current + 2}/{set.questions.length}) <ChevronRight className="ml-1 h-3.5 w-3.5" />
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={() => submit()}
+                  className="rounded-xl font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  ส่งตรวจคะแนนรวมทั้งชุด <Send className="ml-1 h-3.5 w-3.5" />
+                </Button>
+              )}
+            </div>
           </div>
         )}
 
@@ -555,18 +760,28 @@ export function QuizRunner({
               value={answers[q.id]?.text ?? ""}
               onChange={(e) => saveAnswer(q.id, { text: e.target.value })}
               className="w-full rounded-2xl border border-input bg-background px-4 py-2.5 text-sm focus-visible:outline-2 focus-visible:outline-ring"
-              placeholder="เช่น 9.8 m/s^2 หรือ $\\frac{1}{2}$"
+              placeholder="พิมพ์คำตอบที่ต้องการ..."
             />
+            {isPractice && feedback && (
+              <div className="mt-2 text-xs">
+                {feedback.isCorrect ? (
+                  <span className="font-semibold text-emerald-600">✓ คำตอบถูกต้อง</span>
+                ) : (
+                  <span className="text-rose-600">
+                    เฉลยที่ถูกต้อง: <strong>{feedback.finalAnswer}</strong>
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         )}
 
-        {/* ข้อเขียน: กระดานเขียน + LaTeX + คำตอบสุดท้าย */}
+        {/* ข้อเขียน */}
         {q.type === "WRITTEN" && (
           <div className="mt-4 flex flex-col gap-3">
             <Whiteboard
               storageKey={`${set.id}:${q.id}`}
               onChange={(dataUrl) => {
-                // เก็บภาพไว้ในหน่วยความจำก่อน — จะอัปโหลดครั้งเดียวตอนกดส่งคำตอบ (ไม่หน่วงตอนเขียน)
                 if (dataUrl) pendingSketches.current[q.id] = dataUrl;
               }}
             />
@@ -579,76 +794,59 @@ export function QuizRunner({
                 type="text"
                 value={answers[q.id]?.tex ?? ""}
                 onChange={(e) => saveAnswer(q.id, { tex: e.target.value })}
-                className="mt-1 w-full rounded-2xl border border-input bg-background px-4 py-2 text-sm font-mono focus-visible:outline-2 focus-visible:outline-ring"
-                placeholder="\\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}"
+                className="mt-1 w-full rounded-2xl border border-input bg-background px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-ring font-mono"
               />
-              {answers[q.id]?.tex && (
-                <div className="mt-1 rounded-2xl bg-muted/60 p-2 text-sm">
-                  พรีวิว: <KatexText text={`$${answers[q.id]?.tex}$`} />
-                </div>
-              )}
             </div>
             <div>
-              <label htmlFor={`final-${q.id}`} className="text-sm font-medium text-wine dark:text-primary">
-                คำตอบสุดท้าย *
+              <label htmlFor={`final-${q.id}`} className="text-sm font-medium">
+                คำตอบสุดท้าย
               </label>
               <input
                 id={`final-${q.id}`}
                 type="text"
                 value={answers[q.id]?.finalAnswer ?? ""}
                 onChange={(e) => saveAnswer(q.id, { finalAnswer: e.target.value })}
-                className="mt-1 w-full rounded-2xl border-2 border-wine/40 bg-background px-4 py-2.5 text-sm focus-visible:outline-2 focus-visible:outline-ring dark:border-primary/50"
-                placeholder="เขียนคำตอบสุดท้ายแยกจากวิธีทำ"
+                className="mt-1 w-full rounded-2xl border border-input bg-background px-4 py-2.5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-ring"
               />
             </div>
-            <p className="text-xs text-muted-foreground">
-              ร่างบนกระดานถูกบันทึกอัตโนมัติในเครื่องของคุณ ปิดหน้าแล้วกลับมาใหม่ก็ยังอยู่
-              (ข้อเขียนจะให้คุณตรวจกับเฉลยและ rubric เองหลังส่ง)
-            </p>
           </div>
         )}
 
-        {/* ความมั่นใจ: ถามหลังตอบแล้ว — ข้อ "มั่นใจแต่ผิด" และ "ถูกเพราะเดา" จะถูกส่งเข้าคิวทบทวน */}
-        {q.type !== "WRITTEN" &&
-          ((answers[q.id]?.selectedKeys?.length ?? 0) > 0 || Boolean(answers[q.id]?.text?.trim())) && (
-            <div
-              className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-dashed border-border bg-muted/40 p-3"
-              role="group"
-              aria-label="ความมั่นใจในคำตอบข้อนี้"
-            >
-              <span className="mr-1 text-sm font-medium">ตอบข้อนี้แบบไหน?</span>
-              {(
-                [
-                  { v: "SURE", label: "มั่นใจ", icon: <ShieldCheck className="mr-1 h-4 w-4" aria-hidden /> },
-                  { v: "GUESS", label: "เดา / ไม่ชัวร์", icon: <HelpCircle className="mr-1 h-4 w-4" aria-hidden /> },
-                ] as const
-              ).map((c) => {
-                const on = answers[q.id]?.confidence === c.v;
-                return (
-                  <button
-                    key={c.v}
-                    type="button"
-                    aria-pressed={on}
-                    onClick={() => saveAnswer(q.id, { confidence: on ? null : c.v })}
-                    className={cn(
-                      "inline-flex h-10 items-center rounded-xl border px-4 text-sm font-medium transition-colors",
-                      on
-                        ? c.v === "SURE"
-                          ? "border-emerald-600 bg-emerald-600 text-white"
-                          : "border-amber-500 bg-amber-500 text-white"
-                        : "border-border bg-card hover:bg-secondary",
-                    )}
-                  >
-                    {c.icon}
-                    {c.label}
-                  </button>
-                );
-              })}
-              <span className="w-full text-xs text-muted-foreground">
-                ข้อที่เดาถูก หรือมั่นใจแต่ผิด ระบบจะเอากลับมาให้ทบทวนในวันถัด ๆ ไป
-              </span>
-            </div>
-          )}
+        {/* ความมั่นใจ */}
+        {Boolean(
+          answers[q.id]?.selectedKeys?.length ||
+            answers[q.id]?.text?.trim() ||
+            answers[q.id]?.finalAnswer?.trim(),
+        ) && (
+          <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border/60 pt-4">
+            <span className="text-xs text-muted-foreground">ความมั่นใจ:</span>
+            {[
+              { v: "SURE" as const, label: "มั่นใจ", icon: <ShieldCheck className="mr-1 h-3.5 w-3.5" /> },
+              { v: "GUESS" as const, label: "เดา / ยังลังเล", icon: <HelpCircle className="mr-1 h-3.5 w-3.5" /> },
+            ].map((c) => {
+              const on = answers[q.id]?.confidence === c.v;
+              return (
+                <button
+                  key={c.v}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => saveAnswer(q.id, { confidence: on ? null : c.v })}
+                  className={cn(
+                    "inline-flex h-9 items-center rounded-xl border px-3 text-xs font-medium transition-colors cursor-pointer",
+                    on
+                      ? c.v === "SURE"
+                        ? "border-emerald-600 bg-emerald-600 text-white"
+                        : "border-amber-500 bg-amber-500 text-white"
+                      : "border-border bg-card hover:bg-secondary",
+                  )}
+                >
+                  {c.icon}
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </article>
 
       {/* ปุ่มเลื่อนข้อ + ส่ง */}
@@ -669,6 +867,8 @@ export function QuizRunner({
               ((answers[qq.id].selectedKeys?.length ?? 0) > 0 ||
                 Boolean(answers[qq.id].text?.trim()) ||
                 Boolean(answers[qq.id].finalAnswer?.trim()));
+            const qFeedback = revealedFeedback[qq.id];
+
             return (
               <button
                 key={qq.id}
@@ -678,19 +878,23 @@ export function QuizRunner({
                 aria-label={`ข้อ ${i + 1}${answered ? " (ตอบแล้ว)" : ""}${answers[qq.id]?.flagged ? " (ปักธง)" : ""}`}
                 onClick={() => setCurrent(i)}
                 className={cn(
-                  "relative h-8 w-8 shrink-0 rounded-xl border text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-ring",
-                  i === current
-                    ? "border-wine bg-wine text-white dark:border-primary dark:bg-primary"
-                    : answered
-                      ? "border-transparent bg-secondary text-wine dark:text-primary"
-                      : "border-border text-muted-foreground",
+                  "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border text-xs font-medium transition-all cursor-pointer",
+                  i === current && "ring-2 ring-primary ring-offset-1 font-bold",
+                  !answered && !answers[qq.id]?.flagged && "border-border bg-card hover:bg-secondary",
+                  answered && !isPractice && "border-wine bg-soft-pink text-wine dark:border-primary dark:bg-secondary dark:text-primary",
+                  answered && isPractice && qFeedback?.isCorrect === true && "border-emerald-600 bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-bold",
+                  answered && isPractice && qFeedback?.isCorrect === false && "border-rose-500 bg-rose-500/15 text-rose-800 dark:text-rose-300 font-bold",
+                  answered && isPractice && !qFeedback && "border-wine bg-soft-pink text-wine dark:border-primary dark:bg-secondary dark:text-primary",
+                  answers[qq.id]?.flagged && "border-amber-500 bg-amber-500/10 text-amber-700 dark:text-amber-300",
                 )}
               >
                 {i + 1}
-                {answers[qq.id]?.flagged && (
+                {isPractice && qFeedback && (
                   <span
-                    className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-amber-400 ring-2 ring-card"
-                    aria-hidden
+                    className={cn(
+                      "absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full border border-background shadow-xs",
+                      qFeedback.isCorrect ? "bg-emerald-500" : "bg-rose-500"
+                    )}
                   />
                 )}
               </button>
