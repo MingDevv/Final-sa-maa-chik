@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { FileText, NotebookPen } from "lucide-react";
+import { FileText, NotebookPen, Zap } from "lucide-react";
 import { BackButton } from "@/components/back-button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -51,15 +51,25 @@ export default async function SubjectPage({
             <p className="text-sm text-muted-foreground">{subject.code}</p>
           </div>
         </div>
-        <Link
-          href={`/study-guide/${encodeURIComponent(subject.code)}`}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          <NotebookPen className="h-4 w-4" aria-hidden /> อ่านชีตสรุปก่อนสอบ
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href={`/subjects/${encodeURIComponent(subject.code)}/flashcards`}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-amber-300 bg-amber-500/15 px-4 text-sm font-semibold text-amber-800 transition-colors hover:bg-amber-500/25 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
+          >
+            <Zap className="h-4 w-4 text-amber-600 dark:text-amber-400" aria-hidden />
+            แผ่นการ์ดทบทวน (Flashcards)
+          </Link>
+          <Link
+            href={`/study-guide/${encodeURIComponent(subject.code)}`}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            <NotebookPen className="h-4 w-4" aria-hidden /> อ่านชีตสรุปก่อนสอบ
+          </Link>
+        </div>
       </header>
 
       <SubjectContent
+        subjectCode={subject.code}
         topics={subject.topics.map((t) => ({ id: t.id, title: t.title }))}
         sets={sets.map((s) => ({
           id: s.id,

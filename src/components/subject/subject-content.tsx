@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { PlayCircle } from "lucide-react";
+import { BookOpen, PlayCircle, Zap } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ExamAnnouncementBanner } from "@/components/announcement/exam-announcement-banner";
 
 interface TopicItem {
   id: string;
@@ -38,12 +39,19 @@ const difficultyLabel: Record<SetItem["difficulty"], string> = {
 export function SubjectContent({
   topics,
   sets,
+  subjectCode,
 }: {
   topics: TopicItem[];
   sets: SetItem[];
+  subjectCode?: string;
 }) {
   const [topicId, setTopicId] = useState<string>("all");
   const [difficulty, setDifficulty] = useState<string>("all");
+
+  const isEnglish =
+    subjectCode === "อ31101" ||
+    subjectCode?.includes("31101") ||
+    subjectCode?.toLowerCase().includes("english");
 
   const filtered = useMemo(
     () =>
@@ -56,7 +64,40 @@ export function SubjectContent({
   );
 
   return (
-    <section className="flex flex-col gap-3" aria-label="ชุดข้อสอบของวิชานี้">
+    <section className="flex flex-col gap-4" aria-label="ชุดข้อสอบของวิชานี้">
+      {/* If English subject อ31101, show the ExamAnnouncementBanner at top */}
+      {isEnglish && (
+        <div className="w-full">
+          <ExamAnnouncementBanner />
+        </div>
+      )}
+
+      {/* Quick links bar alongside อ่านชีตสรุป */}
+      {subjectCode && (
+        <div className="flex flex-wrap items-center gap-2.5 rounded-2xl border border-border/70 bg-card/60 p-3.5 backdrop-blur-xs">
+          <span className="text-xs font-semibold text-muted-foreground mr-1">
+            ทบทวนด่วน:
+          </span>
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="rounded-xl border-amber-300 bg-amber-500/10 text-amber-800 hover:bg-amber-500/20 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
+          >
+            <Link href={`/subjects/${encodeURIComponent(subjectCode)}/flashcards`}>
+              <Zap className="mr-1 h-3.5 w-3.5 text-amber-600 dark:text-amber-400" aria-hidden />
+              แผ่นการ์ดทบทวน (Flashcards)
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="sm" className="rounded-xl">
+            <Link href={`/study-guide/${encodeURIComponent(subjectCode)}`}>
+              <BookOpen className="mr-1 h-3.5 w-3.5 text-primary" aria-hidden />
+              อ่านชีตสรุป
+            </Link>
+          </Button>
+        </div>
+      )}
+
       <div className="flex flex-wrap items-center gap-2">
         <Select value={topicId} onValueChange={setTopicId}>
           <SelectTrigger className="w-56 rounded-2xl" aria-label="กรองตามหัวข้อ">

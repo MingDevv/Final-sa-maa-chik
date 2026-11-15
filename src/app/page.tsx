@@ -24,6 +24,7 @@ import { Progress } from "@/components/ui/progress";
 import { subjectService } from "@/server/services/subject-service";
 import { db } from "@/lib/db";
 import { Hero, examCountdownText } from "@/components/dashboard/hero";
+import { ExamAnnouncementBanner } from "@/components/announcement/exam-announcement-banner";
 import { analyticsService } from "@/server/services/analytics-service";
 import { getReadOnlySession } from "@/server/read-session";
 import { reviewService } from "@/server/services/review-service";
@@ -132,6 +133,9 @@ export default async function DashboardPage() {
         termName={termInfo.name}
         subjectCount={subjects.length}
       />
+
+      {/* ประกาศนัดหมายสอบภาษาอังกฤษ (คาบหน้าพรุ่งนี้!) */}
+      <ExamAnnouncementBanner />
 
       {/* ทบทวนวันนี้ (spaced repetition) — CTA เด่นที่สุดรองจาก hero */}
       <Link
