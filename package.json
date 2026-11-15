@@ -20,6 +20,7 @@
     "seed:guides:day2": "tsx prisma/seed-guides-day2.ts",
     "seed:exams:day2": "tsx prisma/seed-exams-day2.ts",
     "seed:english": "tsx prisma/seed-english-exam.ts",
+    "seed:english2": "tsx prisma/seed-english-exam-2.ts",
     "db:clean": "tsx prisma/reset-clean-subjects.ts",
     "db:studio": "prisma studio",
     "dev:db": "node scripts/dev-db.mjs"

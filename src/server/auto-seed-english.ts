@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { ENGLISH_FUTURE_STUDY_GUIDE_MD } from "@/data/english-future-study-guide";
 import { ENGLISH_FUTURE_QUESTIONS_DATA } from "@/data/english-future-questions";
+import ENGLISH_FUTURE_APPLIED_DATA from "@/data/english-future-applied-questions.json";
 
 export const ENGLISH_SUBJECT_CODE = "อ31101";
 export const ENGLISH_QUESTION_SET_ID = "cmwhdrreg0006xj05df2kb4ke";
@@ -159,11 +160,71 @@ export async function ensureEnglishContent(): Promise<void> {
       }
     }
 
+    // 6. ชุดที่ 2 (แนวประยุกต์) — สร้างครั้งเดียวถ้ายังไม่มี ไม่แตะชุดเดิม
+    await ensureAppliedSet(englishSubject.id, topic.id);
+
     hasSeededSuccessfully = true;
   } catch (error) {
     console.warn("[auto-seed-english] Seeding encountered warning:", error);
   } finally {
     isSeeding = false;
+  }
+}
+
+/** id คงที่ของชุดที่ 2 (ห้ามมีคำว่า "english" เพราะหน้า quiz มี fallback ของชุดที่ 1 จับคำนั้น) */
+export const ENGLISH_APPLIED_SET_ID = "future-applied-set-2";
+
+async function ensureAppliedSet(subjectId: string, topicId: string): Promise<void> {
+  const data = ENGLISH_FUTURE_APPLIED_DATA;
+  const existing = await db.questionSet.findFirst({
+    where: {
+      OR: [
+        { id: ENGLISH_APPLIED_SET_ID },
+        { subjectId, title: { path: ["th"], equals: data.title.th } },
+      ],
+    },
+    include: { _count: { select: { questions: true } } },
+  });
+  if (existing && existing._count.questions >= data.questions.length) return;
+
+  const term = await db.examTerm.findFirst({ where: { status: "ACTIVE" } });
+  try {
+    await db.$transaction(async (tx) => {
+      const set =
+        existing ??
+        (await tx.questionSet.create({
+          data: {
+            id: ENGLISH_APPLIED_SET_ID,
+            title: data.title as never,
+            description: data.description,
+            subjectId,
+            topicId,
+            termId: term?.id ?? null,
+            difficulty: "MEDIUM",
+            recommendedMinutes: data.recommendedMinutes,
+            status: "PUBLISHED",
+            revealMode: "AFTER_SUBMIT",
+            shuffleQuestions: false,
+            shuffleOptions: false,
+          },
+        }));
+      await tx.question.deleteMany({ where: { setId: set.id } });
+      await tx.question.createMany({
+        data: data.questions.map((q) => ({
+          setId: set.id,
+          type: "MCQ" as const,
+          prompt: q.prompt,
+          options: q.options as never,
+          answer: { kind: "MCQ", correctKeys: [q.answer.correctKey], correctKey: q.answer.correctKey },
+          explanation: q.explanation,
+          points: q.points,
+          sortOrder: q.sortOrder,
+        })),
+      });
+    });
+  } catch (error) {
+    // อีก instance อาจสร้างไปพร้อมกันแล้ว (id ชน) — ไม่เป็นไร
+    console.warn("[auto-seed-english] applied set:", error);
   }
 }
 
