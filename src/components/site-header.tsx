@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 
 const NAV = [
   { href: "/", label: "หน้าแรก" },
+  { href: "/flashcards", label: "การ์ดจำ" },
   { href: "/review", label: "ทบทวน" },
   { href: "/archive", label: "คลังข้อสอบ" },
   { href: "/admin", label: "ผู้ดูแล" },

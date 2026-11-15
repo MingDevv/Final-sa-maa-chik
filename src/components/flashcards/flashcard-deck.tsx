@@ -238,6 +238,32 @@ export function FlashcardDeck({
   ).length;
   const masteryPercentage = Math.round((totalMasteredCount / totalCardsCount) * 100);
 
+  // รองรับ Swipe ท่าทางปัดนิ้วซ้าย-ขวาบนจอมือถือ
+  const touchStartX = React.useRef<number | null>(null);
+  const touchStartY = React.useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const diffX = touchStartX.current - e.changedTouches[0].clientX;
+    const diffY = touchStartY.current - e.changedTouches[0].clientY;
+    touchStartX.current = null;
+    touchStartY.current = null;
+
+    // ตรวจสอบว่าเป็นการปัดแนวนอนชัดเจน (เกิน 45px และไม่อิงแกนตั้ง)
+    if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX > 0) {
+        handleNext(); // ปัดซ้าย -> การ์ดถัดไป
+      } else {
+        handlePrev(); // ปัดขวา -> การ์ดก่อนหน้า
+      }
+    }
+  };
+
   // Category counts for pill badges
   const categoryCounts = React.useMemo(() => {
     const map: Record<string, number> = { All: initialCards.length };
@@ -441,9 +467,11 @@ export function FlashcardDeck({
             className="group relative w-full cursor-pointer select-none"
             style={{ perspective: "1200px" }}
             onClick={handleFlip}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
             role="button"
             tabIndex={0}
-            aria-label={`Flashcard: ${currentCard.title}. กด Spacebar เพื่อพลิกการ์ด`}
+            aria-label={`Flashcard: ${currentCard.title}. กด Spacebar เพื่อพลิกการ์ด (บนมือถือปัดซ้ายขวาได้)`}
           >
             <div
               className="relative w-full rounded-3xl transition-transform duration-500 ease-out"

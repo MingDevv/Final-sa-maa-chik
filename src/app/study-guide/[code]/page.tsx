@@ -4,6 +4,7 @@ import { BackButton } from "@/components/back-button";
 import { db } from "@/lib/db";
 import { localizedToString } from "@/lib/types";
 import { MarkdownLite } from "@/components/study-guide/markdown-lite";
+import { PrintGuideButton } from "@/components/study-guide/print-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -60,22 +61,25 @@ export default async function StudyGuidePage({
           fallbackHref={`/subjects/${encodeURIComponent(subject.code)}`}
           label={`กลับวิชา ${subject.code}`}
         />
-        {isEnglish && (
-          <div className="flex flex-wrap items-center gap-2">
-            <Button asChild size="sm" variant="outline" className="rounded-xl border-amber-300 bg-amber-500/10 text-amber-800 hover:bg-amber-500/20 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
-              <Link href={`/subjects/${encodeURIComponent(subject.code)}/flashcards`}>
-                <Zap className="mr-1 h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
-                แผ่นการ์ดท่องจำ (Flashcards)
-              </Link>
-            </Button>
-            <Button asChild size="sm" className="rounded-xl bg-purple-600 hover:bg-purple-700 text-white">
-              <Link href={`/quiz/${ENGLISH_QUESTION_SET_ID}`}>
-                <PlayCircle className="mr-1 h-3.5 w-3.5" />
-                ทำแนวข้อสอบ 20 ข้อ (มีช้อย)
-              </Link>
-            </Button>
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          <PrintGuideButton />
+          {isEnglish && (
+            <>
+              <Button asChild size="sm" variant="outline" className="rounded-xl border-amber-300 bg-amber-500/10 text-amber-800 hover:bg-amber-500/20 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+                <Link href={`/subjects/${encodeURIComponent(subject.code)}/flashcards`}>
+                  <Zap className="mr-1 h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                  แผ่นการ์ดท่องจำ (Flashcards)
+                </Link>
+              </Button>
+              <Button asChild size="sm" className="rounded-xl bg-purple-600 hover:bg-purple-700 text-white">
+                <Link href={`/quiz/${ENGLISH_QUESTION_SET_ID}`}>
+                  <PlayCircle className="mr-1 h-3.5 w-3.5" />
+                  ทำแนวข้อสอบ 20 ข้อ (มีช้อย)
+                </Link>
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       <header className="flex items-center gap-3">

@@ -359,6 +359,57 @@ export function QuizRunner({
     [set.questions, answers],
   );
 
+  // คีย์ลัดสำหรับการทำข้อสอบแบบลื่นไหล: 1-4 หรือ A-D ตอบข้อสอบ, ลูกศร ซ้าย-ขวา เลื่อนข้อ, F ปักธง
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // ข้ามถ้ากำลังพิมพ์ในช่อง input, textarea หรือ modal ยืนยันส่งข้อสอบกำลังเปิดอยู่
+      if (
+        document.activeElement?.tagName === "INPUT" ||
+        document.activeElement?.tagName === "TEXTAREA" ||
+        confirmSubmit
+      ) {
+        return;
+      }
+
+      // เปลี่ยนข้อสอบ: ArrowLeft (ข้อก่อนหน้า), ArrowRight (ข้อถัดไป)
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setCurrent((c) => Math.max(0, c - 1));
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setCurrent((c) => Math.min(set.questions.length - 1, c + 1));
+      }
+
+      // ปักธงทบทวน (Flag): กด f หรือ F
+      if (e.key.toLowerCase() === "f") {
+        e.preventDefault();
+        if (q) {
+          const flagged = answers[q.id]?.flagged ?? false;
+          saveAnswer(q.id, { flagged: !flagged });
+        }
+      }
+
+      // เลือกชอยส์ MCQ ด้วยปุ่ม 1-4 หรือ A-D
+      if (q && q.type === "MCQ" && q.options) {
+        const keyMap: Record<string, number> = {
+          "1": 0, "a": 0, "A": 0,
+          "2": 1, "b": 1, "B": 1,
+          "3": 2, "c": 2, "C": 2,
+          "4": 3, "d": 3, "D": 3,
+        };
+        const optIndex = keyMap[e.key];
+        if (optIndex !== undefined && optIndex < q.options.length) {
+          e.preventDefault();
+          const targetOpt = q.options[optIndex];
+          saveAnswer(q.id, { selectedKeys: [targetOpt.key] });
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [q, set.questions.length, answers, saveAnswer, confirmSubmit]);
+
   if (!q) return null;
 
   return (
@@ -657,6 +708,10 @@ export function QuizRunner({
             {submitting ? "กำลังส่ง..." : "ส่งคำตอบ"}
           </Button>
         )}
+      </div>
+
+      <div className="hidden sm:flex items-center justify-center gap-3 text-xs text-muted-foreground/75 py-0.5">
+        <span>⚡ <strong>คีย์ลัดสะดวกรวดเร็ว:</strong> กด <strong>A/B/C/D</strong> หรือ <strong>1/2/3/4</strong> เลือกคำตอบ • <strong>← / →</strong> เลื่อนข้อ • <strong>F</strong> ปักธงทบทวน</span>
       </div>
 
       {current === set.questions.length - 1 && (
