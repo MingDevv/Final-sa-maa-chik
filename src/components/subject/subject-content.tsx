@@ -13,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ExamAnnouncementBanner } from "@/components/announcement/exam-announcement-banner";
 
 interface TopicItem {
   id: string;
@@ -48,11 +47,6 @@ export function SubjectContent({
   const [topicId, setTopicId] = useState<string>("all");
   const [difficulty, setDifficulty] = useState<string>("all");
 
-  const isEnglish =
-    subjectCode === "อ31101" ||
-    subjectCode?.includes("31101") ||
-    subjectCode?.toLowerCase().includes("english");
-
   const filtered = useMemo(
     () =>
       sets.filter(
@@ -65,13 +59,6 @@ export function SubjectContent({
 
   return (
     <section className="flex flex-col gap-4" aria-label="ชุดข้อสอบของวิชานี้">
-      {/* If English subject อ31101, show the ExamAnnouncementBanner at top */}
-      {isEnglish && (
-        <div className="w-full">
-          <ExamAnnouncementBanner />
-        </div>
-      )}
-
       {/* Quick links bar alongside อ่านชีตสรุป */}
       {subjectCode && (
         <div className="flex flex-wrap items-center gap-2.5 rounded-2xl border border-border/70 bg-card/60 p-3.5 backdrop-blur-xs">
