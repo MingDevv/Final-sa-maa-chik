@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { ENGLISH_FUTURE_STUDY_GUIDE_MD } from "@/data/english-future-study-guide";
 import { ENGLISH_FUTURE_QUESTIONS_DATA } from "@/data/english-future-questions";
 import ENGLISH_FUTURE_APPLIED_DATA from "@/data/english-future-applied-questions.json";
+import ENGLISH_FUTURE_SET3_DATA from "@/data/english-future-set3-questions.json";
 
 export const ENGLISH_SUBJECT_CODE = "อ31101";
 export const ENGLISH_QUESTION_SET_ID = "cmwhdrreg0006xj05df2kb4ke";
@@ -160,8 +161,8 @@ export async function ensureEnglishContent(): Promise<void> {
       }
     }
 
-    // 6. ชุดที่ 2 (แนวประยุกต์) — สร้างครั้งเดียวถ้ายังไม่มี ไม่แตะชุดเดิม
-    await ensureAppliedSet(englishSubject.id, topic.id);
+    // 6. ชุดที่ 2, 3 — สร้าง/อัปเดตตาม version ในไฟล์ JSON ไม่แตะชุดที่ 1
+    await ensureExtraEnglishSets(englishSubject.id, topic.id);
 
     hasSeededSuccessfully = true;
   } catch (error) {
@@ -171,60 +172,94 @@ export async function ensureEnglishContent(): Promise<void> {
   }
 }
 
-/** id คงที่ของชุดที่ 2 (ห้ามมีคำว่า "english" เพราะหน้า quiz มี fallback ของชุดที่ 1 จับคำนั้น) */
-export const ENGLISH_APPLIED_SET_ID = "future-applied-set-2";
+/**
+ * ชุดข้อสอบอังกฤษเพิ่มเติม (ชุดที่ 2, 3, ...) — id คงที่ ห้ามมีคำว่า "english"
+ * เพราะหน้า quiz มี fallback ของชุดที่ 1 ที่จับคำนั้น
+ * แก้เนื้อหาในไฟล์ JSON แล้วเพิ่ม "version" → เว็บจะแทนข้อเก่าให้เองครั้งถัดไปที่มีคนเปิดหน้าวิชา
+ */
+type ExtraSetData = {
+  version: number;
+  title: { th: string; en?: string };
+  description: string;
+  recommendedMinutes: number;
+  questions: Array<{
+    prompt: string;
+    options: Array<{ key: string; text: string }>;
+    answer: { correctKey: string };
+    explanation: string;
+    points: number;
+    sortOrder: number;
+  }>;
+};
 
-async function ensureAppliedSet(subjectId: string, topicId: string): Promise<void> {
-  const data = ENGLISH_FUTURE_APPLIED_DATA;
-  const existing = await db.questionSet.findFirst({
-    where: {
-      OR: [
-        { id: ENGLISH_APPLIED_SET_ID },
-        { subjectId, title: { path: ["th"], equals: data.title.th } },
-      ],
-    },
-    include: { _count: { select: { questions: true } } },
-  });
-  if (existing && existing._count.questions >= data.questions.length) return;
+export const ENGLISH_EXTRA_SETS: Array<{ id: string; data: ExtraSetData }> = [
+  { id: "future-applied-set-2", data: ENGLISH_FUTURE_APPLIED_DATA },
+  { id: "future-practice-set-3", data: ENGLISH_FUTURE_SET3_DATA },
+];
 
-  const term = await db.examTerm.findFirst({ where: { status: "ACTIVE" } });
-  try {
-    await db.$transaction(async (tx) => {
-      const set =
-        existing ??
-        (await tx.questionSet.create({
-          data: {
-            id: ENGLISH_APPLIED_SET_ID,
-            title: data.title as never,
-            description: data.description,
-            subjectId,
-            topicId,
-            termId: term?.id ?? null,
-            difficulty: "MEDIUM",
-            recommendedMinutes: data.recommendedMinutes,
-            status: "PUBLISHED",
-            revealMode: "AFTER_SUBMIT",
-            shuffleQuestions: false,
-            shuffleOptions: false,
-          },
-        }));
-      await tx.question.deleteMany({ where: { setId: set.id } });
-      await tx.question.createMany({
-        data: data.questions.map((q) => ({
-          setId: set.id,
-          type: "MCQ" as const,
-          prompt: q.prompt,
-          options: q.options as never,
-          answer: { kind: "MCQ", correctKeys: [q.answer.correctKey], correctKey: q.answer.correctKey },
-          explanation: q.explanation,
-          points: q.points,
-          sortOrder: q.sortOrder,
-        })),
+function questionRows(setId: string, data: ExtraSetData) {
+  return data.questions.map((q) => ({
+    setId,
+    type: "MCQ" as const,
+    prompt: q.prompt,
+    options: q.options as never,
+    answer: { kind: "MCQ", correctKeys: [q.answer.correctKey], correctKey: q.answer.correctKey },
+    explanation: q.explanation,
+    points: q.points,
+    sortOrder: q.sortOrder,
+  }));
+}
+
+export async function ensureExtraEnglishSets(subjectId: string, topicId: string | null): Promise<void> {
+  for (const { id, data } of ENGLISH_EXTRA_SETS) {
+    try {
+      const existing = await db.questionSet.findFirst({
+        where: { OR: [{ id }, { subjectId, title: { path: ["th"], equals: data.title.th } }] },
+        include: { _count: { select: { questions: true } } },
       });
-    });
-  } catch (error) {
-    // อีก instance อาจสร้างไปพร้อมกันแล้ว (id ชน) — ไม่เป็นไร
-    console.warn("[auto-seed-english] applied set:", error);
+      if (existing && existing.version >= data.version && existing._count.questions === data.questions.length) {
+        continue;
+      }
+
+      if (!existing) {
+        const term = await db.examTerm.findFirst({ where: { status: "ACTIVE" } });
+        await db.$transaction(async (tx) => {
+          await tx.questionSet.create({
+            data: {
+              id,
+              title: data.title as never,
+              description: data.description,
+              version: data.version,
+              subjectId,
+              topicId,
+              termId: term?.id ?? null,
+              difficulty: "MEDIUM",
+              recommendedMinutes: data.recommendedMinutes,
+              status: "PUBLISHED",
+              revealMode: "AFTER_SUBMIT",
+              shuffleQuestions: false,
+              shuffleOptions: false,
+            },
+          });
+          await tx.question.createMany({ data: questionRows(id, data) });
+        });
+        continue;
+      }
+
+      // มีอยู่แล้วแต่เวอร์ชันเก่า → แทนข้อทั้งหมด (updateMany ล็อกแถวไว้ instance อื่นจะได้ไม่ทำซ้ำ)
+      await db.$transaction(async (tx) => {
+        const claimed = await tx.questionSet.updateMany({
+          where: { id: existing.id, version: existing.version },
+          data: { title: data.title as never, description: data.description, version: data.version },
+        });
+        if (claimed.count === 0) return;
+        await tx.question.deleteMany({ where: { setId: existing.id } });
+        await tx.question.createMany({ data: questionRows(existing.id, data) });
+      });
+    } catch (error) {
+      // อีก instance อาจสร้างไปพร้อมกันแล้ว (id ชน) — ไม่เป็นไร
+      console.warn(`[auto-seed-english] extra set ${id}:`, error);
+    }
   }
 }
 
