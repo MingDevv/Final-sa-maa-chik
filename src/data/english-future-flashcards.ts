@@ -2,8 +2,7 @@ export type FlashcardCategory =
   | "Formula"
   | "Will vs Going To"
   | "Future Continuous"
-  | "Exam Trick"
-  | "Checklist";
+  | "Exam Trick";
 
 export interface Flashcard {
   id: string;
@@ -267,21 +266,21 @@ export const ENGLISH_FUTURE_FLASHCARDS: Flashcard[] = [
     },
   },
   {
-    id: "fc-exam-day-checklist",
-    title: "Final 2B & Exam Room Checklist: เตรียมพร้อม 20 ข้อคาบหน้า!",
-    category: "Checklist",
+    id: "fc-future-continuous-polite-questions",
+    title: "Future Continuous: ถามแผนการอย่างสุภาพ (Polite Inquiries)",
+    category: "Future Continuous",
     front: {
-      prompt: "สิ่งที่ต้องเตรียมตัวสำหรับสอบภาษาอังกฤษ Future Tense คาบหน้า!",
-      subtext: "ข้อสอบ 20 ข้อ 20 คะแนน พรุ่งนี้คาบหน้า ต้องพกอะไรบ้าง?",
-      badge: "Checklist เข้าห้องสอบ",
+      prompt: "อยากถามแผนการของคนอื่นอย่างสุภาพและนุ่มนวลที่สุด ใช้โครงสร้างไหน?",
+      subtext: "เช่น อยากยืมรถ หรืออยากถามเพื่อนว่าจะผ่านร้านสะดวกซื้อไหม",
+      badge: "ถามอย่างสุภาพ",
     },
     back: {
-      formula: "20 ข้อปรนัย • พรุ่งนี้คาบหน้า • ดินสอ 2B + ยางลบลบสะอาด",
-      rule: "เช็คลิสต์ก่อนเดินเข้าห้องสอบ:\n1. ดินสอ 2B เหลาแหลมพร้อมใช้อย่างน้อย 2 แท่ง\n2. ยางลบเนื้อนุ่มสะอาด ไม่ทำให้กระดาษคำตอบดำหรือขาด\n3. สเต็ปทำข้อสอบ: กวาดสายตาหา Time Marker -> เช็ค Stative Verb -> ตัดชอยส์ไวยากรณ์ผิด -> ฝนดำเต็มวง",
-      keywords: ["20 ข้อ 20 คะแนน", "พรุ่งนี้คาบหน้า", "ดินสอ 2B", "ยางลบ", "Time Markers", "Stative Verbs"],
-      example: "Check: 2B pencil sharpened, clean eraser, calm mind, ready for 20/20 full score!",
-      thaiMeaning: "เตรียมดินสอ 2B และยางลบให้พร้อม ตั้งสติ อ่านคีย์เวิร์ดบอกเวลาให้ดีทุกข้อ ได้คะแนนเต็มแน่นอน!",
-      examTip: "คาบหน้ามาตรงเวลา นั่งประจำที่ เตรียมอุปกรณ์ให้พร้อมบนโต๊ะ ขอให้ทุกคนคว้าเกรด A และคะแนนเต็ม 20/20!",
+      formula: "Will + you + be + V-ing...?",
+      rule: "ใช้ Future Continuous เมื่อต้องการถามถึงแผนการหรือสิ่งที่ผู้อื่นจะทำอยู่แล้วตามปกติอย่างสุภาพมาก (Polite inquiry) เพื่อดูว่าเราจะขอติดรถหรือขอยืมของได้ไหม โดยไม่ฟังดูเหมือนสั่งหรือกดดัน",
+      keywords: ["Will you be using...?", "Will you be going...?", "polite inquiry", "routine plan"],
+      example: "Will you be using your car this evening? (เย็นนี้คุณจะใช้รถอยู่หรือเปล่าครับ?)",
+      thaiMeaning: "ถามเพื่อเช็กดูว่าอีกฝ่ายมีแผนใช้รถอยู่ไหม ถ้าไม่ใช้จะได้ขอยืม โดยฟังดูสุภาพและเกรงใจ",
+      examTip: "ออกสอบบ่อยในแนวข้อสอบประยุกต์บทสนทนา: 'Will you be going to the supermarket?' สุภาพและเป็นธรรมชาติกว่า 'Are you going to...?'",
     },
   },
 ];

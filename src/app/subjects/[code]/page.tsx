@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { FileText, NotebookPen, Zap } from "lucide-react";
+import { FileText, NotebookPen, Zap, ExternalLink } from "lucide-react";
 import { BackButton } from "@/components/back-button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -8,6 +8,12 @@ import { SubjectContent } from "@/components/subject/subject-content";
 import { subjectService } from "@/server/services/subject-service";
 import { questionSetService } from "@/server/services/question-set-service";
 import { documentService } from "@/server/services/document-service";
+import {
+  ensureEnglishContent,
+  getEnglishQuestionSetFallback,
+  getEnglishDocumentsFallback,
+  ENGLISH_SUBJECT_CODE,
+} from "@/server/auto-seed-english";
 
 export const dynamic = "force-dynamic";
 
@@ -17,13 +23,33 @@ export default async function SubjectPage({
   params: Promise<{ code: string }>;
 }) {
   const { code } = await params;
-  const subject = await subjectService.getSubjectByCode(decodeURIComponent(code));
+  const decodedCode = decodeURIComponent(code);
+
+  if (decodedCode === ENGLISH_SUBJECT_CODE) {
+    await ensureEnglishContent();
+  }
+
+  let subject = await subjectService.getSubjectByCode(decodedCode);
+  if (!subject && decodedCode === ENGLISH_SUBJECT_CODE) {
+    await ensureEnglishContent();
+    subject = await subjectService.getSubjectByCode(decodedCode);
+  }
   if (!subject) notFound();
 
-  const [sets, documents] = await Promise.all([
+  let [sets, documents] = await Promise.all([
     questionSetService.listPublished({ subjectId: subject.id }),
     documentService.listForSubject(subject.id),
   ]);
+
+  // Fallback สำหรับวิชาภาษาอังกฤษถ้า DB ยังไม่มีข้อมูล
+  if (decodedCode === ENGLISH_SUBJECT_CODE) {
+    if (sets.length === 0) {
+      sets = getEnglishQuestionSetFallback() as never;
+    }
+    if (documents.length === 0) {
+      documents = getEnglishDocumentsFallback() as never;
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">

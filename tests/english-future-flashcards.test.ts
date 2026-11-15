@@ -18,7 +18,6 @@ describe("English Future Flashcards & Cram Cards Dataset", () => {
       "Will vs Going To",
       "Future Continuous",
       "Exam Trick",
-      "Checklist",
     ];
 
     for (const card of ENGLISH_FUTURE_FLASHCARDS) {
@@ -119,13 +118,12 @@ describe("English Future Flashcards & Cram Cards Dataset", () => {
       expect(card?.front.prompt).toContain("baby is going to cry");
     });
 
-    it("12) 2B Pencil & Exam Checklist: 20 ข้อ พรุ่งนี้คาบหน้า พกดินสอ 2B ยางลบ", () => {
-      const card = ENGLISH_FUTURE_FLASHCARDS.find((c) => c.id === "fc-exam-day-checklist");
+    it("12) Future Continuous: ถามแผนการอย่างสุภาพ (Polite Inquiries)", () => {
+      const card = ENGLISH_FUTURE_FLASHCARDS.find((c) => c.id === "fc-future-continuous-polite-questions");
       expect(card).toBeDefined();
-      expect(card?.back.formula).toContain("20 ข้อ");
-      expect(card?.back.formula).toContain("ดินสอ 2B");
-      expect(card?.back.keywords).toContain("ดินสอ 2B");
-      expect(card?.back.keywords).toContain("ยางลบ");
+      expect(card?.back.formula).toContain("Will + you + be + V-ing");
+      expect(card?.back.rule).toContain("สุภาพ");
+      expect(card?.back.keywords).toContain("polite inquiry");
     });
   });
 });

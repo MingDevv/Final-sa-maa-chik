@@ -36,7 +36,6 @@ const CATEGORIES: { label: string; value: FlashcardCategory | "All" }[] = [
   { label: "Future Continuous", value: "Future Continuous" },
   { label: "Formula (สูตร)", value: "Formula" },
   { label: "Exam Trick (กับดักสอบ)", value: "Exam Trick" },
-  { label: "Checklist (ห้องสอบ 2B)", value: "Checklist" },
 ];
 
 const CATEGORY_STYLES: Record<
@@ -62,11 +61,6 @@ const CATEGORY_STYLES: Record<
     badge: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30",
     borderAccent: "border-l-rose-500",
     bgSoft: "bg-rose-500/5",
-  },
-  Checklist: {
-    badge: "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/30",
-    borderAccent: "border-l-purple-500",
-    bgSoft: "bg-purple-500/5",
   },
 };
 

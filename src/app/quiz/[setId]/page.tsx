@@ -7,6 +7,14 @@ import { MarkdownLite } from "@/components/study-guide/markdown-lite";
 import { questionSetService } from "@/server/services/question-set-service";
 import { db } from "@/lib/db";
 import { getSession } from "@/server/session";
+import {
+  ensureEnglishContent,
+  ENGLISH_QUESTION_SET_ID,
+  ENGLISH_SUBJECT_CODE,
+} from "@/server/auto-seed-english";
+import { ENGLISH_FUTURE_QUESTIONS_DATA } from "@/data/english-future-questions";
+import { ENGLISH_FUTURE_STUDY_GUIDE_MD } from "@/data/english-future-study-guide";
+import type { SafeQuestionSet } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +28,51 @@ export default async function QuizPage({
   const { setId } = await params;
   const { retry: retrySessionId } = await searchParams;
   const session = await getSession();
-  const set = await questionSetService.getForPlay(setId);
+
+  if (setId === ENGLISH_QUESTION_SET_ID || setId.includes("english")) {
+    await ensureEnglishContent();
+  }
+
+  let set = await questionSetService.getForPlay(setId);
+
+  // ถ้ายังไม่เจอใน DB แต่เป็นชุดข้อสอบภาษาอังกฤษ ให้ auto-seed แล้วลองใหม่
+  if (!set && (setId === ENGLISH_QUESTION_SET_ID || setId.includes("english"))) {
+    await ensureEnglishContent();
+    set = await questionSetService.getForPlay(setId);
+  }
+
+  // Fallback สร้าง SafeQuestionSet โดยตรงจากชุดข้อมูลภาษาอังกฤษ 20 ข้อ
+  if (!set && (setId === ENGLISH_QUESTION_SET_ID || setId.includes("english"))) {
+    const fallbackSet: SafeQuestionSet = {
+      id: ENGLISH_QUESTION_SET_ID,
+      title: ENGLISH_FUTURE_QUESTIONS_DATA.title,
+      description: ENGLISH_FUTURE_QUESTIONS_DATA.description,
+      subjectId: "cmw60il60000kxjkmlkuxk82p",
+      subjectCode: ENGLISH_SUBJECT_CODE,
+      subjectName: { th: "ภาษาอังกฤษ", en: "English" },
+      subjectColor: "#3b82f6",
+      topicId: "topic-english-future",
+      topicTitle: { th: "Future Tenses", en: "Future Tenses" },
+      difficulty: "MEDIUM",
+      recommendedMinutes: 25,
+      shuffleQuestions: false,
+      shuffleOptions: false,
+      revealMode: "AFTER_SUBMIT",
+      questions: ENGLISH_FUTURE_QUESTIONS_DATA.questions.map((q, idx) => ({
+        id: `q-english-${idx + 1}`,
+        type: "MCQ" as const,
+        prompt: q.prompt,
+        imageUrl: null,
+        options: q.options.map((opt) => ({ key: opt.key, text: opt.text })),
+        points: 1,
+        sortOrder: q.sortOrder,
+        rubric: null,
+        hasSketch: false,
+      })),
+    };
+    set = fallbackSet;
+  }
+
   if (!set) notFound();
 
   // โหมดฝึกซ้ำ: ตรวจสิทธิ์เจ้าของและจำกัดเฉพาะข้อใน RetrySession (ข้อที่ผิด/ข้ามจาก attempt ต้นทาง)
@@ -42,16 +94,26 @@ export default async function QuizPage({
   }
 
   // ชีตสรุปของวิชานี้ — แนะนำให้อ่านก่อนเริ่มทำ
-  const guide = await db.studyGuide.findUnique({
-    where: { subjectId: set.subjectId },
-  });
+  let guideContent: string | null = null;
+  try {
+    const guide = await db.studyGuide.findUnique({
+      where: { subjectId: set.subjectId },
+    });
+    guideContent = guide?.content ?? null;
+  } catch {
+    // ignore
+  }
+
+  if (!guideContent && set.subjectCode === ENGLISH_SUBJECT_CODE) {
+    guideContent = ENGLISH_FUTURE_STUDY_GUIDE_MD;
+  }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="-mb-2">
         <BackButton fallbackHref={`/subjects/${encodeURIComponent(set.subjectCode)}`} label="ย้อนกลับ" />
       </div>
-      {guide && (
+      {guideContent && (
         <details className="group rounded-3xl border border-border bg-card shadow-soft">
           <summary className="flex cursor-pointer items-center gap-2 px-5 py-3 text-sm font-semibold text-wine focus-visible:outline-2 focus-visible:outline-ring dark:text-primary">
             <BookOpen className="h-4 w-4 shrink-0" aria-hidden />
@@ -68,7 +130,7 @@ export default async function QuizPage({
             />
           </summary>
           <div className="max-h-[60vh] overflow-y-auto border-t border-border px-5 py-4">
-            <MarkdownLite content={guide.content} />
+            <MarkdownLite content={guideContent} />
           </div>
         </details>
       )}
