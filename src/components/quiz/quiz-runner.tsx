@@ -100,6 +100,11 @@ export function QuizRunner({
   const [quizMode, setQuizMode] = useState<"EXAM" | "PRACTICE">(initialMode);
   const [answers, setAnswers] = useState<Record<string, AnswerState>>({});
   const [revealedFeedback, setRevealedFeedback] = useState<Record<string, FeedbackState>>({});
+  // อ่านค่าล่าสุดใน callback ได้ทันที (กันกดซ้ำเร็ว ๆ ก่อน state อัปเดต)
+  const revealedRef = useRef<Record<string, FeedbackState>>({});
+  useEffect(() => {
+    revealedRef.current = { ...revealedRef.current, ...revealedFeedback };
+  }, [revealedFeedback]);
   const [current, setCurrent] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
@@ -344,24 +349,24 @@ export function QuizRunner({
 
   const saveAnswer = useCallback(
     (questionId: string, patch: AnswerState, immediate = true) => {
-      setAnswers((prev) => ({ ...prev, [questionId]: { ...prev[questionId], ...patch } }));
-
       // ในโหมดฝึกซ้อม หรือ revealMode === AFTER_EACH: ถ้ามี explanationsMap ให้เฉลยทันที (0ms latency)
       const isPractice = quizMode === "PRACTICE" || set.revealMode === "AFTER_EACH";
-      if (isPractice && patch.selectedKeys && patch.selectedKeys.length > 0) {
-        const selectedKey = patch.selectedKeys[0];
+      const choosing = !!patch.selectedKeys && patch.selectedKeys.length > 0;
+
+      // ล็อกคำตอบ: เฉลยขึ้นแล้วห้ามเปลี่ยนตัวเลือก (ปักธง/ความมั่นใจยังแก้ได้)
+      if (isPractice && choosing && revealedRef.current[questionId]) return;
+
+      setAnswers((prev) => ({ ...prev, [questionId]: { ...prev[questionId], ...patch } }));
+
+      if (isPractice && choosing) {
+        const selectedKey = patch.selectedKeys![0];
         const local = explanationsMap?.[questionId];
         if (local) {
           const isRight = local.correctKey === selectedKey;
+          const fb = { isCorrect: isRight, correctKey: local.correctKey, explanation: local.explanation };
+          revealedRef.current = { ...revealedRef.current, [questionId]: fb };
           setPerQuestionCorrect((prev) => ({ ...prev, [questionId]: isRight }));
-          setRevealedFeedback((prev) => ({
-            ...prev,
-            [questionId]: {
-              isCorrect: isRight,
-              correctKey: local.correctKey,
-              explanation: local.explanation,
-            },
-          }));
+          setRevealedFeedback((prev) => ({ ...prev, [questionId]: fb }));
         }
       }
 
@@ -622,8 +627,10 @@ export function QuizRunner({
                   role="radio"
                   aria-checked={selected}
                   onClick={() => saveAnswer(q.id, { selectedKeys: [opt.key] })}
+                  aria-disabled={isAnswered || undefined}
                   className={cn(
-                    "flex items-start gap-3 rounded-2xl border p-3.5 text-left text-sm transition-all hover:bg-secondary/60 focus-visible:outline-2 focus-visible:outline-ring cursor-pointer select-none",
+                    "flex items-start gap-3 rounded-2xl border p-3.5 text-left text-sm transition-all focus-visible:outline-2 focus-visible:outline-ring select-none",
+                    isAnswered ? "cursor-default" : "cursor-pointer hover:bg-secondary/60",
                     selected && !isAnswered && "border-wine bg-soft-pink/50 dark:border-primary dark:bg-secondary",
                     !selected && !isAnswered && "border-border",
                     // ไฮไลต์เฉลยในโหมดฝึกซ้อม
@@ -725,7 +732,7 @@ export function QuizRunner({
 
             <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-border/40">
               <span className="text-xs text-muted-foreground">
-                ลองเลือกข้ออื่นเพื่อฝึก หรือกดข้อถัดไป
+                🔒 ล็อกคำตอบแล้ว — กดข้อถัดไปได้เลย
               </span>
               {current < set.questions.length - 1 ? (
                 <Button

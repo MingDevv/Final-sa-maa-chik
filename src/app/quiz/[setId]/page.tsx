@@ -111,6 +111,26 @@ export default async function QuizPage({
 
   // สร้าง explanationsMap สำหรับโหมดฝึกซ้อมเฉลยทันที (Instant Feedback)
   const explanationsMap: Record<string, { correctKey: string; explanation: string }> = {};
+
+  // โหมดฝึก: ส่งเฉลยข้อปรนัย (คำตอบเดียว) มากับหน้าเลย → กดแล้วเฉลยขึ้นทันที ไม่ต้องรอ server
+  // (เปิดแบบโหมดสอบจะไม่ส่งเฉลยมา)
+  if (initialMode === "PRACTICE" && set) {
+    try {
+      const rows = await db.question.findMany({
+        where: { setId: set.id, type: "MCQ" },
+        select: { id: true, answer: true, explanation: true },
+      });
+      for (const r of rows) {
+        const a = (r.answer ?? {}) as { correctKey?: string; correctKeys?: string[] };
+        const keys = a.correctKeys ?? (a.correctKey ? [a.correctKey] : []);
+        if (keys.length === 1) {
+          explanationsMap[r.id] = { correctKey: keys[0], explanation: r.explanation ?? "" };
+        }
+      }
+    } catch {
+      // ไม่มีก็ไม่เป็นไร — จะไปเช็กกับ server แทน
+    }
+  }
   if (setId === ENGLISH_QUESTION_SET_ID || setId.includes("english")) {
     ENGLISH_FUTURE_QUESTIONS_DATA.questions.forEach((q, idx) => {
       explanationsMap[`q-english-${idx + 1}`] = {
