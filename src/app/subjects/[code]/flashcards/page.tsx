@@ -8,6 +8,7 @@ import { FlashcardDeck } from "@/components/flashcards/flashcard-deck";
 import { subjectService } from "@/server/services/subject-service";
 import { db } from "@/lib/db";
 import { localizedToString } from "@/lib/types";
+import { getFlashcardDeck } from "@/data/flashcard-decks";
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +72,9 @@ export default async function FlashcardsPage({ params }: FlashcardPageProps) {
       notFound();
     }
   }
+
+  // แต่ละวิชาใช้เด็คของตัวเอง — วิชาที่ยังไม่มีการ์ดให้ขึ้นข้อความแทน (เดิมทุกวิชาขึ้นการ์ดอังกฤษ)
+  const deck = getFlashcardDeck(subject.code);
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 pb-12 pt-2">
@@ -171,7 +175,19 @@ export default async function FlashcardsPage({ params }: FlashcardPageProps) {
 
       {/* Main Flashcard Interactive Deck */}
       <main className="w-full">
-        <FlashcardDeck />
+        {deck ? (
+          <FlashcardDeck
+            initialCards={deck.cards}
+            categories={deck.categories}
+            variant={deck.variant}
+            topicLabel={deck.topicLabel}
+            tagline={deck.tagline}
+          />
+        ) : (
+          <p className="rounded-2xl border border-border bg-card p-6 text-center text-sm text-muted-foreground">
+            ยังไม่มีแผ่นการ์ดสำหรับวิชานี้ — ลองอ่านชีตสรุปหรือทำชุดข้อสอบแทนก่อนนะ
+          </p>
+        )}
       </main>
     </div>
   );

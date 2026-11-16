@@ -35,7 +35,7 @@ describe("English Future Flashcards & Cram Cards Dataset", () => {
       expect(Array.isArray(card.back.keywords)).toBe(true);
       expect(card.back.keywords.length).toBeGreaterThan(0);
       expect(card.back.example.trim().length).toBeGreaterThan(0);
-      expect(card.back.thaiMeaning.trim().length).toBeGreaterThan(0);
+      expect(card.back.thaiMeaning?.trim().length ?? 0).toBeGreaterThan(0);
     }
   });
 

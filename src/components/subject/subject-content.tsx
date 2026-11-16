@@ -39,10 +39,13 @@ export function SubjectContent({
   topics,
   sets,
   subjectCode,
+  hasFlashcards = false,
 }: {
   topics: TopicItem[];
   sets: SetItem[];
   subjectCode?: string;
+  /** วิชานี้มีเด็คแฟลชการ์ดไหม (ไม่มี = ซ่อนปุ่ม) */
+  hasFlashcards?: boolean;
 }) {
   const [topicId, setTopicId] = useState<string>("all");
   const [difficulty, setDifficulty] = useState<string>("all");
@@ -65,6 +68,7 @@ export function SubjectContent({
           <span className="text-xs font-semibold text-muted-foreground mr-1">
             ทบทวนด่วน:
           </span>
+          {hasFlashcards && (
           <Button
             asChild
             variant="outline"
@@ -76,6 +80,7 @@ export function SubjectContent({
               แผ่นการ์ดทบทวน (Flashcards)
             </Link>
           </Button>
+          )}
           <Button asChild variant="outline" size="sm" className="rounded-xl">
             <Link href={`/study-guide/${encodeURIComponent(subjectCode)}`}>
               <BookOpen className="mr-1 h-3.5 w-3.5 text-primary" aria-hidden />

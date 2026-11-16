@@ -7,7 +7,8 @@ export type FlashcardCategory =
 export interface Flashcard {
   id: string;
   title: string;
-  category: FlashcardCategory;
+  /** หมวดของการ์ด — อังกฤษใช้ FlashcardCategory, วิชาอื่นตั้งชื่อหมวดเองได้ */
+  category: string;
   front: {
     prompt: string;
     subtext?: string;
@@ -18,7 +19,8 @@ export interface Flashcard {
     formula?: string;
     keywords: string[];
     example: string;
-    thaiMeaning: string;
+    /** คำแปลไทยของประโยคตัวอย่าง (เฉพาะภาษา) */
+    thaiMeaning?: string;
     examTip?: string;
   };
 }

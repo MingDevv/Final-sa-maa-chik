@@ -13,7 +13,7 @@ import {
   ENGLISH_SUBJECT_CODE,
   ENGLISH_QUESTION_SET_ID,
 } from "@/server/auto-seed-english";
-import { ensureMathRelationsContent, MATH_SUBJECT_CODE } from "@/server/auto-seed-math";
+import { ensureMathRelationsContent, MATH_SUBJECT_CODE, MATH_RELATIONS_SETS } from "@/server/auto-seed-math";
 import { ENGLISH_FUTURE_STUDY_GUIDE_MD } from "@/data/english-future-study-guide";
 
 export const dynamic = "force-dynamic";
@@ -57,6 +57,7 @@ export default async function StudyGuidePage({
   }
 
   const isEnglish = decodedCode === ENGLISH_SUBJECT_CODE;
+  const isMath = decodedCode === MATH_SUBJECT_CODE;
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-4">
@@ -81,6 +82,24 @@ export default async function StudyGuidePage({
                   ทำแนวข้อสอบ 20 ข้อ (มีช้อย)
                 </Link>
               </Button>
+            </>
+          )}
+          {isMath && (
+            <>
+              <Button asChild size="sm" variant="outline" className="rounded-xl border-amber-300 bg-amber-500/10 text-amber-800 hover:bg-amber-500/20 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+                <Link href={`/subjects/${encodeURIComponent(subject.code)}/flashcards`}>
+                  <Zap className="mr-1 h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                  แผ่นการ์ดท่องจำ (Flashcards)
+                </Link>
+              </Button>
+              {MATH_RELATIONS_SETS.map(({ id }, i) => (
+                <Button key={id} asChild size="sm" className="rounded-xl">
+                  <Link href={`/quiz/${id}`}>
+                    <PlayCircle className="mr-1 h-3.5 w-3.5" />
+                    ทำข้อสอบชุดที่ {i + 1}
+                  </Link>
+                </Button>
+              ))}
             </>
           )}
         </div>

@@ -27,10 +27,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { KatexText } from "@/components/katex-text";
 
 const STORAGE_KEY = "final_prep_mastered_flashcards_v1";
 
-const CATEGORIES: { label: string; value: FlashcardCategory | "All" }[] = [
+export type FlashcardCategoryOption = { label: string; value: string };
+
+const ENGLISH_CATEGORIES: FlashcardCategoryOption[] = [
   { label: "ทั้งหมด (All)", value: "All" },
   { label: "Will vs Going To", value: "Will vs Going To" },
   { label: "Future Continuous", value: "Future Continuous" },
@@ -38,10 +41,9 @@ const CATEGORIES: { label: string; value: FlashcardCategory | "All" }[] = [
   { label: "Exam Trick (กับดักสอบ)", value: "Exam Trick" },
 ];
 
-const CATEGORY_STYLES: Record<
-  FlashcardCategory,
-  { badge: string; borderAccent: string; bgSoft: string }
-> = {
+type CategoryStyle = { badge: string; borderAccent: string; bgSoft: string };
+
+const CATEGORY_STYLES: Record<FlashcardCategory, CategoryStyle> = {
   "Will vs Going To": {
     badge: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30",
     borderAccent: "border-l-amber-500",
@@ -64,17 +66,38 @@ const CATEGORY_STYLES: Record<
   },
 };
 
+/** สีสำหรับหมวดของวิชาอื่น (วนตามลำดับหมวด) */
+const FALLBACK_STYLES: CategoryStyle[] = [
+  CATEGORY_STYLES["Formula"],
+  CATEGORY_STYLES["Will vs Going To"],
+  CATEGORY_STYLES["Future Continuous"],
+  CATEGORY_STYLES["Exam Trick"],
+];
+
 interface FlashcardDeckProps {
   initialCards?: Flashcard[];
+  /** ปุ่มกรองหมวด (ต้องมี { value: "All" } เป็นตัวแรก) */
+  categories?: FlashcardCategoryOption[];
+  /** english = มีปุ่มฟังเสียง + คำแปล, math = ป้ายเป็นนิยาม/สูตร และเรนเดอร์ $...$ เป็นสูตร */
+  variant?: "english" | "math";
+  /** ป้ายหัวเด็ค เช่น "Future Tense" */
+  topicLabel?: string;
+  /** คำอธิบายใต้หัวเด็ค */
+  tagline?: string;
   className?: string;
 }
 
 export function FlashcardDeck({
   initialCards = ENGLISH_FUTURE_FLASHCARDS,
+  categories = ENGLISH_CATEGORIES,
+  variant = "english",
+  topicLabel = "Future Tense",
+  tagline = "การ์ดสรุปสูตร & ทริคลับเตรียมสอบ 20 ข้อคาบหน้า ทบทวนจำขึ้นใจ!",
   className,
 }: FlashcardDeckProps) {
+  const isEnglish = variant === "english";
   const [cards, setCards] = React.useState<Flashcard[]>(initialCards);
-  const [selectedCategory, setSelectedCategory] = React.useState<FlashcardCategory | "All">("All");
+  const [selectedCategory, setSelectedCategory] = React.useState<string>("All");
   const [showOnlyUnmastered, setShowOnlyUnmastered] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [isFlipped, setIsFlipped] = React.useState(false);
@@ -273,9 +296,12 @@ export function FlashcardDeck({
     return map;
   }, [initialCards]);
 
-  const currentStyles = currentCard
-    ? CATEGORY_STYLES[currentCard.category]
-    : CATEGORY_STYLES["Formula"];
+  const styleFor = (category: string): CategoryStyle =>
+    CATEGORY_STYLES[category as FlashcardCategory] ??
+    FALLBACK_STYLES[
+      Math.max(0, categories.findIndex((c) => c.value === category) - 1) % FALLBACK_STYLES.length
+    ];
+  const currentStyles = currentCard ? styleFor(currentCard.category) : CATEGORY_STYLES["Formula"];
 
   return (
     <div className={cn("mx-auto flex w-full max-w-4xl flex-col gap-6", className)}>
@@ -291,11 +317,11 @@ export function FlashcardDeck({
                 Flashcards & Cram Cards
               </h2>
               <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                Future Tense
+                {topicLabel}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground">
-              การ์ดสรุปสูตร & ทริคลับเตรียมสอบ 20 ข้อคาบหน้า ทบทวนจำขึ้นใจ!
+              {tagline}
             </p>
           </div>
         </div>
@@ -372,7 +398,7 @@ export function FlashcardDeck({
 
         {/* Filter Pills */}
         <div className="flex flex-wrap gap-1.5">
-          {CATEGORIES.map((cat) => {
+          {categories.map((cat) => {
             const count = categoryCounts[cat.value] || 0;
             const isSelected = selectedCategory === cat.value;
             return (
@@ -518,12 +544,12 @@ export function FlashcardDeck({
                   </span>
 
                   <h3 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl sm:leading-snug">
-                    {currentCard.front.prompt}
+                    <KatexText text={currentCard.front.prompt} />
                   </h3>
 
                   {currentCard.front.subtext && (
                     <p className="max-w-xl text-base text-muted-foreground sm:text-lg">
-                      {currentCard.front.subtext}
+                      <KatexText text={currentCard.front.subtext} />
                     </p>
                   )}
                 </div>
@@ -566,7 +592,7 @@ export function FlashcardDeck({
                       </span>
                     </div>
                     <h4 className="mt-1 text-base font-bold text-foreground sm:text-lg">
-                      {currentCard.title}
+                      <KatexText text={currentCard.title} />
                     </h4>
                   </div>
 
@@ -596,7 +622,7 @@ export function FlashcardDeck({
                           โครงสร้างสูตร (Formula)
                         </span>
                         <span className="font-mono text-sm font-bold text-foreground sm:text-base">
-                          {currentCard.back.formula}
+                          <KatexText text={currentCard.back.formula} />
                         </span>
                       </div>
                     </div>
@@ -605,10 +631,10 @@ export function FlashcardDeck({
                   {/* Rule Details */}
                   <div className="flex flex-col gap-1">
                     <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      หลักไวยากรณ์ (Grammar Rule)
+                      {isEnglish ? "หลักไวยากรณ์ (Grammar Rule)" : "หลักการ / นิยาม"}
                     </span>
                     <p className="whitespace-pre-line text-sm text-foreground/90 sm:text-base">
-                      {currentCard.back.rule}
+                      <KatexText text={currentCard.back.rule} />
                     </p>
                   </div>
 
@@ -616,7 +642,7 @@ export function FlashcardDeck({
                   {currentCard.back.keywords.length > 0 && (
                     <div className="flex flex-col gap-1.5">
                       <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                        คีย์เวิร์ดสังเกต (Keywords & Signals)
+                        {isEnglish ? "คีย์เวิร์ดสังเกต (Keywords & Signals)" : "คำสำคัญ / สิ่งที่ต้องสังเกต"}
                       </span>
                       <div className="flex flex-wrap gap-1.5">
                         {currentCard.back.keywords.map((kw, idx) => (
@@ -624,7 +650,7 @@ export function FlashcardDeck({
                             key={idx}
                             className="inline-flex items-center rounded-lg border border-border/80 bg-muted/60 px-2 py-0.5 font-mono text-xs font-medium text-foreground"
                           >
-                            {kw}
+                            <KatexText text={kw} />
                           </span>
                         ))}
                       </div>
@@ -635,9 +661,10 @@ export function FlashcardDeck({
                   <div className="rounded-xl border border-border bg-muted/30 p-3 sm:p-4">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                        ประโยคตัวอย่าง (Example)
+                        {isEnglish ? "ประโยคตัวอย่าง (Example)" : "ตัวอย่าง"}
                       </span>
 
+                      {isEnglish && (
                       <Button
                         type="button"
                         variant="ghost"
@@ -654,14 +681,21 @@ export function FlashcardDeck({
                         <Volume2 className="h-3.5 w-3.5" />
                         <span>ฟังเสียง</span>
                       </Button>
+                      )}
                     </div>
 
                     <p className="mt-1 font-medium text-foreground sm:text-base">
-                      &quot;{currentCard.back.example}&quot;
+                      {isEnglish ? (
+                        <>&quot;{currentCard.back.example}&quot;</>
+                      ) : (
+                        <KatexText text={currentCard.back.example} />
+                      )}
                     </p>
-                    <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
-                      แปลว่า: {currentCard.back.thaiMeaning}
-                    </p>
+                    {currentCard.back.thaiMeaning && (
+                      <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
+                        แปลว่า: {currentCard.back.thaiMeaning}
+                      </p>
+                    )}
                   </div>
 
                   {/* High Yield Exam Tip */}
@@ -673,7 +707,7 @@ export function FlashcardDeck({
                           ทริคลับ & กับดักข้อสอบ (Exam Tip)
                         </span>
                         <p className="whitespace-pre-line leading-relaxed">
-                          {currentCard.back.examTip}
+                          <KatexText text={currentCard.back.examTip} />
                         </p>
                       </div>
                     </div>
