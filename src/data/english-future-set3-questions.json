@@ -1,486 +1,27 @@
 {
-  "version": 1,
+  "version": 2,
   "title": {
     "th": "แนวข้อสอบเก็บคะแนน ชุดที่ 3: Will / Be Going To / Future Continuous (20 ข้อ)",
     "en": "Grammar Test 3: Will / Be Going To / Future Continuous (20 Items)"
   },
-  "description": "ชุดที่ 3 รูปแบบเดียวกับชุดแรก เนื้อหาตามสไลด์: Will (คาดเดา/ตัดสินใจทันที/เสนอ/สัญญา), Be Going To (แผน/หลักฐาน), Future Continuous (20 ข้อ 20 คะแนน)",
+  "description": "ชุดที่ 3 เติมคำรูปแบบเดียวกับชุดแรก ตามโปสเตอร์สรุป (แนวออกสอบจริง): keyword ของ Will (I hope, I believe, I'm sure, I expect, Probably), Be Going To (Look!, Be careful!, Next week, Next year, Soon), Future Continuous (At this time tomorrow, This time next week, At 7 p.m. tomorrow) และข้อควรจำ (20 ข้อ 20 คะแนน)",
   "recommendedMinutes": 25,
   "difficulty": "MEDIUM",
   "questions": [
     {
-      "prompt": "I think the train __________ soon.",
+      "prompt": "I hope you __________ the exam.",
       "options": [
         {
           "key": "A",
-          "text": "will come"
-        },
-        {
-          "key": "B",
-          "text": "is going to come"
-        },
-        {
-          "key": "C",
-          "text": "will be coming"
-        },
-        {
-          "key": "D",
-          "text": "came"
-        }
-      ],
-      "answer": {
-        "correctKey": "A"
-      },
-      "explanation": "ใช้ will come เพราะมี \"I think\" เป็นการคาดเดาจากความคิดเห็น → will + V.1\n- is going to come ใช้เมื่อมีหลักฐานตรงหน้า\n- will be coming ใช้กับเวลาเจาะจงในอนาคต\n- came เป็นอดีต",
-      "points": 1,
-      "sortOrder": 1
-    },
-    {
-      "prompt": "I'm sure you __________ the film.",
-      "options": [
-        {
-          "key": "A",
-          "text": "are going to enjoy"
-        },
-        {
-          "key": "B",
-          "text": "will enjoy"
-        },
-        {
-          "key": "C",
-          "text": "will be enjoying"
-        },
-        {
-          "key": "D",
-          "text": "enjoyed"
-        }
-      ],
-      "answer": {
-        "correctKey": "B"
-      },
-      "explanation": "ใช้ will enjoy เพราะมี \"I'm sure\" เป็นการคาดเดา/ความเชื่อ → will + V.1\n- are going to enjoy ใช้กับแผนหรือหลักฐานตรงหน้า\n- will be enjoying ใช้กับเวลาเจาะจงในอนาคต\n- enjoyed เป็นอดีต",
-      "points": 1,
-      "sortOrder": 2
-    },
-    {
-      "prompt": "It's very hot in here. I __________ the air conditioning.",
-      "options": [
-        {
-          "key": "A",
-          "text": "am going to turn on"
-        },
-        {
-          "key": "B",
-          "text": "will be turning on"
-        },
-        {
-          "key": "C",
-          "text": "will turn on"
-        },
-        {
-          "key": "D",
-          "text": "turned on"
-        }
-      ],
-      "answer": {
-        "correctKey": "C"
-      },
-      "explanation": "ใช้ will turn on เพราะเพิ่งรู้สึกร้อนแล้วตัดสินใจทันทีขณะพูด → will + V.1\n- am going to turn on ใช้กับสิ่งที่วางแผนไว้ก่อน\n- will be turning on ใช้กับเวลาเจาะจงในอนาคต\n- turned on เป็นอดีต",
-      "points": 1,
-      "sortOrder": 3
-    },
-    {
-      "prompt": "\"I can't reach the milk.\" \"Don't worry. I __________ it for you.\"",
-      "options": [
-        {
-          "key": "A",
-          "text": "am going to get"
-        },
-        {
-          "key": "B",
-          "text": "will be getting"
-        },
-        {
-          "key": "C",
-          "text": "got"
-        },
-        {
-          "key": "D",
-          "text": "will get"
-        }
-      ],
-      "answer": {
-        "correctKey": "D"
-      },
-      "explanation": "ใช้ will get เพราะเป็นการเสนอตัวช่วย (offer) → will + V.1\n- am going to get ใช้กับแผนที่คิดไว้ก่อน\n- will be getting ใช้กับเวลาเจาะจงในอนาคต\n- got เป็นอดีต",
-      "points": 1,
-      "sortOrder": 4
-    },
-    {
-      "prompt": "I __________ your birthday again. I promise!",
-      "options": [
-        {
-          "key": "A",
-          "text": "won't forget"
-        },
-        {
-          "key": "B",
-          "text": "am not going to forget"
-        },
-        {
-          "key": "C",
-          "text": "won't be forgetting"
-        },
-        {
-          "key": "D",
-          "text": "didn't forget"
-        }
-      ],
-      "answer": {
-        "correctKey": "A"
-      },
-      "explanation": "ใช้ won't forget เพราะเป็นคำสัญญา (I promise) → will not (won't) + V.1\n- am not going to forget ใช้กับแผน ไม่ใช่คำสัญญา\n- won't be forgetting ใช้กับเวลาเจาะจงในอนาคต\n- didn't forget เป็นอดีต",
-      "points": 1,
-      "sortOrder": 5
-    },
-    {
-      "prompt": "He is putting his coat on. He __________ out.",
-      "options": [
-        {
-          "key": "A",
-          "text": "will go"
-        },
-        {
-          "key": "B",
-          "text": "is going to go"
-        },
-        {
-          "key": "C",
-          "text": "will be going"
-        },
-        {
-          "key": "D",
-          "text": "went"
-        }
-      ],
-      "answer": {
-        "correctKey": "B"
-      },
-      "explanation": "ใช้ is going to go เพราะเห็นหลักฐานตรงหน้า (กำลังใส่เสื้อโค้ต) → be going to + V.1\n- will go ใช้กับการคาดเดาจากความคิดเห็นหรือการตัดสินใจทันที\n- will be going ใช้กับเวลาเจาะจงในอนาคต\n- went เป็นอดีต",
-      "points": 1,
-      "sortOrder": 6
-    },
-    {
-      "prompt": "Be careful! You __________ the tree!",
-      "options": [
-        {
-          "key": "A",
-          "text": "will hit"
-        },
-        {
-          "key": "B",
-          "text": "will be hitting"
-        },
-        {
-          "key": "C",
-          "text": "are going to hit"
-        },
-        {
-          "key": "D",
-          "text": "hit"
-        }
-      ],
-      "answer": {
-        "correctKey": "C"
-      },
-      "explanation": "ใช้ are going to hit เพราะมีคำเตือน Be careful! และเห็นเหตุการณ์ตรงหน้าว่ากำลังจะชน → be going to\n- will hit ใช้กับการคาดเดาจากความคิดเห็น\n- will be hitting ใช้กับเวลาเจาะจงในอนาคต\n- hit (รูปปัจจุบัน/อดีต) ไม่ได้สื่ออนาคต",
-      "points": 1,
-      "sortOrder": 7
-    },
-    {
-      "prompt": "It's 8.30! You __________ your train!",
-      "options": [
-        {
-          "key": "A",
-          "text": "will miss"
-        },
-        {
-          "key": "B",
-          "text": "will be missing"
-        },
-        {
-          "key": "C",
-          "text": "missed"
-        },
-        {
-          "key": "D",
-          "text": "are going to miss"
-        }
-      ],
-      "answer": {
-        "correctKey": "D"
-      },
-      "explanation": "ใช้ are going to miss เพราะดูจากเวลาตอนนี้ (หลักฐานปัจจุบัน) → be going to\n- will miss ใช้กับการคาดเดาจากความคิดเห็น\n- will be missing ใช้กับเวลาเจาะจงในอนาคต\n- missed เป็นอดีต",
-      "points": 1,
-      "sortOrder": 8
-    },
-    {
-      "prompt": "My father has already decided. He __________ a new car next month.",
-      "options": [
-        {
-          "key": "A",
-          "text": "is going to buy"
-        },
-        {
-          "key": "B",
-          "text": "will buy"
-        },
-        {
-          "key": "C",
-          "text": "will be buying"
-        },
-        {
-          "key": "D",
-          "text": "bought"
-        }
-      ],
-      "answer": {
-        "correctKey": "A"
-      },
-      "explanation": "ใช้ is going to buy เพราะมี \"has already decided\" = ตัดสินใจไว้ก่อนแล้ว → be going to + V.1\n- will buy ใช้กับการตัดสินใจทันที\n- will be buying ใช้กับเวลาเจาะจงในอนาคต\n- bought เป็นอดีต",
-      "points": 1,
-      "sortOrder": 9
-    },
-    {
-      "prompt": "We have already bought the tickets. We __________ an NBA game next Saturday.",
-      "options": [
-        {
-          "key": "A",
-          "text": "will attend"
-        },
-        {
-          "key": "B",
-          "text": "are going to attend"
-        },
-        {
-          "key": "C",
-          "text": "will be attend"
-        },
-        {
-          "key": "D",
-          "text": "attended"
-        }
-      ],
-      "answer": {
-        "correctKey": "B"
-      },
-      "explanation": "ใช้ are going to attend เพราะซื้อตั๋วแล้ว = วางแผนไว้ก่อน → be going to + V.1\n- will attend ใช้กับการตัดสินใจทันที\n- will be attend ผิดโครงสร้าง\n- attended เป็นอดีต",
-      "points": 1,
-      "sortOrder": 10
-    },
-    {
-      "prompt": "At 3 p.m. tomorrow, our class __________ Japanese.",
-      "options": [
-        {
-          "key": "A",
-          "text": "will have studied"
-        },
-        {
-          "key": "B",
-          "text": "studies"
-        },
-        {
-          "key": "C",
-          "text": "will be studying"
-        },
-        {
-          "key": "D",
-          "text": "studied"
-        }
-      ],
-      "answer": {
-        "correctKey": "C"
-      },
-      "explanation": "ใช้ will be studying เพราะมีเวลาเจาะจงในอนาคต (At 3 p.m. tomorrow) → Future Continuous: will be + V-ing\n- will have studied ไม่ใช่ Future Continuous\n- studies เป็น Present Simple\n- studied เป็นอดีต",
-      "points": 1,
-      "sortOrder": 11
-    },
-    {
-      "prompt": "This time next week, my sister __________ her entrance exam.",
-      "options": [
-        {
-          "key": "A",
-          "text": "will have taken"
-        },
-        {
-          "key": "B",
-          "text": "takes"
-        },
-        {
-          "key": "C",
-          "text": "took"
-        },
-        {
-          "key": "D",
-          "text": "will be taking"
-        }
-      ],
-      "answer": {
-        "correctKey": "D"
-      },
-      "explanation": "ใช้ will be taking เพราะมี \"This time next week\" = เวลาเจาะจงในอนาคต → will be + V-ing\n- will have taken ไม่ใช่ Future Continuous\n- takes เป็น Present Simple\n- took เป็นอดีต",
-      "points": 1,
-      "sortOrder": 12
-    },
-    {
-      "prompt": "Sam __________ to the cinema with Jack at 8 p.m. tomorrow.",
-      "options": [
-        {
-          "key": "A",
-          "text": "won't be going"
-        },
-        {
-          "key": "B",
-          "text": "isn't be going"
-        },
-        {
-          "key": "C",
-          "text": "won't being go"
-        },
-        {
-          "key": "D",
-          "text": "didn't go"
-        }
-      ],
-      "answer": {
-        "correctKey": "A"
-      },
-      "explanation": "ใช้ won't be going เพราะเป็นปฏิเสธของ Future Continuous ที่เวลาเจาะจง (at 8 p.m. tomorrow) → S + will not (won't) + be + V-ing\n- isn't be going ใช้ is กับ be พร้อมกันไม่ได้\n- won't being go ผิดโครงสร้าง\n- didn't go เป็นอดีต",
-      "points": 1,
-      "sortOrder": 13
-    },
-    {
-      "prompt": "__________ abroad this time next year?",
-      "options": [
-        {
-          "key": "A",
-          "text": "Will you studying"
-        },
-        {
-          "key": "B",
-          "text": "Will you be studying"
-        },
-        {
-          "key": "C",
-          "text": "Are you will study"
-        },
-        {
-          "key": "D",
-          "text": "Do you be studying"
-        }
-      ],
-      "answer": {
-        "correctKey": "B"
-      },
-      "explanation": "ใช้ Will you be studying เพราะคำถาม Future Continuous คือ Will + S + be + V-ing...? และมี this time next year\n- Will you studying ขาด be\n- Are you will study ผิดโครงสร้าง\n- Do you be studying ผิดโครงสร้าง",
-      "points": 1,
-      "sortOrder": 14
-    },
-    {
-      "prompt": "What __________ at 7 p.m. tomorrow?",
-      "options": [
-        {
-          "key": "A",
-          "text": "will you have done"
-        },
-        {
-          "key": "B",
-          "text": "you will be doing"
-        },
-        {
-          "key": "C",
-          "text": "will you be doing"
-        },
-        {
-          "key": "D",
-          "text": "did you do"
-        }
-      ],
-      "answer": {
-        "correctKey": "C"
-      },
-      "explanation": "ใช้ will you be doing เพราะคำถาม Wh- ของ Future Continuous คือ Wh- + will + S + be + V-ing...? และมีเวลาเจาะจง at 7 p.m. tomorrow\n- will you have done ไม่ใช่ Future Continuous\n- you will be doing ผิดลำดับคำในประโยคคำถาม\n- did you do เป็นอดีต",
-      "points": 1,
-      "sortOrder": 15
-    },
-    {
-      "prompt": "Look out! That dog __________ you!",
-      "options": [
-        {
-          "key": "A",
-          "text": "will bite"
-        },
-        {
-          "key": "B",
-          "text": "will be biting"
-        },
-        {
-          "key": "C",
-          "text": "bit"
-        },
-        {
-          "key": "D",
-          "text": "is going to bite"
-        }
-      ],
-      "answer": {
-        "correctKey": "D"
-      },
-      "explanation": "ใช้ is going to bite เพราะมี Look out! และเห็นสถานการณ์ตรงหน้า → be going to\n- will bite ใช้กับการคาดเดาจากความคิดเห็น\n- will be biting ใช้กับเวลาเจาะจงในอนาคต\n- bit เป็นอดีต",
-      "points": 1,
-      "sortOrder": 16
-    },
-    {
-      "prompt": "Ring! Ring! — I __________ it.",
-      "options": [
-        {
-          "key": "A",
-          "text": "'ll answer"
-        },
-        {
-          "key": "B",
-          "text": "am going to answer"
-        },
-        {
-          "key": "C",
-          "text": "'ll be answering"
-        },
-        {
-          "key": "D",
-          "text": "answered"
-        }
-      ],
-      "answer": {
-        "correctKey": "A"
-      },
-      "explanation": "ใช้ 'll answer (will answer) เพราะโทรศัพท์ดังแล้วตัดสินใจรับทันทีขณะนั้น → will + V.1\n- am going to answer ใช้กับแผนที่คิดไว้ก่อน\n- 'll be answering ใช้กับเวลาเจาะจงในอนาคต\n- answered เป็นอดีต",
-      "points": 1,
-      "sortOrder": 17
-    },
-    {
-      "prompt": "I doubt that he __________ the English test.",
-      "options": [
-        {
-          "key": "A",
-          "text": "is going to pass"
-        },
-        {
-          "key": "B",
           "text": "will pass"
         },
         {
+          "key": "B",
+          "text": "are going to passed"
+        },
+        {
           "key": "C",
-          "text": "will be passing"
+          "text": "will be pass"
         },
         {
           "key": "D",
@@ -488,63 +29,522 @@
         }
       ],
       "answer": {
-        "correctKey": "B"
+        "correctKey": "A"
       },
-      "explanation": "ใช้ will pass เพราะ \"I doubt\" (ฉันสงสัยว่า) เป็นการคาดเดาจากความคิดเห็น → will + V.1\n- is going to pass ใช้เมื่อมีหลักฐานหรือแผน\n- will be passing ใช้กับเวลาเจาะจงในอนาคต\n- passed เป็นอดีต",
+      "explanation": "ใช้ will pass เพราะมี keyword I hope = คาดเดา/หวัง → will + V.1\n- are going to passed ผิด: หลัง going to ต้องเป็น V.1\n- will be pass ผิด: will be ต้องตามด้วย V.ing\n- passed เป็นอดีต",
       "points": 1,
-      "sortOrder": 18
+      "sortOrder": 1
     },
     {
-      "prompt": "\"Salim and I will come at one o'clock.\" \"OK. I __________ for you.\"",
+      "prompt": "I believe our team __________ the football match.",
       "options": [
         {
           "key": "A",
-          "text": "will have waited"
+          "text": "is going to winning"
         },
         {
           "key": "B",
-          "text": "waited"
+          "text": "will be win"
         },
         {
           "key": "C",
-          "text": "will be waiting"
+          "text": "won"
         },
         {
           "key": "D",
-          "text": "am wait"
-        }
-      ],
-      "answer": {
-        "correctKey": "C"
-      },
-      "explanation": "ใช้ will be waiting เพราะตอนบ่ายโมงที่อีกฝ่ายมาถึง ผู้พูดจะกำลังรออยู่ → Future Continuous: will be + V-ing\n- will have waited ไม่ใช่ Future Continuous\n- waited เป็นอดีต\n- am wait ผิดโครงสร้าง",
-      "points": 1,
-      "sortOrder": 19
-    },
-    {
-      "prompt": "Tonight we __________ a birthday party for my brother. We sent the invitations last week.",
-      "options": [
-        {
-          "key": "A",
-          "text": "will have"
-        },
-        {
-          "key": "B",
-          "text": "will be have"
-        },
-        {
-          "key": "C",
-          "text": "had"
-        },
-        {
-          "key": "D",
-          "text": "are going to have"
+          "text": "will win"
         }
       ],
       "answer": {
         "correctKey": "D"
       },
-      "explanation": "ใช้ are going to have เพราะส่งการ์ดเชิญไปแล้วตั้งแต่สัปดาห์ก่อน = แผนที่เตรียมไว้ → be going to + V.1\n- will have ใช้กับการตัดสินใจทันที\n- will be have ผิดโครงสร้าง\n- had เป็นอดีต",
+      "explanation": "ใช้ will win เพราะมี keyword I believe = การคาดเดาจากความเชื่อ → will + V.1\n- is going to winning ผิด: หลัง going to ต้องเป็น V.1\n- will be win ผิดโครงสร้าง\n- won เป็นอดีต",
+      "points": 1,
+      "sortOrder": 2
+    },
+    {
+      "prompt": "I'm sure she __________ your present.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will loving"
+        },
+        {
+          "key": "B",
+          "text": "is love"
+        },
+        {
+          "key": "C",
+          "text": "will love"
+        },
+        {
+          "key": "D",
+          "text": "loved"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "ใช้ will love เพราะมี keyword I'm sure = การคาดเดา → will + V.1\n- will loving ผิด: หลัง will ต้องเป็น V.1\n- is love ผิดโครงสร้าง\n- loved เป็นอดีต",
+      "points": 1,
+      "sortOrder": 3
+    },
+    {
+      "prompt": "I expect my parents __________ me a gift for my birthday.",
+      "options": [
+        {
+          "key": "A",
+          "text": "are going to giving"
+        },
+        {
+          "key": "B",
+          "text": "will give"
+        },
+        {
+          "key": "C",
+          "text": "will be give"
+        },
+        {
+          "key": "D",
+          "text": "gave"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "ใช้ will give เพราะมี keyword I expect = คาดว่า → will + V.1\n- are going to giving ผิด: หลัง going to ต้องเป็น V.1\n- will be give ผิด: will be ต้องตามด้วย V.ing\n- gave เป็นอดีต",
+      "points": 1,
+      "sortOrder": 4
+    },
+    {
+      "prompt": "I'm very tired. Probably, I __________ to the party tonight.",
+      "options": [
+        {
+          "key": "A",
+          "text": "won't going"
+        },
+        {
+          "key": "B",
+          "text": "am not go"
+        },
+        {
+          "key": "C",
+          "text": "didn't go"
+        },
+        {
+          "key": "D",
+          "text": "won't go"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "ใช้ won't go เพราะมี keyword Probably = คาดเดา → ปฏิเสธของ Will คือ S + will not (won't) + V.1\n- won't going ผิด: หลัง won't ต้องเป็น V.1\n- am not go ผิด: ขาด going to\n- didn't go เป็นอดีต",
+      "points": 1,
+      "sortOrder": 5
+    },
+    {
+      "prompt": "A: Which shirt do you want?\nB: Hmm... I __________ the blue one.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will take"
+        },
+        {
+          "key": "B",
+          "text": "am going to take"
+        },
+        {
+          "key": "C",
+          "text": "will be taking"
+        },
+        {
+          "key": "D",
+          "text": "took"
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "ใช้ will take เพราะ B เพิ่งเลือกตอนนั้นเลย = ตัดสินใจในขณะนั้นๆ → will + V.1\n- am going to take ใช้กับสิ่งที่ตัดสินใจไว้ก่อน\n- will be taking ใช้กับเวลาเจาะจงในอนาคต\n- took เป็นอดีต",
+      "points": 1,
+      "sortOrder": 6
+    },
+    {
+      "prompt": "You look tired. Sit down and I __________ the dishes for you.",
+      "options": [
+        {
+          "key": "A",
+          "text": "am going to wash"
+        },
+        {
+          "key": "B",
+          "text": "will be washing"
+        },
+        {
+          "key": "C",
+          "text": "will wash"
+        },
+        {
+          "key": "D",
+          "text": "washed"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "ใช้ will wash เพราะเป็นการเสนอความช่วยเหลือ → will + V.1\n- am going to wash ใช้กับแผนที่คิดไว้ก่อน\n- will be washing ใช้กับเวลาเจาะจงในอนาคต\n- washed เป็นอดีต",
+      "points": 1,
+      "sortOrder": 7
+    },
+    {
+      "prompt": "Be careful! You __________ your coffee!",
+      "options": [
+        {
+          "key": "A",
+          "text": "are going to spill"
+        },
+        {
+          "key": "B",
+          "text": "will spill"
+        },
+        {
+          "key": "C",
+          "text": "will be spilling"
+        },
+        {
+          "key": "D",
+          "text": "spilled"
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "ใช้ are going to spill เพราะมี keyword Be careful! และเห็นหลักฐานตรงหน้าว่ากาแฟกำลังจะหก → be going to = คาดการณ์จากหลักฐานในปัจจุบัน\n- will spill ใช้กับการคาดเดาจากความคิดเห็น\n- will be spilling ใช้กับเวลาเจาะจงในอนาคต\n- spilled เป็นอดีต",
+      "points": 1,
+      "sortOrder": 8
+    },
+    {
+      "prompt": "Look! She is running very fast. She __________ the race.",
+      "options": [
+        {
+          "key": "A",
+          "text": "is going to win"
+        },
+        {
+          "key": "B",
+          "text": "will win"
+        },
+        {
+          "key": "C",
+          "text": "will be winning"
+        },
+        {
+          "key": "D",
+          "text": "won"
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "ใช้ is going to win เพราะมี keyword Look! และเห็นหลักฐานตรงหน้า (วิ่งเร็วมาก) → be going to\n- will win ใช้กับการคาดเดาจากความคิดเห็น (I think...)\n- will be winning ใช้กับเวลาเจาะจงในอนาคต\n- won เป็นอดีต",
+      "points": 1,
+      "sortOrder": 9
+    },
+    {
+      "prompt": "I have booked an appointment. I __________ the dentist next week.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will be see"
+        },
+        {
+          "key": "B",
+          "text": "am going to see"
+        },
+        {
+          "key": "C",
+          "text": "am going to saw"
+        },
+        {
+          "key": "D",
+          "text": "saw"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "ใช้ am going to see เพราะนัดไว้แล้ว = สิ่งที่วางแผนไว้แล้ว (keyword next week) → be going to + V.1\n- will be see ผิด: will be ต้องตามด้วย V.ing\n- am going to saw ผิด: หลัง going to ต้องเป็น V.1\n- saw เป็นอดีต",
+      "points": 1,
+      "sortOrder": 10
+    },
+    {
+      "prompt": "My cousin has saved money for two years. He __________ a motorbike next year.",
+      "options": [
+        {
+          "key": "A",
+          "text": "is going buy"
+        },
+        {
+          "key": "B",
+          "text": "is going to buy"
+        },
+        {
+          "key": "C",
+          "text": "will be buy"
+        },
+        {
+          "key": "D",
+          "text": "bought"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "ใช้ is going to buy เพราะเก็บเงินมานาน = วางแผนไว้แล้ว (keyword next year) → be going to + V.1\n- is going buy ขาด to\n- will be buy ผิดโครงสร้าง\n- bought เป็นอดีต",
+      "points": 1,
+      "sortOrder": 11
+    },
+    {
+      "prompt": "The plane is coming down. We __________ in Bangkok soon.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will be land"
+        },
+        {
+          "key": "B",
+          "text": "landed"
+        },
+        {
+          "key": "C",
+          "text": "are going to land"
+        },
+        {
+          "key": "D",
+          "text": "are going land"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "ใช้ are going to land เพราะเห็นหลักฐานตอนนี้ (เครื่องบินกำลังลด) และมี keyword soon → be going to + V.1\n- will be land ผิด: will be ต้องตามด้วย V.ing\n- landed เป็นอดีต\n- are going land ขาด to",
+      "points": 1,
+      "sortOrder": 12
+    },
+    {
+      "prompt": "It's raining heavily. We __________ going to play football this afternoon.",
+      "options": [
+        {
+          "key": "A",
+          "text": "won't"
+        },
+        {
+          "key": "B",
+          "text": "don't"
+        },
+        {
+          "key": "C",
+          "text": "isn't"
+        },
+        {
+          "key": "D",
+          "text": "aren't"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "ใช้ aren't เพราะปฏิเสธของ Be Going To คือ S + is/am/are + not + going to + V.1 → ประธาน We ใช้ are not (aren't)\n- won't ใช้กับ will + V.1 ไม่มี going to\n- don't ใช้กับ Present Simple\n- isn't ใช้กับประธานเอกพจน์",
+      "points": 1,
+      "sortOrder": 13
+    },
+    {
+      "prompt": "__________ your brother going to study in Bangkok next year?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Are"
+        },
+        {
+          "key": "B",
+          "text": "Is"
+        },
+        {
+          "key": "C",
+          "text": "Will"
+        },
+        {
+          "key": "D",
+          "text": "Does"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "ใช้ Is เพราะคำถามของ Be Going To คือ Is/Am/Are + S + going to + V.1 ? → your brother เป็นเอกพจน์ ใช้ Is\n- Are ใช้กับประธานพหูพจน์ / you\n- Will ใช้กับ Will + S + V.1 ? (ไม่มี going to)\n- Does ใช้กับ Present Simple",
+      "points": 1,
+      "sortOrder": 14
+    },
+    {
+      "prompt": "At this time tomorrow, we __________ to Chiang Rai.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will driving"
+        },
+        {
+          "key": "B",
+          "text": "are drive"
+        },
+        {
+          "key": "C",
+          "text": "will be driving"
+        },
+        {
+          "key": "D",
+          "text": "drove"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "ใช้ will be driving เพราะมี keyword At this time tomorrow = กำลังทำ ณ เวลาหนึ่งในอนาคต → S + will be + V.ing\n- will driving ขาด be\n- are drive ผิดโครงสร้าง\n- drove เป็นอดีต",
+      "points": 1,
+      "sortOrder": 15
+    },
+    {
+      "prompt": "This time next week, my family __________ at a hotel in Phuket.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will be stay"
+        },
+        {
+          "key": "B",
+          "text": "is stay"
+        },
+        {
+          "key": "C",
+          "text": "stayed"
+        },
+        {
+          "key": "D",
+          "text": "will be staying"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "ใช้ will be staying เพราะมี keyword This time next week → Future Continuous: S + will be + V.ing\n- will be stay ขาด -ing\n- is stay ผิดโครงสร้าง\n- stayed เป็นอดีต",
+      "points": 1,
+      "sortOrder": 16
+    },
+    {
+      "prompt": "I __________ TV at 7 p.m. tomorrow. I'll be at my piano lesson.",
+      "options": [
+        {
+          "key": "A",
+          "text": "won't be watching"
+        },
+        {
+          "key": "B",
+          "text": "won't watching"
+        },
+        {
+          "key": "C",
+          "text": "am not be watching"
+        },
+        {
+          "key": "D",
+          "text": "didn't watch"
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "ใช้ won't be watching เพราะปฏิเสธของ Future Continuous คือ S + will not (won't) + be + V.ing และมี keyword at 7 p.m. tomorrow\n- won't watching ขาด be\n- am not be watching ใช้ am กับ be พร้อมกันไม่ได้\n- didn't watch เป็นอดีต",
+      "points": 1,
+      "sortOrder": 17
+    },
+    {
+      "prompt": "__________ at 6 a.m. tomorrow?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Will your father sleeping"
+        },
+        {
+          "key": "B",
+          "text": "Will your father be sleeping"
+        },
+        {
+          "key": "C",
+          "text": "Is your father be sleeping"
+        },
+        {
+          "key": "D",
+          "text": "Does your father will sleep"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "ใช้ Will your father be sleeping เพราะคำถามของ Future Continuous คือ Will + S + be + V.ing ? (มีเวลาเจาะจง at 6 a.m. tomorrow)\n- Will your father sleeping ขาด be\n- Is your father be sleeping ใช้ is กับ be พร้อมกันไม่ได้\n- Does your father will sleep ใช้ does กับ will พร้อมกันไม่ได้",
+      "points": 1,
+      "sortOrder": 18
+    },
+    {
+      "prompt": "When you come home tonight, I __________ dinner.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will cooking"
+        },
+        {
+          "key": "B",
+          "text": "cook"
+        },
+        {
+          "key": "C",
+          "text": "will be cooking"
+        },
+        {
+          "key": "D",
+          "text": "cooked"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "ใช้ will be cooking เพราะตอนที่อีกฝ่ายกลับมาถึง ผู้พูดจะกำลังทำอาหารอยู่ → Future Continuous (เหมือน I will be waiting for you when you arrive.)\nสังเกต: หลัง when ใช้ Present Simple (come) ไม่ใช่ will come\n- will cooking ขาด be\n- cook เป็น Present Simple\n- cooked เป็นอดีต",
+      "points": 1,
+      "sortOrder": 19
+    },
+    {
+      "prompt": "Next week is Mum's birthday and I haven't got a gift yet... Oh, I know! I __________ her a cake.",
+      "options": [
+        {
+          "key": "A",
+          "text": "am going to make"
+        },
+        {
+          "key": "B",
+          "text": "will be making"
+        },
+        {
+          "key": "C",
+          "text": "made"
+        },
+        {
+          "key": "D",
+          "text": "will make"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "ใช้ will make เพราะผู้พูดยังไม่มีแผน แล้วเพิ่งคิดออกตอนนั้น (Oh, I know!) = ตัดสินใจในขณะนั้นๆ → will + V.1\nข้อควรจำ: Keywords เป็นเพียงตัวช่วย — ถึงจะมี Next week (keyword ของ going to) แต่ความหมายคือการตัดสินใจทันที\n- am going to make ใช้กับแผนที่คิดไว้ก่อน\n- will be making ใช้กับเวลาเจาะจงในอนาคต\n- made เป็นอดีต",
       "points": 1,
       "sortOrder": 20
     }

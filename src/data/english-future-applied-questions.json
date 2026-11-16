@@ -1,15 +1,231 @@
 {
-  "version": 2,
+  "version": 3,
   "title": {
     "th": "แนวข้อสอบประยุกต์ ชุดที่ 2: Future Simple & Future Continuous (20 ข้อ)",
     "en": "Applied Grammar Test 2: Future Simple vs Future Continuous (20 Items)"
   },
-  "description": "ชุดที่ 2 แนวประยุกต์ (เนื้อหาตามสไลด์เท่านั้น): บทสนทนา สถานการณ์ หาประโยคที่ถูก และหลักการใช้ Will / Be Going To / Future Continuous (20 ข้อ 20 คะแนน)",
+  "description": "ชุดที่ 2 แนวประยุกต์ ตามโปสเตอร์สรุป (แนวออกสอบจริง): โครงสร้างบอกเล่า/ปฏิเสธ/คำถาม ของ Will, Be Going To, Future Continuous • หลักการใช้ • ตารางเปรียบเทียบ • ข้อควรจำ (หลัง when ใช้ Present Simple / keyword เป็นแค่ตัวช่วย) (20 ข้อ 20 คะแนน)",
   "recommendedMinutes": 25,
   "difficulty": "MEDIUM",
   "questions": [
     {
-      "prompt": "A: Eric is in hospital.\nB: Really? I didn't know. I __________ and visit him.",
+      "prompt": "A: __________ you going to visit your grandparents next week?\nB: Yes, I am. I've already planned it.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Will"
+        },
+        {
+          "key": "B",
+          "text": "Do"
+        },
+        {
+          "key": "C",
+          "text": "Is"
+        },
+        {
+          "key": "D",
+          "text": "Are"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "ใช้ Are เพราะคำถามของ Be Going To คือ Is/Am/Are + S + going to + V.1 ? → ประธาน you ใช้ Are\n- Will ใช้กับ Will + S + V.1 ? (ไม่มี going to)\n- Do ใช้กับ Present Simple\n- Is ใช้กับประธานเอกพจน์ (he/she/it)",
+      "points": 1,
+      "sortOrder": 1
+    },
+    {
+      "prompt": "She has decided to study hard for the exam. She __________ going to join the football club next year.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will not"
+        },
+        {
+          "key": "B",
+          "text": "does not"
+        },
+        {
+          "key": "C",
+          "text": "is not"
+        },
+        {
+          "key": "D",
+          "text": "not"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "ใช้ is not เพราะประโยคปฏิเสธของ Be Going To คือ S + is/am/are + not + going to + V.1\n- will not ใช้กับ will + V.1 (ไม่มี going to)\n- does not ใช้กับ Present Simple\n- not อย่างเดียวขาด verb to be",
+      "points": 1,
+      "sortOrder": 2
+    },
+    {
+      "prompt": "Don't worry. I __________ tell anyone your secret. I promise!",
+      "options": [
+        {
+          "key": "A",
+          "text": "am not"
+        },
+        {
+          "key": "B",
+          "text": "won't"
+        },
+        {
+          "key": "C",
+          "text": "won't be"
+        },
+        {
+          "key": "D",
+          "text": "don't going to"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "ใช้ won't (will not) เพราะเป็นคำสัญญา (I promise) → ปฏิเสธของ Will คือ S + will not (won't) + V.1\n- am not tell ผิด: ขาด going to\n- won't be tell ผิด: will be ต้องตามด้วย V.ing\n- don't going to ผิดโครงสร้าง",
+      "points": 1,
+      "sortOrder": 3
+    },
+    {
+      "prompt": "This box is too heavy for me. __________ me, please?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Will you help"
+        },
+        {
+          "key": "B",
+          "text": "Will you helping"
+        },
+        {
+          "key": "C",
+          "text": "Are you help"
+        },
+        {
+          "key": "D",
+          "text": "Do you will help"
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "ใช้ Will you help เพราะคำถามของ Will คือ Will + S + V.1 ? (ขอความช่วยเหลือ)\n- Will you helping ผิด: หลัง will ต้องเป็น V.1\n- Are you help ผิดโครงสร้าง\n- Do you will help ผิด: ใช้ do กับ will พร้อมกันไม่ได้",
+      "points": 1,
+      "sortOrder": 4
+    },
+    {
+      "prompt": "A: __________ at 7 p.m. tomorrow?\nB: Yes, she will. She has a part-time job at the café.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Will she working"
+        },
+        {
+          "key": "B",
+          "text": "Is she be working"
+        },
+        {
+          "key": "C",
+          "text": "Will be she working"
+        },
+        {
+          "key": "D",
+          "text": "Will she be working"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "ใช้ Will she be working เพราะคำถามของ Future Continuous คือ Will + S + be + V.ing ? และมี keyword At 7 p.m. tomorrow\n- Will she working ขาด be\n- Is she be working ใช้ is กับ be พร้อมกันไม่ได้\n- Will be she working ผิดลำดับคำ (ประธานต้องอยู่หลัง will)",
+      "points": 1,
+      "sortOrder": 5
+    },
+    {
+      "prompt": "I will be waiting for you when you __________.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will arrive"
+        },
+        {
+          "key": "B",
+          "text": "will be arriving"
+        },
+        {
+          "key": "C",
+          "text": "are going to arrive"
+        },
+        {
+          "key": "D",
+          "text": "arrive"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "ใช้ arrive เพราะ ข้อควรจำ: หลัง when เมื่อพูดถึงอนาคต ใช้ Present Simple ไม่ใช่ will\n(ตัวอย่างในโปสเตอร์: I will be waiting for you when you arrive. = ฉันจะรอคุณอยู่เมื่อคุณมาถึง)\n- will arrive / will be arriving / are going to arrive ใช้หลัง when ไม่ได้",
+      "points": 1,
+      "sortOrder": 6
+    },
+    {
+      "prompt": "When my mother __________ home this evening, I will cook dinner for her.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will come"
+        },
+        {
+          "key": "B",
+          "text": "comes"
+        },
+        {
+          "key": "C",
+          "text": "is going to come"
+        },
+        {
+          "key": "D",
+          "text": "will be coming"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "ใช้ comes เพราะหลัง when (พูดถึงอนาคต) ใช้ Present Simple → ประธาน my mother เป็นเอกพจน์ จึงเติม s\n- will come / is going to come / will be coming ใช้หลัง when ไม่ได้\n(ส่วนประโยคหลักยังใช้ will ได้ตามปกติ: I will cook)",
+      "points": 1,
+      "sortOrder": 7
+    },
+    {
+      "prompt": "Which sentence is CORRECT?",
+      "options": [
+        {
+          "key": "A",
+          "text": "I'll call you when I get home."
+        },
+        {
+          "key": "B",
+          "text": "I'll call you when I will get home."
+        },
+        {
+          "key": "C",
+          "text": "I call you when I will get home."
+        },
+        {
+          "key": "D",
+          "text": "I'm going to calling you when I get home."
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "I'll call you when I get home. ถูกต้อง: ประโยคหลักใช้ will + V.1 ส่วนหลัง when ใช้ Present Simple (get)\n- when I will get home ผิด: หลัง when ห้ามใช้ will\n- I call you when I will get home ผิดทั้งสองส่วน\n- going to calling ผิด: หลัง going to ต้องเป็น V.1",
+      "points": 1,
+      "sortOrder": 8
+    },
+    {
+      "prompt": "A: Oh no! We don't have any milk.\nB: Really? I __________ to the shop and buy some.",
       "options": [
         {
           "key": "A",
@@ -17,242 +233,53 @@
         },
         {
           "key": "B",
-          "text": "will go"
-        },
-        {
-          "key": "C",
           "text": "will be going"
         },
         {
-          "key": "D",
-          "text": "went"
-        }
-      ],
-      "answer": {
-        "correctKey": "B"
-      },
-      "explanation": "ใช้ will go เพราะ B เพิ่งรู้ข่าวเดี๋ยวนั้น (\"I didn't know\") แล้วตัดสินใจทันทีขณะพูด → will + V.1\n- am going to go ใช้กับสิ่งที่ตัดสินใจ/วางแผนไว้ก่อน\n- will be going ใช้กับเหตุการณ์ที่กำลังทำอยู่ ณ เวลาเจาะจงในอนาคต\n- went เป็นอดีต",
-      "points": 1,
-      "sortOrder": 1
-    },
-    {
-      "prompt": "A: Eric is in hospital.\nB: Yes, I know. I __________ him tomorrow.",
-      "options": [
-        {
-          "key": "A",
-          "text": "will visit"
-        },
-        {
-          "key": "B",
-          "text": "will be visit"
-        },
-        {
           "key": "C",
-          "text": "am going to visit"
+          "text": "go"
         },
         {
           "key": "D",
-          "text": "visited"
-        }
-      ],
-      "answer": {
-        "correctKey": "C"
-      },
-      "explanation": "ใช้ am going to visit เพราะ B รู้อยู่แล้ว (\"Yes, I know\") และวางแผนไว้ก่อนแล้วว่าจะไปเยี่ยม → be going to + V.1\n- will visit ใช้กับการตัดสินใจทันทีขณะพูด\n- will be visit ผิดโครงสร้าง (will be ต้องตามด้วย V-ing)\n- visited เป็นอดีต",
-      "points": 1,
-      "sortOrder": 2
-    },
-    {
-      "prompt": "I crashed my car into a tree. I __________ another car.",
-      "options": [
-        {
-          "key": "A",
-          "text": "will buy"
-        },
-        {
-          "key": "B",
-          "text": "am going to bought"
-        },
-        {
-          "key": "C",
-          "text": "will be buy"
-        },
-        {
-          "key": "D",
-          "text": "bought"
-        }
-      ],
-      "answer": {
-        "correctKey": "A"
-      },
-      "explanation": "ใช้ will buy เพราะเพิ่งขับรถชนต้นไม้ จึงตัดสินใจเดี๋ยวนั้นว่าจะซื้อคันใหม่ โดยไม่ได้วางแผนไว้ก่อน → will + V.1 (ตามตัวอย่าง #3 ในสไลด์)\n- am going to bought ผิด: หลัง going to ต้องเป็น V.1\n- will be buy ผิดโครงสร้าง\n- bought เป็นอดีต",
-      "points": 1,
-      "sortOrder": 3
-    },
-    {
-      "prompt": "I have saved some money because I __________ a new car.",
-      "options": [
-        {
-          "key": "A",
-          "text": "will buy"
-        },
-        {
-          "key": "B",
-          "text": "will be buying"
-        },
-        {
-          "key": "C",
-          "text": "buy"
-        },
-        {
-          "key": "D",
-          "text": "am going to buy"
+          "text": "will go"
         }
       ],
       "answer": {
         "correctKey": "D"
       },
-      "explanation": "ใช้ am going to buy เพราะเก็บเงินไว้แล้ว แปลว่าวางแผน/เตรียมการไว้ก่อน → be going to + V.1 (ตามตัวอย่าง #2 ในสไลด์)\n- will buy ใช้กับการตัดสินใจทันที\n- will be buying ใช้กับเวลาเจาะจงในอนาคต\n- buy เป็น Present Simple",
-      "points": 1,
-      "sortOrder": 4
-    },
-    {
-      "prompt": "Which sentence is a prediction based on PRESENT EVIDENCE (มีหลักฐานตรงหน้า)?",
-      "options": [
-        {
-          "key": "A",
-          "text": "I think it will rain tomorrow."
-        },
-        {
-          "key": "B",
-          "text": "Look at those black clouds. It is going to rain."
-        },
-        {
-          "key": "C",
-          "text": "I'll carry this bag for you."
-        },
-        {
-          "key": "D",
-          "text": "She will be playing piano at 7 a.m. tomorrow."
-        }
-      ],
-      "answer": {
-        "correctKey": "B"
-      },
-      "explanation": "Look at those black clouds. It is going to rain. คือคำตอบ เพราะเห็นเมฆดำตรงหน้า → คาดเดาจากหลักฐาน ใช้ be going to\n- I think it will rain tomorrow. = คาดเดาจากความคิดเห็น (will)\n- I'll carry this bag for you. = ข้อเสนอ (will)\n- She will be playing piano... = Future Continuous (กำลังทำ ณ เวลาเจาะจง)",
-      "points": 1,
-      "sortOrder": 5
-    },
-    {
-      "prompt": "Which statement about WILL is NOT correct?",
-      "options": [
-        {
-          "key": "A",
-          "text": "will is used for predictions"
-        },
-        {
-          "key": "B",
-          "text": "will is used for offers of help"
-        },
-        {
-          "key": "C",
-          "text": "will is used for plans that we decided before"
-        },
-        {
-          "key": "D",
-          "text": "will is used for decisions I make now"
-        }
-      ],
-      "answer": {
-        "correctKey": "C"
-      },
-      "explanation": "ข้อที่ไม่ถูกคือ \"will is used for plans that we decided before\" เพราะแผนที่ตัดสินใจไว้ก่อนต้องใช้ be going to\nส่วน will ใช้กับ: การคาดเดา (predictions), ข้อเสนอช่วยเหลือ (offers), และการตัดสินใจทันทีขณะพูด (decisions I make now)",
-      "points": 1,
-      "sortOrder": 6
-    },
-    {
-      "prompt": "Which statement is CORRECT?",
-      "options": [
-        {
-          "key": "A",
-          "text": "am going to is used after I think"
-        },
-        {
-          "key": "B",
-          "text": "will is used for plans"
-        },
-        {
-          "key": "C",
-          "text": "will be + V-ing is used for decisions I make now"
-        },
-        {
-          "key": "D",
-          "text": "am going to is used for plans"
-        }
-      ],
-      "answer": {
-        "correctKey": "D"
-      },
-      "explanation": "ข้อที่ถูกคือ \"am going to is used for plans\" (ใช้กับแผนที่ตัดสินใจไว้แล้ว)\n- am going to is used after I think → ผิด หลัง I think ใช้ will\n- will is used for plans → ผิด แผนใช้ be going to\n- will be + V-ing ใช้กับการกระทำที่กำลังเกิด ณ เวลาเจาะจงในอนาคต ไม่ใช่การตัดสินใจทันที",
-      "points": 1,
-      "sortOrder": 7
-    },
-    {
-      "prompt": "Waiter: What would you like to eat?\nCustomer: I __________ a pizza, please.",
-      "options": [
-        {
-          "key": "A",
-          "text": "will have"
-        },
-        {
-          "key": "B",
-          "text": "am going to have"
-        },
-        {
-          "key": "C",
-          "text": "will be having"
-        },
-        {
-          "key": "D",
-          "text": "had"
-        }
-      ],
-      "answer": {
-        "correctKey": "A"
-      },
-      "explanation": "ใช้ will have เพราะลูกค้าตัดสินใจสั่งอาหารตอนที่พูด (decision now) → will + V.1\n- am going to have ใช้กับสิ่งที่ตัดสินใจไว้ก่อน\n- will be having ใช้กับเวลาเจาะจงในอนาคต\n- had เป็นอดีต",
-      "points": 1,
-      "sortOrder": 8
-    },
-    {
-      "prompt": "A: I can't open this jar.\nB: Give it to me. I __________ it for you.",
-      "options": [
-        {
-          "key": "A",
-          "text": "am going to open"
-        },
-        {
-          "key": "B",
-          "text": "will open"
-        },
-        {
-          "key": "C",
-          "text": "will be opening"
-        },
-        {
-          "key": "D",
-          "text": "opened"
-        }
-      ],
-      "answer": {
-        "correctKey": "B"
-      },
-      "explanation": "ใช้ will open เพราะ B เสนอตัวช่วย (offer) → will + V.1 เหมือนตัวอย่าง I'll carry this bag for you.\n- am going to open ใช้กับแผนที่คิดไว้ก่อน\n- will be opening ใช้กับเวลาเจาะจงในอนาคต\n- opened เป็นอดีต",
+      "explanation": "ใช้ will go เพราะ B เพิ่งรู้ว่านมหมด แล้วตัดสินใจทันทีขณะพูด → will + V.1 (ตัดสินใจในขณะนั้นๆ)\n- am going to go ใช้กับสิ่งที่วางแผนไว้ก่อน\n- will be going ใช้กับเหตุการณ์ที่กำลังเกิด ณ เวลาหนึ่งในอนาคต\n- go เป็น Present Simple",
       "points": 1,
       "sortOrder": 9
     },
     {
-      "prompt": "I feel terrible. I think I __________ sick.",
+      "prompt": "A: My bag is so heavy!\nB: __________",
+      "options": [
+        {
+          "key": "A",
+          "text": "I'm going to carrying it for you."
+        },
+        {
+          "key": "B",
+          "text": "I'll carry it for you."
+        },
+        {
+          "key": "C",
+          "text": "I will be carry it for you."
+        },
+        {
+          "key": "D",
+          "text": "I carried it for you tomorrow."
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "I'll carry it for you. ถูกต้อง เพราะเป็นการเสนอความช่วยเหลือ → will + V.1\n- going to carrying ผิด: หลัง going to ต้องเป็น V.1\n- will be carry ผิด: will be ต้องตามด้วย V.ing\n- carried ... tomorrow ผิด: ใช้อดีตกับ tomorrow ไม่ได้",
+      "points": 1,
+      "sortOrder": 10
+    },
+    {
+      "prompt": "A: Please don't be late again.\nB: Sorry! I promise I __________ on time tomorrow.",
       "options": [
         {
           "key": "A",
@@ -260,11 +287,11 @@
         },
         {
           "key": "B",
-          "text": "will be being"
+          "text": "am being"
         },
         {
           "key": "C",
-          "text": "am going to be"
+          "text": "will be"
         },
         {
           "key": "D",
@@ -274,277 +301,250 @@
       "answer": {
         "correctKey": "C"
       },
-      "explanation": "ใช้ am going to be เพราะตอนนี้รู้สึกแย่มาก (หลักฐานจากสภาพปัจจุบัน) จึงคาดว่าจะป่วย → be going to (ตามตัวอย่างในสไลด์ การใช้ be going to ข้อ 2)\n- will being ผิด: หลัง will ต้องเป็น V.1 (be)\n- will be being ผิดโครงสร้าง\n- was เป็นอดีต",
-      "points": 1,
-      "sortOrder": 10
-    },
-    {
-      "prompt": "It's 7.55 and the bus leaves at 8.00. Look at the time! You __________ the bus.",
-      "options": [
-        {
-          "key": "A",
-          "text": "will be missing"
-        },
-        {
-          "key": "B",
-          "text": "missed"
-        },
-        {
-          "key": "C",
-          "text": "miss"
-        },
-        {
-          "key": "D",
-          "text": "are going to miss"
-        }
-      ],
-      "answer": {
-        "correctKey": "D"
-      },
-      "explanation": "ใช้ are going to miss เพราะดูจากเวลาตอนนี้ (หลักฐานปัจจุบัน) ว่าต้องตกรถแน่ ๆ → be going to (เหมือน It's 8.30! You're going to miss your train!)\n- will be missing ใช้กับเวลาเจาะจงในอนาคต\n- missed เป็นอดีต\n- miss เป็น Present Simple",
+      "explanation": "ใช้ will be เพราะ I promise = ให้สัญญา → will + V.1 (V.1 ของ is/am/are คือ be)\nระวัง: will be ตรงนี้ไม่ใช่ Future Continuous เพราะไม่มี V.ing ตามหลัง\n- will being ผิด: หลัง will ต้องเป็น V.1\n- am being เป็นปัจจุบัน\n- was เป็นอดีต",
       "points": 1,
       "sortOrder": 11
     },
     {
-      "prompt": "A: Can you come to my party at 7 p.m. on Friday?\nB: Sorry, I can't. I __________ my grandparents at that time.",
+      "prompt": "Watch out! The glass __________ off the table!",
       "options": [
         {
           "key": "A",
-          "text": "will be visiting"
+          "text": "is going to fall"
         },
         {
           "key": "B",
-          "text": "will have visited"
+          "text": "will fall"
         },
         {
           "key": "C",
-          "text": "visit"
+          "text": "will be falling"
         },
         {
           "key": "D",
-          "text": "visited"
+          "text": "fell"
         }
       ],
       "answer": {
         "correctKey": "A"
       },
-      "explanation": "ใช้ will be visiting เพราะพูดถึงสิ่งที่จะกำลังทำอยู่ ณ เวลาเจาะจงในอนาคต (7 p.m. on Friday / at that time) → S + will be + V-ing\n- will have visited ไม่ใช่โครงสร้างที่เรียน (และความหมายผิด)\n- visit เป็น Present Simple\n- visited เป็นอดีต",
+      "explanation": "ใช้ is going to fall เพราะเห็นหลักฐานตรงหน้าว่าแก้วกำลังจะตก (keyword: Watch out!) → be going to = คาดการณ์จากหลักฐานในปัจจุบัน\n- will fall ใช้กับการคาดเดาจากความคิดเห็น\n- will be falling ใช้กับเวลาเจาะจงในอนาคต\n- fell เป็นอดีต",
       "points": 1,
       "sortOrder": 12
     },
     {
-      "prompt": "A: What __________ at 9 a.m. tomorrow?\nB: I'll be taking my English test.",
+      "prompt": "A: Why are you buying flour and eggs?\nB: I __________ a cake for my mum's birthday.",
       "options": [
         {
           "key": "A",
-          "text": "will you have done"
+          "text": "will make"
         },
         {
           "key": "B",
-          "text": "will you be doing"
+          "text": "will be making"
         },
         {
           "key": "C",
-          "text": "you will be doing"
+          "text": "am going to make"
         },
         {
           "key": "D",
-          "text": "did you do"
+          "text": "made"
         }
       ],
       "answer": {
-        "correctKey": "B"
+        "correctKey": "C"
       },
-      "explanation": "ใช้ will you be doing เพราะคำถาม Wh- ของ Future Continuous คือ Wh- + will + S + be + V-ing...? และคำตอบของ B ก็เป็น Future Continuous (I'll be taking)\n- will you have done ไม่ใช่ Future Continuous\n- you will be doing ผิดลำดับคำ (คำถามต้องเอา will ขึ้นก่อนประธาน)\n- did you do เป็นอดีต",
+      "explanation": "ใช้ am going to make เพราะ B วางแผนไว้แล้วถึงได้ซื้อแป้งกับไข่มา → be going to = สิ่งที่วางแผนไว้แล้ว\n- will make ใช้กับการตัดสินใจทันที\n- will be making ใช้กับเวลาเจาะจงในอนาคต\n- made เป็นอดีต",
       "points": 1,
       "sortOrder": 13
     },
     {
-      "prompt": "I won't __________ his wedding this Saturday as I'll be on my way to Spain.",
+      "prompt": "I hope it __________ sunny on Sports Day.",
       "options": [
         {
           "key": "A",
-          "text": "attending"
+          "text": "will be"
         },
         {
           "key": "B",
-          "text": "attended"
+          "text": "is going to be"
         },
         {
           "key": "C",
-          "text": "be attending"
+          "text": "will being"
         },
         {
           "key": "D",
-          "text": "to be attend"
-        }
-      ],
-      "answer": {
-        "correctKey": "C"
-      },
-      "explanation": "ใช้ be attending เพราะประโยคปฏิเสธของ Future Continuous คือ S + will not (won't) + be + V-ing\n- attending ขาด be\n- attended ผิด: หลัง won't ต้องเป็น be + V-ing หรือ V.1\n- to be attend ผิดโครงสร้าง",
-      "points": 1,
-      "sortOrder": 14
-    },
-    {
-      "prompt": "The presentation was moved to Friday, so our team __________ our presentation at this time tomorrow.",
-      "options": [
-        {
-          "key": "A",
-          "text": "won't making"
-        },
-        {
-          "key": "B",
-          "text": "isn't going make"
-        },
-        {
-          "key": "C",
-          "text": "didn't make"
-        },
-        {
-          "key": "D",
-          "text": "won't be making"
-        }
-      ],
-      "answer": {
-        "correctKey": "D"
-      },
-      "explanation": "ใช้ won't be making เพราะเป็นปฏิเสธของ Future Continuous ที่เวลาเจาะจง (at this time tomorrow) → S + won't + be + V-ing\n- won't making ขาด be\n- isn't going make ขาด to\n- didn't make เป็นอดีต",
-      "points": 1,
-      "sortOrder": 15
-    },
-    {
-      "prompt": "__________ the car at 10 a.m. tomorrow? I need to borrow it.",
-      "options": [
-        {
-          "key": "A",
-          "text": "Will you be using"
-        },
-        {
-          "key": "B",
-          "text": "Will you using"
-        },
-        {
-          "key": "C",
-          "text": "Are you going use"
-        },
-        {
-          "key": "D",
-          "text": "Do you will use"
+          "text": "is being"
         }
       ],
       "answer": {
         "correctKey": "A"
       },
-      "explanation": "ใช้ Will you be using เพราะคำถาม Future Continuous คือ Will + S + be + V-ing...? (ถามว่าตอน 10 โมงพรุ่งนี้จะกำลังใช้รถอยู่ไหม)\n- Will you using ขาด be\n- Are you going use ขาด to\n- Do you will use ผิด: ใช้ do กับ will พร้อมกันไม่ได้",
+      "explanation": "ใช้ will be เพราะมี keyword I hope = การคาดเดา/ความหวัง → will + V.1\n- is going to be ใช้เมื่อมีหลักฐานตรงหน้าหรือมีแผน\n- will being ผิด: หลัง will ต้องเป็น V.1\n- is being เป็นปัจจุบัน",
       "points": 1,
-      "sortOrder": 16
+      "sortOrder": 14
     },
     {
-      "prompt": "Which sentence is grammatically correct?",
+      "prompt": "Don't call me at 9 p.m. tonight. I __________ my homework at that time.",
       "options": [
         {
           "key": "A",
-          "text": "He is going to buys a new car soon."
+          "text": "will be doing"
         },
         {
           "key": "B",
-          "text": "George is going to move to Bangkok soon."
+          "text": "will doing"
         },
         {
           "key": "C",
-          "text": "They will be travel at this time next month."
+          "text": "am do"
         },
         {
           "key": "D",
-          "text": "I will to help you with this project."
+          "text": "did"
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "ใช้ will be doing เพราะพูดถึงสิ่งที่จะกำลังทำอยู่ ณ เวลาหนึ่งในอนาคต (at 9 p.m. tonight) → S + will be + V.ing\n- will doing ขาด be\n- am do ผิดโครงสร้าง\n- did เป็นอดีต",
+      "points": 1,
+      "sortOrder": 15
+    },
+    {
+      "prompt": "Which structure means \"วางแผนไว้แล้ว / มีหลักฐาน\" (planned / evidence)?",
+      "options": [
+        {
+          "key": "A",
+          "text": "will + V.1"
+        },
+        {
+          "key": "B",
+          "text": "is/am/are + going to + V.1"
+        },
+        {
+          "key": "C",
+          "text": "will be + V.ing"
+        },
+        {
+          "key": "D",
+          "text": "V.2 (past simple)"
         }
       ],
       "answer": {
         "correctKey": "B"
       },
-      "explanation": "George is going to move to Bangkok soon. ถูกต้อง: S + be going to + V.1\n- is going to buys ผิด: หลัง going to ต้องเป็น V.1 (buy) ไม่เติม s\n- will be travel ผิด: ต้องเป็น will be travelling\n- will to help ผิด: หลัง will ไม่มี to",
+      "explanation": "is/am/are + going to + V.1 = Be Going To ใช้กับสิ่งที่วางแผนไว้แล้ว และคาดการณ์จากหลักฐานในปัจจุบัน (ตามตารางเปรียบเทียบ)\n- will + V.1 = ตัดสินใจทันที / คาดเดา / เสนอ / สัญญา\n- will be + V.ing = จะกำลังทำ ณ ช่วงเวลาหนึ่งในอนาคต\n- V.2 เป็นอดีต",
       "points": 1,
-      "sortOrder": 17
+      "sortOrder": 16
     },
     {
-      "prompt": "Choose the sentence that uses Future Continuous correctly.",
+      "prompt": "Which group of keywords is usually used with FUTURE CONTINUOUS?",
       "options": [
         {
           "key": "A",
-          "text": "She will playing piano at 7 a.m. tomorrow."
+          "text": "I think, I hope, I'm sure"
         },
         {
           "key": "B",
-          "text": "She is be playing piano at 7 a.m. tomorrow."
+          "text": "Look!, Watch out!, Be careful!"
         },
         {
           "key": "C",
-          "text": "She will be playing piano at 7 a.m. tomorrow."
+          "text": "yesterday, last week, ago"
         },
         {
           "key": "D",
-          "text": "She will be play piano at 7 a.m. tomorrow."
-        }
-      ],
-      "answer": {
-        "correctKey": "C"
-      },
-      "explanation": "She will be playing piano at 7 a.m. tomorrow. ถูกต้อง: S + will + be + V-ing\n- will playing ขาด be\n- is be playing ใช้ is กับ be พร้อมกันไม่ได้\n- will be play ขาด -ing",
-      "points": 1,
-      "sortOrder": 18
-    },
-    {
-      "prompt": "A: Liza and I will come at one o'clock.\nB: OK. I __________ for you. I'm sure you __________ the new café.",
-      "options": [
-        {
-          "key": "A",
-          "text": "will have waited / are going to enjoy"
-        },
-        {
-          "key": "B",
-          "text": "am waiting / enjoyed"
-        },
-        {
-          "key": "C",
-          "text": "will be wait / will enjoying"
-        },
-        {
-          "key": "D",
-          "text": "will be waiting / will enjoy"
+          "text": "At this time tomorrow, This time next week, At 7 p.m. tomorrow"
         }
       ],
       "answer": {
         "correctKey": "D"
       },
-      "explanation": "ใช้ will be waiting / will enjoy\n- ช่องแรก: ตอนบ่ายโมงที่เพื่อนมาถึง B จะกำลังรออยู่ → Future Continuous (will be waiting) เหมือนแบบฝึกในสไลด์\n- ช่องสอง: มี I'm sure → คาดเดาด้วย will + V.1 (will enjoy)\n- ตัวเลือกอื่นใช้ will have waited / be going to หลัง I'm sure / รูปปัจจุบัน-อดีต หรือผิดโครงสร้าง",
+      "explanation": "At this time tomorrow, This time next week, At 7 p.m. tomorrow = keyword ของ Future Continuous (บอกช่วงเวลาเจาะจงในอนาคต)\n- I think, I hope, I'm sure = keyword ของ Will\n- Look!, Watch out!, Be careful! = keyword ของ Be Going To\n- yesterday, last week, ago = อดีต",
+      "points": 1,
+      "sortOrder": 17
+    },
+    {
+      "prompt": "A: Look! You've dropped your wallet.\nB: Oh, thanks! I __________ it up.",
+      "options": [
+        {
+          "key": "A",
+          "text": "am going to pick"
+        },
+        {
+          "key": "B",
+          "text": "will be picking"
+        },
+        {
+          "key": "C",
+          "text": "will pick"
+        },
+        {
+          "key": "D",
+          "text": "picked"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "ใช้ will pick เพราะ B เพิ่งรู้ว่าทำกระเป๋าตังค์หล่น แล้วตัดสินใจเก็บทันที → will + V.1\nข้อควรจำ: Keywords เป็นเพียงตัวช่วย ต้องดูความหมายของประโยคด้วย — ถึงจะมี Look! แต่ประโยค \"I ___ it up\" เป็นการตัดสินใจทันที ไม่ใช่แผนหรือการคาดการณ์\n- am going to pick ใช้กับแผนที่คิดไว้ก่อน\n- will be picking ใช้กับเวลาเจาะจงในอนาคต\n- picked เป็นอดีต",
+      "points": 1,
+      "sortOrder": 18
+    },
+    {
+      "prompt": "A: What __________ at this time next week?\nB: I __________ in the sea. We booked a trip to Phuket last month.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will you do / am swimming"
+        },
+        {
+          "key": "B",
+          "text": "are you doing / swam"
+        },
+        {
+          "key": "C",
+          "text": "will you be doing / will be swimming"
+        },
+        {
+          "key": "D",
+          "text": "you will be doing / will be swim"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "ใช้ will you be doing / will be swimming เพราะมี keyword at this time next week = กำลังทำ ณ เวลาหนึ่งในอนาคต → Future Continuous\n- คำถาม: Wh- + will + S + be + V.ing ?\n- คำตอบ: S + will be + V.ing\n- you will be doing ผิดลำดับคำในคำถาม และ will be swim ขาด -ing",
       "points": 1,
       "sortOrder": 19
     },
     {
-      "prompt": "My father has already booked a table, so we __________ dinner at a restaurant tonight. I think the food __________ delicious.",
+      "prompt": "My sister has already bought a plane ticket. She __________ Japan next year. At this time next year, she __________ around Tokyo.",
       "options": [
         {
           "key": "A",
-          "text": "are going to have / will be"
+          "text": "will visit / is going to walk"
         },
         {
           "key": "B",
-          "text": "will have / is going to be"
+          "text": "is going to visit / will be walking"
         },
         {
           "key": "C",
-          "text": "are having / was"
+          "text": "visits / will walking"
         },
         {
           "key": "D",
-          "text": "will be having / will being"
+          "text": "will be visit / walks"
         }
       ],
       "answer": {
-        "correctKey": "A"
+        "correctKey": "B"
       },
-      "explanation": "ใช้ are going to have / will be\n- ช่องแรก: จองโต๊ะไว้แล้ว = แผนที่เตรียมไว้ก่อน → be going to\n- ช่องสอง: มี I think = คาดเดาจากความคิดเห็น → will + V.1\n- will have / is going to be สลับกันผิดหลัก (หลัง I think ไม่ใช้ going to)\n- are having / was และ will be having / will being ผิดเวลา/โครงสร้าง",
+      "explanation": "ใช้ is going to visit / will be walking\n- ช่องแรก: ซื้อตั๋วแล้ว = วางแผนไว้แล้ว (keyword next year) → be going to + V.1\n- ช่องสอง: At this time next year = กำลังทำ ณ เวลาหนึ่งในอนาคต → will be + V.ing\n- ตัวเลือกอื่นสลับหลักการใช้ หรือผิดโครงสร้าง (will walking, will be visit)",
       "points": 1,
       "sortOrder": 20
     }
