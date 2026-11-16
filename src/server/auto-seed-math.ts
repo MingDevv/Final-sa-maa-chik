@@ -70,9 +70,18 @@ export async function ensureMathRelationsContent(): Promise<void> {
       });
     }
 
-    let topic = await db.topic.findFirst({
+    // หาหัวข้อของเรา (ถ้ามีซ้ำจากการ seed พร้อมกันหลาย instance → เก็บอันแรก ย้ายชุดข้อสอบมา แล้วลบที่ซ้ำ)
+    const topics = await db.topic.findMany({
       where: { subjectId: subject.id, title: { path: ["th"], equals: TOPIC_TITLE_TH } },
+      orderBy: { createdAt: "asc" },
     });
+    let topic = topics[0] ?? null;
+    if (topic && topics.length > 1) {
+      const dupIds = topics.slice(1).map((t) => t.id);
+      await db.questionSet.updateMany({ where: { topicId: { in: dupIds } }, data: { topicId: topic.id } });
+      await db.sourceDocument.updateMany({ where: { topicId: { in: dupIds } }, data: { topicId: topic.id } });
+      await db.topic.deleteMany({ where: { id: { in: dupIds } } });
+    }
     if (!topic) {
       topic = await db.topic.create({
         data: {
