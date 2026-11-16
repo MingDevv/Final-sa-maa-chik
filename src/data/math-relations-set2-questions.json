@@ -1,0 +1,552 @@
+{
+  "version": 1,
+  "title": {
+    "th": "คณิต ความสัมพันธ์ ชุดที่ 2: ประยุกต์ + แนว O-NET/A-Level (20 ข้อ)",
+    "en": "Relations Set 2: Applied + O-NET/A-Level Style (20 Items)"
+  },
+  "description": "ชุดที่ 2 ยากขึ้น: โจทย์ท้าทายในแบบฝึก (O-NET, A-Level, กสพท), โดเมน/เรนจ์ที่มีกับดัก, ตัวผกผันแบบมีเงื่อนไข (20 ข้อ 20 คะแนน)",
+  "recommendedMinutes": 35,
+  "difficulty": "HARD",
+  "questions": [
+    {
+      "prompt": "(O-NET) กำหนดให้ $A = \\{x \\in \\mathbb{N} \\mid x^2 - 5x - 14 \\le 0\\}$ และ $n(A \\times B) = 42$ แล้ว $n(B)$ เท่ากับข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "6"
+        },
+        {
+          "key": "B",
+          "text": "14"
+        },
+        {
+          "key": "C",
+          "text": "7"
+        },
+        {
+          "key": "D",
+          "text": "5"
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "$(x-7)(x+2) \\le 0$ → $-2 \\le x \\le 7$ แต่ $x \\in \\mathbb{N}$ → $A = \\{1,\\dots,7\\}$, $n(A) = 7$ → $7 \\cdot n(B) = 42$ → $n(B) = 6$ (กับดัก: นับ $-2, -1, 0$ เข้าไปด้วย)",
+      "points": 1,
+      "sortOrder": 1
+    },
+    {
+      "prompt": "(O-NET) กำหนดให้ $A = \\{1,2\\}$ และ $B = \\{a,b\\}$ คู่อันดับในข้อใดเป็นสมาชิกของ $A \\times B$",
+      "options": [
+        {
+          "key": "A",
+          "text": "$(b, a)$"
+        },
+        {
+          "key": "B",
+          "text": "$(1, 2)$"
+        },
+        {
+          "key": "C",
+          "text": "$(2, b)$"
+        },
+        {
+          "key": "D",
+          "text": "$(a, 1)$"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "ตัวหน้าต้องมาจาก $A$ ตัวหลังมาจาก $B$ → $(2, b)$ ถูก; $(a,1)$ อยู่ใน $B \\times A$; $(b,a)$ อยู่ใน $B \\times B$; $(1,2)$ อยู่ใน $A \\times A$",
+      "points": 1,
+      "sortOrder": 2
+    },
+    {
+      "prompt": "ถ้า $n(A) = 5$ และ $n(A \\times B) = 15$ จำนวนความสัมพันธ์ทั้งหมดจาก $B$ ไป $A$ เท่ากับข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$2^{15}$"
+        },
+        {
+          "key": "B",
+          "text": "$2^{8}$"
+        },
+        {
+          "key": "C",
+          "text": "15"
+        },
+        {
+          "key": "D",
+          "text": "$15^{2}$"
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "$n(B) = \\frac{15}{5} = 3$ → $n(B \\times A) = 3 \\cdot 5 = 15$ → จำนวนความสัมพันธ์ $= 2^{15}$ (จาก $B$ ไป $A$ หรือ $A$ ไป $B$ ก็ได้ $2^{15}$ เท่ากัน)",
+      "points": 1,
+      "sortOrder": 3
+    },
+    {
+      "prompt": "กำหนดให้ $A = \\{1,2,3\\}$, $B = \\{2,3,4\\}$ และ $C = \\{3,4,5\\}$ จำนวนสมาชิกของ $A \\times (B - C)$ เท่ากับข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "9"
+        },
+        {
+          "key": "B",
+          "text": "3"
+        },
+        {
+          "key": "C",
+          "text": "6"
+        },
+        {
+          "key": "D",
+          "text": "0"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "$B - C$ = สมาชิกของ $B$ ที่ไม่อยู่ใน $C$ = $\\{2\\}$ → $n(A \\times \\{2\\}) = 3 \\cdot 1 = 3$",
+      "points": 1,
+      "sortOrder": 4
+    },
+    {
+      "prompt": "(A-Level) กำหนดให้ $A = [-2,-1] \\cup [\\frac{1}{2}, 4]$ โดยที่ $A \\subset \\mathbb{Z}$ และ $r = \\{(x,y) \\in A \\times A \\mid 3x = 2y\\}$ แล้ว $r$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$\\{(2,3),(4,6)\\}$"
+        },
+        {
+          "key": "B",
+          "text": "$\\{(-2,-3),(2,3)\\}$"
+        },
+        {
+          "key": "C",
+          "text": "$\\{(3,2)\\}$"
+        },
+        {
+          "key": "D",
+          "text": "$\\{(2,3)\\}$"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "$A = \\{-2,-1,1,2,3,4\\}$ และ $y = \\frac{3x}{2}$: $x=2 \\to y=3 \\in A$ ✔, $x=4 \\to y=6 \\notin A$, $x=-2 \\to y=-3 \\notin A$, ค่าอื่นได้เศษส่วน → $r = \\{(2,3)\\}$",
+      "points": 1,
+      "sortOrder": 5
+    },
+    {
+      "prompt": "(A-Level) กำหนดให้ $A = \\{-2,-1,1,2\\}$ และ $r = \\{(x,y) \\in A \\times A \\mid x - y = -1\\}$ แล้ว $r^{-1}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$\\{(-2,-1),(1,2)\\}$"
+        },
+        {
+          "key": "B",
+          "text": "$\\{(-1,-2)\\}$"
+        },
+        {
+          "key": "C",
+          "text": "$\\{(-1,-2),(0,-1),(2,1)\\}$"
+        },
+        {
+          "key": "D",
+          "text": "$\\{(-1,-2),(2,1)\\}$"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "$y = x + 1$: $x=-2 \\to -1$ ✔, $x=-1 \\to 0 \\notin A$, $x=1 \\to 2$ ✔, $x=2 \\to 3 \\notin A$ → $r = \\{(-2,-1),(1,2)\\}$ แล้วสลับคู่ → $r^{-1} = \\{(-1,-2),(2,1)\\}$",
+      "points": 1,
+      "sortOrder": 6
+    },
+    {
+      "prompt": "กำหนดให้ $A = \\{1,2\\}$ และ $B = \\{3,4\\}$ ความสัมพันธ์จาก $A$ ไป $B$ ที่มีสมาชิก พอดี 2 คู่ มีทั้งหมดกี่ความสัมพันธ์",
+      "options": [
+        {
+          "key": "A",
+          "text": "8"
+        },
+        {
+          "key": "B",
+          "text": "6"
+        },
+        {
+          "key": "C",
+          "text": "4"
+        },
+        {
+          "key": "D",
+          "text": "16"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "$A \\times B = \\{(1,3),(1,4),(2,3),(2,4)\\}$ มี 4 คู่ เลือก 2 คู่ได้ 6 แบบ: $\\{(1,3),(1,4)\\}, \\{(1,3),(2,3)\\}, \\{(1,3),(2,4)\\}, \\{(1,4),(2,3)\\}, \\{(1,4),(2,4)\\}, \\{(2,3),(2,4)\\}$ (ทั้งหมดทุกขนาดรวมกันได้ $2^4 = 16$)",
+      "points": 1,
+      "sortOrder": 7
+    },
+    {
+      "prompt": "โดเมนของ $r = \\{(x,y) \\in \\mathbb{R} \\times \\mathbb{R} \\mid y = \\sqrt{x^2 - 1}\\}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$[-1, 1]$"
+        },
+        {
+          "key": "B",
+          "text": "$(-\\infty, -1] \\cup [1, \\infty)$"
+        },
+        {
+          "key": "C",
+          "text": "$\\mathbb{R} - \\{-1, 1\\}$"
+        },
+        {
+          "key": "D",
+          "text": "$[1, \\infty)$"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "ในรากต้อง $\\ge 0$: $x^2 - 1 \\ge 0$ → $(x-1)(x+1) \\ge 0$ → $x \\le -1$ หรือ $x \\ge 1$ (กับดัก: ลืมฝั่งลบ)",
+      "points": 1,
+      "sortOrder": 8
+    },
+    {
+      "prompt": "เรนจ์ของ $r = \\{(x,y) \\in \\mathbb{R} \\times \\mathbb{R} \\mid y = \\frac{x-2}{3x-1}\\}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$\\mathbb{R}$"
+        },
+        {
+          "key": "B",
+          "text": "$\\mathbb{R} - \\{-\\frac{1}{3}\\}$"
+        },
+        {
+          "key": "C",
+          "text": "$\\mathbb{R} - \\{2\\}$"
+        },
+        {
+          "key": "D",
+          "text": "$\\mathbb{R} - \\{\\frac{1}{3}\\}$"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "รูป $y = \\frac{ax+b}{cx+d}$ → เรนจ์ $= \\mathbb{R} - \\{\\frac{a}{c}\\} = \\mathbb{R} - \\{\\frac{1}{3}\\}$ (ตรวจ: $x(3y-1) = y - 2$ → $x = \\frac{y-2}{3y-1}$ ต้อง $3y - 1 \\neq 0$) — บังเอิญเท่ากับค่าที่ตัดออกจากโดเมนพอดี",
+      "points": 1,
+      "sortOrder": 9
+    },
+    {
+      "prompt": "เรนจ์ของ $r = \\{(x,y) \\mid y = \\frac{4x-7}{5x-3}\\}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$\\mathbb{R}$"
+        },
+        {
+          "key": "B",
+          "text": "$\\mathbb{R} - \\{\\frac{3}{5}\\}$"
+        },
+        {
+          "key": "C",
+          "text": "$\\mathbb{R} - \\{\\frac{4}{5}\\}$"
+        },
+        {
+          "key": "D",
+          "text": "$\\mathbb{R} - \\{\\frac{7}{4}\\}$"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "จัดรูป $5xy - 3y = 4x - 7$ → $x(5y - 4) = 3y - 7$ → $x = \\frac{3y-7}{5y-4}$ ต้อง $5y - 4 \\neq 0$ → $y \\neq \\frac{4}{5}$ ($\\frac{3}{5}$ คือค่าที่ตัดจากโดเมน)",
+      "points": 1,
+      "sortOrder": 10
+    },
+    {
+      "prompt": "เรนจ์ของ $r = \\{(x,y) \\mid y + 3 = \\lvert x + 1 \\rvert\\}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$[-1, \\infty)$"
+        },
+        {
+          "key": "B",
+          "text": "$[0, \\infty)$"
+        },
+        {
+          "key": "C",
+          "text": "$[3, \\infty)$"
+        },
+        {
+          "key": "D",
+          "text": "$[-3, \\infty)$"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "$y = \\lvert x + 1 \\rvert - 3$ และ $\\lvert x + 1 \\rvert \\ge 0$ → $y \\ge -3$",
+      "points": 1,
+      "sortOrder": 11
+    },
+    {
+      "prompt": "เรนจ์ของ $r = \\{(x,y) \\mid y = (x+5)^2 - 10\\}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$[10, \\infty)$"
+        },
+        {
+          "key": "B",
+          "text": "$[-10, \\infty)$"
+        },
+        {
+          "key": "C",
+          "text": "$\\mathbb{R}$"
+        },
+        {
+          "key": "D",
+          "text": "$[-5, \\infty)$"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "$(x+5)^2 \\ge 0$ → ลบ 10 ทั้งสองข้าง $y \\ge -10$ (โดเมนเป็น $\\mathbb{R}$ เพราะแทน $x$ ได้ทุกค่า)",
+      "points": 1,
+      "sortOrder": 12
+    },
+    {
+      "prompt": "โดเมนและเรนจ์ของ $r = \\{(x,y) \\mid y = -\\sqrt{x}\\}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$D_r = [0, \\infty),\\ R_r = (-\\infty, 0]$"
+        },
+        {
+          "key": "B",
+          "text": "$D_r = \\mathbb{R},\\ R_r = (-\\infty, 0]$"
+        },
+        {
+          "key": "C",
+          "text": "$D_r = (-\\infty, 0],\\ R_r = [0, \\infty)$"
+        },
+        {
+          "key": "D",
+          "text": "$D_r = [0, \\infty),\\ R_r = [0, \\infty)$"
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "ในราก $x \\ge 0$ → $D_r = [0, \\infty)$; $\\sqrt{x} \\ge 0$ คูณ $-1$ กลับเครื่องหมาย $-\\sqrt{x} \\le 0$ → $R_r = (-\\infty, 0]$",
+      "points": 1,
+      "sortOrder": 13
+    },
+    {
+      "prompt": "กราฟของความสัมพันธ์ $r$ เป็นส่วนของเส้นตรงจากจุด $(-2,-4)$ ซึ่งเป็น จุดทึบ ไปถึงจุด $(2,4)$ ซึ่งเป็น จุดโปร่ง โดเมนและเรนจ์ของ $r$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$D_r = (-2, 2],\\ R_r = (-4, 4]$"
+        },
+        {
+          "key": "B",
+          "text": "$D_r = [-4, 4),\\ R_r = [-2, 2)$"
+        },
+        {
+          "key": "C",
+          "text": "$D_r = [-2, 2),\\ R_r = [-4, 4)$"
+        },
+        {
+          "key": "D",
+          "text": "$D_r = [-2, 2],\\ R_r = [-4, 4]$"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "ดูช่วงบนแกน X: $-2$ ถึง $2$, แกน Y: $-4$ ถึง $4$ — จุดทึบรวมใช้ $[\\ $, จุดโปร่งไม่รวมใช้ $\\ )$",
+      "points": 1,
+      "sortOrder": 14
+    },
+    {
+      "prompt": "โดเมนของ $r = \\{(x,y) \\in \\mathbb{R} \\times \\mathbb{R} \\mid y = \\frac{9}{\\sqrt{x^2 - 3x - 4}}\\}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$\\mathbb{R} - \\{-1, 4\\}$"
+        },
+        {
+          "key": "B",
+          "text": "$(-\\infty, -1] \\cup [4, \\infty)$"
+        },
+        {
+          "key": "C",
+          "text": "$(-\\infty, -1) \\cup (4, \\infty)$"
+        },
+        {
+          "key": "D",
+          "text": "$(-1, 4)$"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "รากอยู่ที่ส่วน → ต้อง $\\ge 0$ และ $\\neq 0$ พร้อมกัน → $x^2 - 3x - 4 > 0$ → $(x-4)(x+1) > 0$ → $x < -1$ หรือ $x > 4$ (กับดัก: ใส่ $[\\ ]$ รวม $-1, 4$ ซึ่งทำให้ส่วนเป็น 0)",
+      "points": 1,
+      "sortOrder": 15
+    },
+    {
+      "prompt": "(แนว กสพท) ถ้า $r_1 = \\{(x,y) \\mid y = \\sqrt{x+3}\\}$ และ $r_2 = \\{(x,y) \\mid y = \\frac{9}{\\sqrt{x^2-3x-4}}\\}$ แล้ว $D_{r_1} \\cap D_{r_2}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$[-3, -1) \\cup (4, \\infty)$"
+        },
+        {
+          "key": "B",
+          "text": "$(4, \\infty)$"
+        },
+        {
+          "key": "C",
+          "text": "$[-3, -1] \\cup [4, \\infty)$"
+        },
+        {
+          "key": "D",
+          "text": "$[-3, \\infty)$"
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "$D_{r_1} = [-3, \\infty)$ และ $D_{r_2} = (-\\infty, -1) \\cup (4, \\infty)$ → ส่วนที่ซ้อนกันบนเส้นจำนวนคือ $[-3, -1) \\cup (4, \\infty)$",
+      "points": 1,
+      "sortOrder": 16
+    },
+    {
+      "prompt": "กำหนดให้ $r = \\{(x,y) \\mid y = 2x + 1\\}$ แล้ว $r^{-1}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$\\{(x,y) \\mid y = \\frac{1}{2x+1}\\}$"
+        },
+        {
+          "key": "B",
+          "text": "$\\{(x,y) \\mid y = 2x - 1\\}$"
+        },
+        {
+          "key": "C",
+          "text": "$\\{(x,y) \\mid y = \\frac{x-1}{2}\\}$"
+        },
+        {
+          "key": "D",
+          "text": "$\\{(x,y) \\mid y = \\frac{x+1}{2}\\}$"
+        }
+      ],
+      "answer": {
+        "correctKey": "C"
+      },
+      "explanation": "สลับ $x, y$: $x = 2y + 1$ → $2y = x - 1$ → $y = \\frac{x-1}{2}$ (ตัวผกผัน ไม่ใช่ส่วนกลับ $\\frac{1}{2x+1}$)",
+      "points": 1,
+      "sortOrder": 17
+    },
+    {
+      "prompt": "กำหนดให้ $r = \\{(x,y) \\mid y = x^2 + 1\\}$ โดเมนและเรนจ์ของ $r^{-1}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$D_{r^{-1}} = \\mathbb{R},\\ R_{r^{-1}} = [1, \\infty)$"
+        },
+        {
+          "key": "B",
+          "text": "$D_{r^{-1}} = [1, \\infty),\\ R_{r^{-1}} = \\mathbb{R}$"
+        },
+        {
+          "key": "C",
+          "text": "$D_{r^{-1}} = [0, \\infty),\\ R_{r^{-1}} = \\mathbb{R}$"
+        },
+        {
+          "key": "D",
+          "text": "$D_{r^{-1}} = [1, \\infty),\\ R_{r^{-1}} = [1, \\infty)$"
+        }
+      ],
+      "answer": {
+        "correctKey": "B"
+      },
+      "explanation": "$D_r = \\mathbb{R}$, $R_r = [1, \\infty)$ → สลับกัน: $D_{r^{-1}} = R_r = [1, \\infty)$ และ $R_{r^{-1}} = D_r = \\mathbb{R}$ (ตรงกับ $r^{-1}: y = \\pm\\sqrt{x-1}$)",
+      "points": 1,
+      "sortOrder": 18
+    },
+    {
+      "prompt": "กำหนดให้ $r = \\{(x,y) \\mid y = \\sqrt{x+2}\\}$ แล้ว $r^{-1}$ คือข้อใด",
+      "options": [
+        {
+          "key": "A",
+          "text": "$\\{(x,y) \\mid y = \\sqrt{x - 2}\\}$"
+        },
+        {
+          "key": "B",
+          "text": "$\\{(x,y) \\mid y = x^2 - 2\\}$"
+        },
+        {
+          "key": "C",
+          "text": "$\\{(x,y) \\mid y = x^2 + 2 \\text{ และ } x \\ge 0\\}$"
+        },
+        {
+          "key": "D",
+          "text": "$\\{(x,y) \\mid y = x^2 - 2 \\text{ และ } x \\ge 0\\}$"
+        }
+      ],
+      "answer": {
+        "correctKey": "D"
+      },
+      "explanation": "สลับ: $x = \\sqrt{y+2}$ ซึ่งบังคับ $x \\ge 0$ → ยกกำลังสอง $x^2 = y + 2$ → $y = x^2 - 2$ โดย $x \\ge 0$ (ถ้าไม่ใส่เงื่อนไขจะได้พาราโบลาทั้งตัวซึ่งเกินมา)",
+      "points": 1,
+      "sortOrder": 19
+    },
+    {
+      "prompt": "ข้อใดถูกต้องเสมอ สำหรับความสัมพันธ์ $r$ ใด ๆ",
+      "options": [
+        {
+          "key": "A",
+          "text": "$D_{r^{-1}} = R_r$"
+        },
+        {
+          "key": "B",
+          "text": "กราฟของ $r^{-1}$ คือกราฟของ $r$ สะท้อนกับแกน X"
+        },
+        {
+          "key": "C",
+          "text": "$r^{-1} = r$"
+        },
+        {
+          "key": "D",
+          "text": "ถ้า $r \\subset A \\times B$ แล้ว $r^{-1} \\subset A \\times B$"
+        }
+      ],
+      "answer": {
+        "correctKey": "A"
+      },
+      "explanation": "การสลับคู่ทำให้ตัวหลังของ $r$ กลายเป็นตัวหน้าของ $r^{-1}$ → $D_{r^{-1}} = R_r$ เสมอ; $r^{-1} \\subset B \\times A$ (ไม่ใช่ $A \\times B$); กราฟสะท้อนกับเส้น $y = x$ ไม่ใช่แกน X; $r^{-1} = r$ เป็นแค่บางกรณี เช่น $xy = 1$",
+      "points": 1,
+      "sortOrder": 20
+    }
+  ]
+}

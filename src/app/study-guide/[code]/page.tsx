@@ -13,6 +13,7 @@ import {
   ENGLISH_SUBJECT_CODE,
   ENGLISH_QUESTION_SET_ID,
 } from "@/server/auto-seed-english";
+import { ensureMathRelationsContent, MATH_SUBJECT_CODE } from "@/server/auto-seed-math";
 import { ENGLISH_FUTURE_STUDY_GUIDE_MD } from "@/data/english-future-study-guide";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +29,9 @@ export default async function StudyGuidePage({
 
   if (decodedCode === ENGLISH_SUBJECT_CODE) {
     await ensureEnglishContent();
+  }
+  if (decodedCode === MATH_SUBJECT_CODE) {
+    await ensureMathRelationsContent();
   }
 
   let subject = await db.subject.findUnique({

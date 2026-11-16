@@ -12,6 +12,7 @@ import {
   ENGLISH_QUESTION_SET_ID,
   ENGLISH_SUBJECT_CODE,
 } from "@/server/auto-seed-english";
+import { ensureMathRelationsContent, isMathRelationsSetId } from "@/server/auto-seed-math";
 import { ENGLISH_FUTURE_QUESTIONS_DATA } from "@/data/english-future-questions";
 import { ENGLISH_FUTURE_STUDY_GUIDE_MD } from "@/data/english-future-study-guide";
 import type { SafeQuestionSet } from "@/lib/types";
@@ -32,6 +33,9 @@ export default async function QuizPage({
 
   if (setId === ENGLISH_QUESTION_SET_ID || setId.includes("english")) {
     await ensureEnglishContent();
+  }
+  if (isMathRelationsSetId(setId)) {
+    await ensureMathRelationsContent();
   }
 
   let set = await questionSetService.getForPlay(setId);

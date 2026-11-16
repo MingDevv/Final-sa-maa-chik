@@ -28,12 +28,14 @@ import { analyticsService } from "@/server/services/analytics-service";
 import { getReadOnlySession } from "@/server/read-session";
 import { reviewService } from "@/server/services/review-service";
 import { localizedToString } from "@/lib/types";
+import { ensureMathRelationsContent } from "@/server/auto-seed-math";
 
 export const dynamic = "force-dynamic";
 
 /** จับกรณี DB ยังไม่พร้อม (เช่นเพิ่ง deploy บน Vercel ยังไม่ตั้ง DATABASE_URL) — แสดงคำแนะนำแทนหน้าพัง */
 async function loadDashboard() {
   try {
+    await ensureMathRelationsContent();
     const session = await getReadOnlySession();
     const [subjects, summary, weakTopics, recent, review] = await Promise.all([
       subjectService.listSubjects(),

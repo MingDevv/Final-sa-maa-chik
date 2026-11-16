@@ -14,6 +14,7 @@ import {
   getEnglishDocumentsFallback,
   ENGLISH_SUBJECT_CODE,
 } from "@/server/auto-seed-english";
+import { ensureMathRelationsContent, MATH_SUBJECT_CODE } from "@/server/auto-seed-math";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,9 @@ export default async function SubjectPage({
 
   if (decodedCode === ENGLISH_SUBJECT_CODE) {
     await ensureEnglishContent();
+  }
+  if (decodedCode === MATH_SUBJECT_CODE) {
+    await ensureMathRelationsContent();
   }
 
   let subject = await subjectService.getSubjectByCode(decodedCode);
